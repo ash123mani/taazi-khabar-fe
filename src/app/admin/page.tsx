@@ -1,45 +1,62 @@
-'use client';
+'use client'
 
-import Link from 'next/link';
+import { Typography, Row, Col } from 'antd'
+import { DatabaseOutlined, BuildOutlined, RobotOutlined } from '@ant-design/icons'
+import { useRouter } from 'next/navigation'
+
+const { Title, Text } = Typography
 
 const adminLinks = [
   {
     title: 'Training Data',
     description: 'Browse and manage AI interactions, provide feedback on responses',
     href: '/admin/training-data',
-    icon: '📊',
+    icon: <DatabaseOutlined style={{ fontSize: 28 }} />,
   },
   {
     title: 'Datasets',
     description: 'Build and manage training datasets from curated interactions',
     href: '/admin/datasets',
-    icon: '📦',
+    icon: <BuildOutlined style={{ fontSize: 28 }} />,
   },
   {
     title: 'Models',
     description: 'View model registry, swap active models, rollback versions',
     href: '/admin/models',
-    icon: '🤖',
+    icon: <RobotOutlined style={{ fontSize: 28 }} />,
   },
-];
+]
 
 export default function AdminDashboard() {
+  const router = useRouter()
+
   return (
     <div>
-      <h1 className="text-2xl font-bold text-text-primary mb-2">Admin Dashboard</h1>
-      <p className="text-text-muted mb-8">Manage AI training data, datasets, and models</p>
+      <Title level={4} style={{ marginBottom: 4, letterSpacing: '-0.5px' }}>Admin Dashboard</Title>
+      <Text style={{ color: '#666', display: 'block', marginBottom: 24 }}>
+        Manage AI training data, datasets, and models
+      </Text>
 
-      <div className="grid gap-6 md:grid-cols-3">
+      <Row gutter={[16, 16]}>
         {adminLinks.map((link) => (
-          <Link key={link.href} href={link.href}>
-            <div className="bg-surface-card border border-surface-border rounded-lg p-6 hover:border-accent/30 transition-colors h-full">
-              <div className="text-3xl mb-4">{link.icon}</div>
-              <h2 className="text-lg font-semibold text-text-primary mb-2">{link.title}</h2>
-              <p className="text-sm text-text-muted">{link.description}</p>
+          <Col xs={24} sm={12} md={8} key={link.href}>
+            <div
+              onClick={() => router.push(link.href)}
+              style={{
+                border: '2px solid #000',
+                padding: 24,
+                background: '#fff',
+                cursor: 'pointer',
+                height: '100%',
+              }}
+            >
+              <div style={{ marginBottom: 16 }}>{link.icon}</div>
+              <Title level={5} style={{ margin: 0, marginBottom: 8 }}>{link.title}</Title>
+              <Text style={{ color: '#666', fontSize: 13 }}>{link.description}</Text>
             </div>
-          </Link>
+          </Col>
         ))}
-      </div>
+      </Row>
     </div>
-  );
+  )
 }

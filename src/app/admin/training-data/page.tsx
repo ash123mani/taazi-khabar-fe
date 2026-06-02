@@ -1,160 +1,161 @@
-'use client';
+'use client'
 
-import { useEffect, useState } from 'react';
-import { api } from '@/lib/api';
-import { AIInteraction } from '@/lib/types';
+import { useEffect, useState } from 'react'
+import { Typography, Table, Tag, Spin, Button, Modal, Input, Tooltip } from 'antd'
+import { EditOutlined, LikeOutlined, DislikeOutlined } from '@ant-design/icons'
+import { api } from '@/lib/api'
+import type { AIInteraction } from '@/lib/types'
+
+const { Title, Text } = Typography
+const { TextArea } = Input
 
 export default function TrainingDataPage() {
-  const [interactions, setInteractions] = useState<AIInteraction[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editResponse, setEditResponse] = useState('');
+  const [interactions, setInteractions] = useState<AIInteraction[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editResponse, setEditResponse] = useState('')
 
   const fetchInteractions = async () => {
     try {
-      const data = await api.getInteractions();
-      setInteractions(Array.isArray(data) ? data : data.interactions || []);
+      const data = await api.getInteractions()
+      setInteractions(Array.isArray(data) ? data : data.interactions || [])
     } catch {
-      setError('Failed to load interactions');
+      setError('Failed to load interactions')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  useEffect(() => {
-    fetchInteractions();
-  }, []);
+  useEffect(() => { fetchInteractions() }, [])
 
-  const handleFeedback = async (id: string, feedback: number) => {
+  const handleFeedback = async (id: string, feedback: number | null) => {
     try {
-      await api.updateInteraction(id, { user_feedback: feedback });
-      setInteractions((prev) =>
-        prev.map((i) => (i.id === id ? { ...i, user_feedback: feedback } : i))
-      );
-    } catch {
-      // ignore
-    }
-  };
+      await api.updateInteraction(id, { user_feedback: feedback })
+      setInteractions((prev) => prev.map((i) => (i.id === id ? { ...i, user_feedback: feedback } : i)))
+    } catch { /* ignore */ }
+  }
 
   const handleEdit = async (id: string) => {
-    if (!editResponse.trim()) return;
+    if (!editResponse.trim()) return
     try {
-      await api.updateInteraction(id, { response: editResponse });
-      setInteractions((prev) =>
-        prev.map((i) => (i.id === id ? { ...i, response: editResponse } : i))
-      );
-      setEditingId(null);
-      setEditResponse('');
-    } catch {
-      // ignore
-    }
-  };
+      await api.updateInteraction(id, { response: editResponse })
+      setInteractions((prev) => prev.map((i) => (i.id === id ? { ...i, response: editResponse } : i)))
+      setEditingId(null)
+      setEditResponse('')
+    } catch { /* ignore */ }
+  }
+
+  const columns = [
+    {
+      title: 'Persona',
+      dataIndex: 'persona',
+      key: 'persona',
+      render: (p: string) => <Tag style={{ border: '1px solid #000', fontWeight: 600 }}>{p}</Tag>,
+      width: 120,
+    },
+    {
+      title: 'Date',
+      dataIndex: 'created_at',
+      key: 'created_at',
+      render: (d: string) => (
+        <span style={{ fontSize: 13, color: '#666' }}>
+          {new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+        </span>
+      ),
+      width: 150,
+    },
+    {
+      title: 'Prompt',
+      dataIndex: 'prompt',
+      key: 'prompt',
+      ellipsis: true,
+      render: (t: string) => (
+        <Tooltip title={t}>
+          <Text ellipsis style={{ maxWidth: 200, display: 'block' }}>{t}</Text>
+        </Tooltip>
+      ),
+    },
+    {
+      title: 'Response',
+      dataIndex: 'response',
+      key: 'response',
+      ellipsis: true,
+      render: (t: string) => (
+        <Tooltip title={t}>
+          <Text ellipsis style={{ maxWidth: 200, display: 'block' }}>{t}</Text>
+        </Tooltip>
+      ),
+    },
+    {
+      title: 'Feedback',
+      key: 'feedback',
+      width: 100,
+      render: (_: any, record: AIInteraction) => (
+        <div style={{ display: 'flex', gap: 4 }}>
+          <Button
+            size="small"
+            type={record.user_feedback === 1 ? 'primary' : 'default'}
+            icon={<LikeOutlined />}
+            onClick={() => handleFeedback(record.id, record.user_feedback === 1 ? null : 1)}
+            style={{ border: '1px solid #000', borderRadius: 0 }}
+          />
+          <Button
+            size="small"
+            type={record.user_feedback === -1 ? 'primary' : 'default'}
+            icon={<DislikeOutlined />}
+            onClick={() => handleFeedback(record.id, record.user_feedback === -1 ? null : -1)}
+            style={{ border: '1px solid #000', borderRadius: 0 }}
+          />
+        </div>
+      ),
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      width: 70,
+      render: (_: any, record: AIInteraction) => (
+        <Button
+          size="small"
+          icon={<EditOutlined />}
+          onClick={() => { setEditingId(record.id); setEditResponse(record.response) }}
+          style={{ border: '1px solid #000', borderRadius: 0 }}
+        />
+      ),
+    },
+  ]
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-text-primary mb-6">Training Data</h1>
-      <p className="text-text-muted mb-6">Browse AI interactions, provide feedback, and edit responses.</p>
+      <Title level={4} style={{ marginBottom: 4, letterSpacing: '-0.5px' }}>Training Data</Title>
+      <Text style={{ color: '#666', display: 'block', marginBottom: 16 }}>
+        Browse AI interactions, provide feedback, and edit responses.
+      </Text>
 
-      {error && (
-        <div className="bg-red-500/10 border border-red-500/30 text-red-300 rounded-lg p-4 mb-6">
-          {error}
-        </div>
-      )}
+      {error && <div style={{ padding: 12, border: '2px solid #000', background: '#f5f5f5', marginBottom: 16 }}>{error}</div>}
 
-      {loading ? (
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-surface-card border border-surface-border rounded-lg p-4 animate-pulse">
-              <div className="h-4 bg-surface-border rounded w-1/4 mb-3" />
-              <div className="h-4 bg-surface-border rounded w-3/4 mb-2" />
-              <div className="h-4 bg-surface-border rounded w-2/3" />
-            </div>
-          ))}
-        </div>
-      ) : interactions.length === 0 ? (
-        <p className="text-center text-text-muted py-8">No interactions recorded yet.</p>
-      ) : (
-        <div className="space-y-4">
-          {interactions.map((item) => (
-            <div key={item.id} className="bg-surface-card border border-surface-border rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded font-medium">
-                  {item.persona}
-                </span>
-                <span className="text-xs text-text-muted">
-                  {new Date(item.created_at).toLocaleDateString('en-IN', {
-                    day: 'numeric', month: 'short', year: 'numeric',
-                    hour: '2-digit', minute: '2-digit',
-                  })}
-                </span>
-              </div>
+      <Table
+        dataSource={interactions}
+        columns={columns}
+        rowKey="id"
+        loading={loading}
+        pagination={{ pageSize: 15, showSizeChanger: false }}
+        locale={{ emptyText: 'No interactions recorded yet.' }}
+        size="small"
+        style={{ border: '2px solid #000' }}
+      />
 
-              <div className="mb-3">
-                <p className="text-xs text-text-muted mb-1">Prompt</p>
-                <p className="text-sm text-text-primary bg-surface rounded-lg p-3">{item.prompt}</p>
-              </div>
-
-              <div className="mb-3">
-                <p className="text-xs text-text-muted mb-1">Response</p>
-                {editingId === item.id ? (
-                  <div className="space-y-2">
-                    <textarea
-                      value={editResponse}
-                      onChange={(e) => setEditResponse(e.target.value)}
-                      className="w-full bg-surface border border-surface-border rounded-lg p-3 text-sm text-text-primary focus:outline-none focus:border-accent"
-                      rows={4}
-                    />
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleEdit(item.id)}
-                        className="text-xs bg-accent text-surface px-3 py-1.5 rounded-lg"
-                      >
-                        Save
-                      </button>
-                      <button
-                        onClick={() => { setEditingId(null); setEditResponse(''); }}
-                        className="text-xs border border-surface-border text-text-muted px-3 py-1.5 rounded-lg"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <p className="text-sm text-text-secondary bg-surface rounded-lg p-3">{item.response}</p>
-                )}
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <p className="text-xs text-text-muted mr-1">Feedback:</p>
-                  {[1, -1].map((val) => (
-                    <button
-                      key={val}
-                      onClick={() => handleFeedback(item.id, item.user_feedback === val ? null : val)}
-                      className={`text-xs px-2 py-1 rounded border transition-colors ${
-                        item.user_feedback === val
-                          ? val === 1
-                            ? 'bg-green-500/20 border-green-500/30 text-green-300'
-                            : 'bg-red-500/20 border-red-500/30 text-red-300'
-                          : 'border-surface-border text-text-muted hover:text-text-secondary'
-                      }`}
-                    >
-                      {val === 1 ? '👍' : '👎'}
-                    </button>
-                  ))}
-                </div>
-                <button
-                  onClick={() => { setEditingId(item.id); setEditResponse(item.response); }}
-                  className="text-xs text-accent hover:text-accent-hover"
-                >
-                  Edit
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      <Modal
+        title="Edit Response"
+        open={!!editingId}
+        onOk={() => editingId && handleEdit(editingId)}
+        onCancel={() => { setEditingId(null); setEditResponse('') }}
+        okText="Save"
+        okButtonProps={{ style: { borderRadius: 0, border: '2px solid #000', fontWeight: 600 } }}
+        cancelButtonProps={{ style: { borderRadius: 0, border: '2px solid #000' } }}
+      >
+        <TextArea value={editResponse} onChange={(e) => setEditResponse(e.target.value)} rows={6} />
+      </Modal>
     </div>
-  );
+  )
 }

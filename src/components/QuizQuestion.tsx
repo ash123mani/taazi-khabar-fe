@@ -1,16 +1,19 @@
-'use client';
+'use client'
 
-import { QuizQuestion as QuizQuestionType } from '@/lib/types';
+import { Card, Typography, Radio, Space } from 'antd'
+import type { QuizQuestion as QuizQuestionType } from '@/lib/types'
+
+const { Text } = Typography
+
+const OPTION_LABELS = ['A', 'B', 'C', 'D']
 
 interface QuizQuestionProps {
-  question: QuizQuestionType;
-  index: number;
-  selected: string | null;
-  onSelect: (optionKey: string) => void;
-  showResults: boolean;
+  question: QuizQuestionType
+  index: number
+  selected: string | null
+  onSelect: (optionKey: string) => void
+  showResults: boolean
 }
-
-const OPTION_LABELS = ['A', 'B', 'C', 'D'];
 
 export default function QuizQuestion({
   question,
@@ -19,59 +22,95 @@ export default function QuizQuestion({
   onSelect,
   showResults,
 }: QuizQuestionProps) {
-  const isCorrect = selected === question.correct_answer;
-
-  const getOptionClass = (key: string) => {
-    const base =
-      'w-full text-left p-3 rounded-lg border transition-all cursor-pointer flex items-center gap-3';
-
-    if (!showResults) {
-      if (selected === key) return `${base} border-accent bg-accent/10 text-accent`;
-      return `${base} border-surface-border bg-surface-card text-text-secondary hover:border-text-muted`;
-    }
-
-    if (key === question.correct_answer) {
-      return `${base} border-green-500 bg-green-500/10 text-green-300`;
-    }
-    if (key === selected && !isCorrect) {
-      return `${base} border-red-500 bg-red-500/10 text-red-300`;
-    }
-    return `${base} border-surface-border bg-surface-card/50 text-text-muted opacity-60`;
-  };
-
   return (
-    <div className="bg-surface-card border border-surface-border rounded-lg p-5">
-      <p className="text-sm font-medium text-text-muted mb-1">Question {index + 1}</p>
-      <p className="text-text-primary font-medium mb-4">{question.question_text}</p>
+    <Card
+      style={{
+        border: '2px solid #000',
+        borderRadius: 0,
+        marginBottom: 16,
+        boxShadow: 'none',
+      }}
+      styles={{ body: { padding: 20 } }}
+    >
+      <Text type="secondary" style={{ fontSize: 12, display: 'block', marginBottom: 8, color: '#999' }}>
+        Question {index + 1}
+      </Text>
+      <Text strong style={{ display: 'block', marginBottom: 20, fontSize: 16, lineHeight: 1.4 }}>
+        {question.question_text}
+      </Text>
 
-      <div className="space-y-2">
-        {Object.entries(question.options).map(([key, value], i) => (
-          <button
-            key={key}
-            disabled={showResults}
-            onClick={() => onSelect(key)}
-            className={getOptionClass(key)}
-          >
-            <span className="w-7 h-7 rounded-full bg-surface flex items-center justify-center text-xs font-bold shrink-0">
-              {OPTION_LABELS[i]}
-            </span>
-            <span>{value}</span>
-          </button>
-        ))}
-      </div>
+      <Radio.Group
+        value={selected}
+        onChange={(e) => onSelect(e.target.value)}
+        disabled={showResults}
+        style={{ width: '100%' }}
+      >
+        <Space direction="vertical" style={{ width: '100%' }} size={8}>
+          {Object.entries(question.options).map(([key, value], i) => {
+            const isCorrectAnswer = showResults && key === question.correct_answer
+            const isWrongAnswer = showResults && key === selected && selected !== question.correct_answer
+            const isSelected = key === selected
+            const borderColor = isCorrectAnswer ? '#000' : isWrongAnswer ? '#000' : isSelected ? '#000' : '#ccc'
+            const bgColor = isCorrectAnswer ? '#e8e8e8' : isWrongAnswer ? '#f0f0f0' : isSelected ? '#f5f5f5' : '#fff'
+
+            return (
+              <div
+                key={key}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  padding: '10px 16px',
+                  border: `2px solid ${borderColor}`,
+                  background: bgColor,
+                  cursor: showResults ? 'default' : 'pointer',
+                }}
+                onClick={() => !showResults && onSelect(key)}
+              >
+                <div
+                  style={{
+                    width: 28,
+                    height: 28,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '2px solid #000',
+                    background: isSelected || isCorrectAnswer ? '#000' : '#fff',
+                    color: isSelected || isCorrectAnswer ? '#fff' : '#000',
+                    fontWeight: 700,
+                    fontSize: 12,
+                    flexShrink: 0,
+                  }}
+                >
+                  {OPTION_LABELS[i]}
+                </div>
+                <span style={{ fontSize: 14, color: '#000', flex: 1 }}>{value}</span>
+                {isCorrectAnswer && <span style={{ fontWeight: 700, fontSize: 12 }}>✓</span>}
+                {isWrongAnswer && <span style={{ fontWeight: 700, fontSize: 12 }}>✗</span>}
+              </div>
+            )
+          })}
+        </Space>
+      </Radio.Group>
 
       {showResults && (
         <div
-          className={`mt-4 p-3 rounded-lg text-sm ${
-            isCorrect
-              ? 'bg-green-500/10 text-green-300 border border-green-500/30'
-              : 'bg-red-500/10 text-red-300 border border-red-500/30'
-          }`}
+          style={{
+            marginTop: 16,
+            padding: 12,
+            border: '2px solid #000',
+            background: '#f5f5f5',
+            fontSize: 14,
+          }}
         >
-          <p className="font-medium mb-1">{isCorrect ? 'Correct' : 'Incorrect'}</p>
-          {question.explanation && <p>{question.explanation}</p>}
+          <Text strong style={{ display: 'block', marginBottom: 4 }}>
+            {selected === question.correct_answer ? 'Correct' : 'Incorrect'}
+          </Text>
+          {question.explanation && (
+            <Text style={{ color: '#666' }}>{question.explanation}</Text>
+          )}
         </div>
       )}
-    </div>
-  );
+    </Card>
+  )
 }

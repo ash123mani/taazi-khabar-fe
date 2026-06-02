@@ -1,47 +1,59 @@
-'use client';
+'use client'
 
-import { Quiz } from '@/lib/types';
-import Link from 'next/link';
+import { Card, Typography, Space } from 'antd'
+import Link from 'next/link'
+import type { Quiz } from '@/lib/types'
+
+const { Text } = Typography
 
 export default function HistoryCard({ quiz }: { quiz: Quiz }) {
   const percentage = quiz.score !== null
     ? Math.round((quiz.score / quiz.total_questions) * 100)
-    : null;
+    : null
 
   return (
-    <Link href={`/history/${quiz.id}`}>
-      <div className="bg-surface-card border border-surface-border rounded-lg p-4 hover:border-accent/30 transition-colors cursor-pointer">
-        <div className="flex items-center justify-between mb-2">
-          <p className="text-sm text-text-muted">
+    <Link href={`/history/${quiz.id}`} style={{ textDecoration: 'none', display: 'block' }}>
+      <Card
+        hoverable
+        style={{
+          border: '2px solid #000',
+          borderRadius: 0,
+          boxShadow: 'none',
+          marginBottom: 12,
+        }}
+        styles={{ body: { padding: 20 } }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+          <Text style={{ color: '#999', fontSize: 12 }}>
             {new Date(quiz.created_at).toLocaleDateString('en-IN', {
-              day: 'numeric',
-              month: 'short',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
+              day: 'numeric', month: 'short', year: 'numeric',
+              hour: '2-digit', minute: '2-digit',
             })}
-          </p>
+          </Text>
           {percentage !== null && (
-            <span
-              className={`text-sm font-bold ${
-                percentage >= 60 ? 'text-green-400' : percentage >= 40 ? 'text-amber-400' : 'text-red-400'
-              }`}
-            >
+            <div style={{
+              padding: '2px 8px',
+              border: '2px solid #000',
+              fontWeight: 700,
+              fontSize: 12,
+            }}>
               {percentage}%
-            </span>
+            </div>
           )}
         </div>
-        <p className="text-text-primary font-medium mb-1">{quiz.title || 'Untitled Quiz'}</p>
-        <div className="flex items-center gap-3 text-xs text-text-muted">
-          <span>{quiz.total_questions} questions</span>
+        <Text strong style={{ display: 'block', marginBottom: 8, fontSize: 15, color: '#000' }}>
+          {quiz.title || 'Untitled Quiz'}
+        </Text>
+        <Space size={16}>
+          <Text style={{ color: '#666', fontSize: 13 }}>{quiz.total_questions} questions</Text>
           {quiz.score !== null && (
-            <span>
+            <Text style={{ color: '#666', fontSize: 13 }}>
               {quiz.score}/{quiz.total_questions} correct
-            </span>
+            </Text>
           )}
-          <span>{quiz.articles?.length || 0} articles</span>
-        </div>
-      </div>
+          <Text style={{ color: '#666', fontSize: 13 }}>{quiz.articles?.length || 0} articles</Text>
+        </Space>
+      </Card>
     </Link>
-  );
+  )
 }

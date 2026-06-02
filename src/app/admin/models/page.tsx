@@ -1,118 +1,109 @@
-'use client';
+'use client'
 
-import { useEffect, useState } from 'react';
-import { api } from '@/lib/api';
+import { useEffect, useState } from 'react'
+import { Typography, Tag, Button, Spin } from 'antd'
+import { SwapOutlined, CheckOutlined } from '@ant-design/icons'
+import { api } from '@/lib/api'
+
+const { Title, Text } = Typography
 
 interface Model {
-  id: string;
-  name: string;
-  version: string;
-  status: string;
-  active: boolean;
-  accuracy: number | null;
-  created_at: string;
+  id: string
+  name: string
+  version: string
+  status: string
+  active: boolean
+  accuracy: number | null
+  created_at: string
 }
 
 export default function ModelsPage() {
-  const [models, setModels] = useState<Model[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [swapping, setSwapping] = useState(false);
+  const [models, setModels] = useState<Model[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [swapping, setSwapping] = useState<string | null>(null)
 
   const fetchModels = async () => {
     try {
-      const data = await api.getModels();
-      setModels(Array.isArray(data) ? data : data.models || []);
+      const data = await api.getModels()
+      setModels(Array.isArray(data) ? data : data.models || [])
     } catch {
-      setError('Failed to load models');
+      setError('Failed to load models')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  useEffect(() => {
-    fetchModels();
-  }, []);
+  useEffect(() => { fetchModels() }, [])
 
   const handleSwap = async (modelId: string) => {
-    setSwapping(true);
+    setSwapping(modelId)
     try {
-      await api.updateModels({ active_model_id: modelId });
-      fetchModels();
+      await api.updateModels({ active_model_id: modelId })
+      fetchModels()
     } catch (err: any) {
-      setError(err.message || 'Failed to swap model');
+      setError(err.message || 'Failed to swap model')
     } finally {
-      setSwapping(false);
+      setSwapping(null)
     }
-  };
+  }
+
+  if (loading) {
+    return <div style={{ textAlign: 'center', padding: 60 }}><Spin size="large" /></div>
+  }
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-text-primary mb-2">Model Registry</h1>
-      <p className="text-text-muted mb-8">Manage active model, swap versions, rollback if needed.</p>
+      <Title level={4} style={{ marginBottom: 4, letterSpacing: '-0.5px' }}>Model Registry</Title>
+      <Text style={{ color: '#666', display: 'block', marginBottom: 24 }}>
+        Manage active model, swap versions, rollback if needed.
+      </Text>
 
-      {error && (
-        <div className="bg-red-500/10 border border-red-500/30 text-red-300 rounded-lg p-4 mb-6">
-          {error}
-        </div>
-      )}
+      {error && <div style={{ padding: 12, border: '2px solid #000', background: '#f5f5f5', marginBottom: 16 }}>{error}</div>}
 
-      {loading ? (
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-surface-card border border-surface-border rounded-lg p-4 animate-pulse">
-              <div className="h-5 bg-surface-border rounded w-1/3 mb-3" />
-              <div className="h-4 bg-surface-border rounded w-1/2 mb-2" />
-              <div className="h-4 bg-surface-border rounded w-1/4" />
-            </div>
-          ))}
-        </div>
-      ) : models.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-text-muted">No models registered.</p>
+      {models.length === 0 ? (
+        <div style={{ padding: 60, border: '2px solid #000', textAlign: 'center', background: '#fff', color: '#666' }}>
+          No models registered.
         </div>
       ) : (
-        <div className="grid gap-4">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {models.map((model) => (
             <div
               key={model.id}
-              className={`bg-surface-card border rounded-lg p-5 transition-colors ${
-                model.active
-                  ? 'border-accent/50 bg-accent/5'
-                  : 'border-surface-border'
-              }`}
+              style={{
+                border: `2px solid ${model.active ? '#000' : '#000'}`,
+                padding: 20,
+                background: model.active ? '#f5f5f5' : '#fff',
+              }}
             >
-              <div className="flex items-center justify-between mb-3">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
-                  <h3 className="text-text-primary font-semibold flex items-center gap-2">
-                    {model.name}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                    <Text strong style={{ fontSize: 15 }}>{model.name}</Text>
                     {model.active && (
-                      <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded-full font-medium">
+                      <Tag icon={<CheckOutlined />} style={{ border: '1px solid #000', fontWeight: 600, background: '#e8e8e8' }}>
                         Active
-                      </span>
+                      </Tag>
                     )}
-                  </h3>
-                  <p className="text-sm text-text-muted">v{model.version}</p>
+                  </div>
+                  <Text style={{ color: '#666', fontSize: 13 }}>v{model.version}</Text>
                 </div>
                 {!model.active && (
-                  <button
+                  <Button
+                    icon={<SwapOutlined />}
+                    loading={swapping === model.id}
                     onClick={() => handleSwap(model.id)}
-                    disabled={swapping}
-                    className="text-sm bg-surface hover:bg-surface-border text-text-secondary border border-surface-border px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                    style={{ borderRadius: 0, border: '2px solid #000' }}
                   >
-                    {swapping ? 'Swapping...' : 'Make Active'}
-                  </button>
+                    Make Active
+                  </Button>
                 )}
               </div>
-              <div className="flex items-center gap-4 text-xs text-text-muted">
-                <span className={`font-medium ${
-                  model.status === 'ready' ? 'text-green-400' : 'text-amber-400'
-                }`}>
+              <div style={{ marginTop: 12, display: 'flex', gap: 16, fontSize: 13, color: '#666' }}>
+                <Tag style={{ border: '1px solid #000', fontWeight: 600, background: model.status === 'ready' ? '#e8e8e8' : '#f5f5f5' }}>
                   {model.status}
-                </span>
-                {model.accuracy !== null && (
-                  <span>Accuracy: {(model.accuracy * 100).toFixed(1)}%</span>
-                )}
+                </Tag>
+                {model.accuracy !== null && <span>Accuracy: {(model.accuracy * 100).toFixed(1)}%</span>}
                 <span>
                   Added: {new Date(model.created_at).toLocaleDateString('en-IN', {
                     day: 'numeric', month: 'short', year: 'numeric',
@@ -124,5 +115,5 @@ export default function ModelsPage() {
         </div>
       )}
     </div>
-  );
+  )
 }

@@ -1,56 +1,65 @@
-'use client';
+'use client'
 
-import { useEffect, useState } from 'react';
-import { api } from '@/lib/api';
-import { Quiz } from '@/lib/types';
-import HistoryCard from '@/components/HistoryCard';
+import { useEffect, useState } from 'react'
+import { Typography, Spin, Button, Space } from 'antd'
+import Link from 'next/link'
+import { api } from '@/lib/api'
+import type { Quiz } from '@/lib/types'
+import HistoryCard from '@/components/HistoryCard'
+
+const { Title, Text } = Typography
 
 export default function HistoryPage() {
-  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [quizzes, setQuizzes] = useState<Quiz[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     api
       .getHistory()
       .then((data) => setQuizzes(Array.isArray(data) ? data : data.quizzes || []))
       .catch(() => setError('Failed to load history'))
-      .finally(() => setLoading(false));
-  }, []);
+      .finally(() => setLoading(false))
+  }, [])
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-text-primary mb-6">Quiz History</h1>
+      <Title level={3} style={{ marginBottom: 4, letterSpacing: '-0.5px' }}>Quiz History</Title>
+      <Text style={{ color: '#666', display: 'block', marginBottom: 24 }}>
+        Review your past quiz attempts and performance
+      </Text>
 
       {loading ? (
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-surface-card border border-surface-border rounded-lg p-4 animate-pulse">
-              <div className="h-4 bg-surface-border rounded w-1/3 mb-3" />
-              <div className="h-5 bg-surface-border rounded w-1/2 mb-2" />
-              <div className="h-4 bg-surface-border rounded w-2/3" />
-            </div>
-          ))}
+        <div style={{ textAlign: 'center', padding: 60 }}>
+          <Spin size="large" />
         </div>
       ) : error ? (
-        <p className="text-center text-red-400 py-8">{error}</p>
+        <div style={{ padding: 20, border: '2px solid #000', fontSize: 14, color: '#666' }}>
+          {error}
+        </div>
       ) : quizzes.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-text-muted mb-4">No quizzes attempted yet.</p>
-          <a
-            href="/quiz"
-            className="text-sm bg-accent hover:bg-accent-hover text-surface px-4 py-2 rounded-lg inline-block"
-          >
-            Take your first quiz
-          </a>
+        <div style={{
+          padding: 60,
+          border: '2px solid #000',
+          textAlign: 'center',
+          background: '#fff',
+        }}>
+          <Text style={{ color: '#666', display: 'block', marginBottom: 16, fontSize: 15 }}>
+            No quizzes attempted yet
+          </Text>
+          <Link href="/quiz">
+            <Button type="primary" style={{ borderRadius: 0, border: '2px solid #000', fontWeight: 600 }}>
+              Take your first quiz
+            </Button>
+          </Link>
         </div>
       ) : (
-        <div className="grid gap-4">
+        <Space direction="vertical" size={0} style={{ width: '100%' }}>
           {quizzes.map((quiz) => (
             <HistoryCard key={quiz.id} quiz={quiz} />
           ))}
-        </div>
+        </Space>
       )}
     </div>
-  );
+  )
 }

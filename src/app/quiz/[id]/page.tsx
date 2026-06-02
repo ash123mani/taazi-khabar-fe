@@ -1,100 +1,94 @@
-'use client';
+'use client'
 
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import { api } from '@/lib/api';
-import { Quiz } from '@/lib/types';
-import QuizQuestionComponent from '@/components/QuizQuestion';
-import QuizResult from '@/components/QuizResult';
+import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
+import { Button, Typography, Spin, Card } from 'antd'
+import { api } from '@/lib/api'
+import type { Quiz } from '@/lib/types'
+import QuizQuestionComponent from '@/components/QuizQuestion'
+import QuizResult from '@/components/QuizResult'
+
+const { Title, Text } = Typography
 
 export default function TakeQuizPage() {
-  const params = useParams();
-  const id = params.id as string;
+  const params = useParams()
+  const id = params.id as string
 
-  const [quiz, setQuiz] = useState<Quiz | null>(null);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [submitted, setSubmitted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [quiz, setQuiz] = useState<Quiz | null>(null)
+  const [answers, setAnswers] = useState<Record<string, string>>({})
+  const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    if (!id) return;
+    if (!id) return
     api
       .getQuiz(id)
       .then((data) => {
-        setQuiz(data);
-        const initial: Record<string, string> = {};
-        data.questions?.forEach((q: any) => (initial[q.id] = ''));
-        setAnswers(initial);
+        setQuiz(data)
+        const initial: Record<string, string> = {}
+        data.questions?.forEach((q: any) => (initial[q.id] = ''))
+        setAnswers(initial)
       })
       .catch(() => setError('Failed to load quiz'))
-      .finally(() => setLoading(false));
-  }, [id]);
+      .finally(() => setLoading(false))
+  }, [id])
 
   const handleSelect = (questionId: string, optionKey: string) => {
-    if (submitted) return;
-    setAnswers((prev) => ({ ...prev, [questionId]: optionKey }));
-  };
+    if (submitted) return
+    setAnswers((prev) => ({ ...prev, [questionId]: optionKey }))
+  }
 
   const handleSubmit = async () => {
-    const unanswered = Object.entries(answers).filter(([, v]) => !v);
+    const unanswered = Object.entries(answers).filter(([, v]) => !v)
     if (unanswered.length > 0) {
-      if (!confirm(`${unanswered.length} question(s) unanswered. Submit anyway?`)) return;
+      if (!confirm(`${unanswered.length} question(s) unanswered. Submit anyway?`)) return
     }
 
-    setSubmitting(true);
+    setSubmitting(true)
     try {
-      const data = await api.submitQuiz(id, answers);
-      setQuiz(data);
-      setSubmitted(true);
+      const data = await api.submitQuiz(id, answers)
+      setQuiz(data)
+      setSubmitted(true)
     } catch (err: any) {
-      setError(err.message || 'Failed to submit quiz');
+      setError(err.message || 'Failed to submit quiz')
     } finally {
-      setSubmitting(false);
+      setSubmitting(false)
     }
-  };
+  }
+
+  const answered = Object.values(answers).filter(Boolean).length
+  const total = quiz?.questions?.length || 0
 
   if (loading) {
     return (
-      <div className="max-w-3xl mx-auto space-y-4">
-        <div className="h-8 bg-surface-border rounded w-48 animate-pulse mb-6" />
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-surface-card border border-surface-border rounded-lg p-5 animate-pulse">
-            <div className="h-4 bg-surface-border rounded w-1/4 mb-3" />
-            <div className="h-5 bg-surface-border rounded w-3/4 mb-4" />
-            <div className="space-y-2">
-              {[1, 2, 3, 4].map((j) => (
-                <div key={j} className="h-12 bg-surface-border rounded" />
-              ))}
-            </div>
-          </div>
-        ))}
+      <div style={{ maxWidth: 720, margin: '0 auto' }}>
+        <Spin size="large" style={{ display: 'block', margin: '100px auto' }} />
       </div>
-    );
+    )
   }
 
   if (error) {
     return (
-      <div className="max-w-3xl mx-auto text-center py-12">
-        <p className="text-red-400 mb-4">{error}</p>
-        <button
-          onClick={() => window.location.reload()}
-          className="text-sm bg-accent hover:bg-accent-hover text-surface px-4 py-2 rounded-lg"
-        >
+      <div style={{ maxWidth: 720, margin: '0 auto', textAlign: 'center', padding: 48 }}>
+        <div style={{ padding: 20, border: '2px solid #000', marginBottom: 16, fontSize: 14, color: '#666' }}>
+          {error}
+        </div>
+        <Button onClick={() => window.location.reload()} style={{ borderRadius: 0, border: '2px solid #000', fontWeight: 600 }}>
           Retry
-        </button>
+        </Button>
       </div>
-    );
+    )
   }
 
-  if (!quiz) return null;
+  if (!quiz) return null
 
   if (submitted && quiz.score !== null) {
     return (
-      <div className="max-w-3xl mx-auto">
+      <div style={{ maxWidth: 720, margin: '0 auto' }}>
         <QuizResult quiz={quiz} />
-        <div className="mt-8 space-y-4">
+        <div style={{ marginTop: 32 }}>
           {quiz.questions?.map((question, i) => (
             <QuizQuestionComponent
               key={question.id}
@@ -107,41 +101,68 @@ export default function TakeQuizPage() {
           ))}
         </div>
       </div>
-    );
+    )
   }
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-text-primary">{quiz.title || 'Quiz'}</h1>
-        <p className="text-sm text-text-muted mt-1">
-          {quiz.questions?.length || 0} questions
-          {quiz.articles?.length ? ` · ${quiz.articles.length} articles` : ''}
-        </p>
-      </div>
+    <div style={{ maxWidth: 720, margin: '0 auto' }}>
+      <Card
+        style={{
+          border: '2px solid #000',
+          borderRadius: 0,
+          marginBottom: 24,
+          boxShadow: 'none',
+        }}
+        styles={{ body: { padding: 20 } }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <Title level={4} style={{ margin: 0 }}>{quiz.title || 'Quiz'}</Title>
+            <Text style={{ color: '#666', fontSize: 13 }}>
+              {total} questions
+              {quiz.articles?.length ? ` · ${quiz.articles.length} articles` : ''}
+            </Text>
+          </div>
+          <div style={{
+            padding: '6px 12px',
+            border: '2px solid #000',
+            fontWeight: 700,
+            fontSize: 14,
+          }}>
+            {answered}/{total}
+          </div>
+        </div>
+      </Card>
 
-      <div className="space-y-4 mb-8">
-        {quiz.questions?.map((question, i) => (
-          <QuizQuestionComponent
-            key={question.id}
-            question={question}
-            index={i}
-            selected={answers[question.id] || null}
-            onSelect={(optionKey) => handleSelect(question.id, optionKey)}
-            showResults={false}
-          />
-        ))}
-      </div>
+      {quiz.questions?.map((question, i) => (
+        <QuizQuestionComponent
+          key={question.id}
+          question={question}
+          index={i}
+          selected={answers[question.id] || null}
+          onSelect={(optionKey) => handleSelect(question.id, optionKey)}
+          showResults={false}
+        />
+      ))}
 
-      <div className="sticky bottom-6 flex justify-center">
-        <button
+      <div style={{ textAlign: 'center', marginTop: 32, marginBottom: 32 }}>
+        <Button
+          type="primary"
+          size="large"
+          loading={submitting}
           onClick={handleSubmit}
-          disabled={submitting}
-          className="bg-accent hover:bg-accent-hover text-surface font-bold px-8 py-3 rounded-full shadow-lg shadow-accent/20 transition-all disabled:opacity-50"
+          style={{
+            borderRadius: 0,
+            height: 48,
+            padding: '0 40px',
+            fontWeight: 700,
+            fontSize: 15,
+            border: '3px solid #000',
+          }}
         >
-          {submitting ? 'Submitting...' : 'Submit Answers'}
-        </button>
+          Submit Answers ({answered}/{total})
+        </Button>
       </div>
     </div>
-  );
+  )
 }

@@ -1,57 +1,95 @@
-'use client';
+'use client'
 
-import Link from 'next/link';
-import { useSession, signOut } from 'next-auth/react';
+import { Layout, Menu, Button, Space, Typography } from 'antd'
+import {
+  BookOutlined,
+  QuestionCircleOutlined,
+  HistoryOutlined,
+  UserOutlined,
+  LogoutOutlined,
+  LoginOutlined,
+  MenuOutlined,
+} from '@ant-design/icons'
+import { useRouter, usePathname } from 'next/navigation'
+import { useSession, signOut } from 'next-auth/react'
+import { useUIStore } from '@/stores/uiStore'
+
+const { Header } = Layout
+const { Text } = Typography
 
 export default function Navbar() {
-  const { data: session } = useSession();
-  const user = session?.user as { name?: string; is_admin?: boolean } | undefined;
+  const router = useRouter()
+  const pathname = usePathname()
+  const { data: session } = useSession()
+  const sidebarCollapsed = useUIStore((s) => s.sidebarCollapsed)
+  const toggleSidebar = useUIStore((s) => s.toggleSidebar)
+
+  const menuItems = [
+    { key: '/', icon: <BookOutlined />, label: 'Articles' },
+    { key: '/quiz', icon: <QuestionCircleOutlined />, label: 'Quiz' },
+    { key: '/history', icon: <HistoryOutlined />, label: 'History' },
+  ]
+
+  if ((session?.user as any)?.is_admin) {
+    menuItems.push({ key: '/admin', icon: <UserOutlined />, label: 'Admin' })
+  }
 
   return (
-    <nav className="sticky top-0 z-50 bg-surface border-b border-surface-border">
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-8">
-          <Link href="/" className="text-xl font-bold text-accent">
-            Taazi Khabar
-          </Link>
-          <div className="hidden sm:flex items-center gap-6">
-            <Link href="/" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
-              News Feed
-            </Link>
-            <Link href="/quiz" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
-              Quiz
-            </Link>
-            <Link href="/history" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
-              History
-            </Link>
-            {user?.is_admin && (
-              <Link href="/admin" className="text-sm text-accent hover:text-accent-hover transition-colors">
-                Admin
-              </Link>
-            )}
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
-          {session ? (
-            <>
-              <span className="text-sm text-text-muted hidden sm:block">{user?.name}</span>
-              <button
-                onClick={() => signOut({ callbackUrl: '/login' })}
-                className="text-sm text-text-secondary hover:text-text-primary transition-colors"
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            <Link
-              href="/login"
-              className="text-sm bg-accent hover:bg-accent-hover text-surface font-medium px-4 py-2 rounded-lg transition-colors"
-            >
-              Login
-            </Link>
-          )}
-        </div>
+    <Header
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        background: '#ffffff',
+        borderBottom: '2px solid #000000',
+        padding: '0 24px',
+        height: 56,
+        position: 'sticky',
+        top: 0,
+        zIndex: 100,
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <Button
+          type="text"
+          icon={<MenuOutlined />}
+          onClick={toggleSidebar}
+          style={{ fontSize: 18 }}
+        />
+        <Text
+          strong
+          style={{ fontSize: 18, cursor: 'pointer', letterSpacing: '-0.5px' }}
+          onClick={() => router.push('/')}
+        >
+          TAAZI KHABAR
+        </Text>
       </div>
-    </nav>
-  );
+
+      <Menu
+        mode="horizontal"
+        selectedKeys={[pathname]}
+        items={menuItems}
+        onClick={({ key }) => router.push(key)}
+        style={{
+          flex: 1,
+          minWidth: 0,
+          borderBottom: 'none',
+          background: 'transparent',
+          justifyContent: 'center',
+        }}
+      />
+
+      <Space>
+        {session ? (
+          <Button type="text" icon={<LogoutOutlined />} onClick={() => signOut()}>
+            Logout
+          </Button>
+        ) : (
+          <Button type="primary" ghost icon={<LoginOutlined />} onClick={() => router.push('/login')}>
+            Login
+          </Button>
+        )}
+      </Space>
+    </Header>
+  )
 }

@@ -1,133 +1,129 @@
-'use client';
+'use client'
 
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import { api } from '@/lib/api';
-import { Quiz } from '@/lib/types';
-import ArticleCard from '@/components/ArticleCard';
-import QuizQuestionComponent from '@/components/QuizQuestion';
+import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
+import { Typography, Spin, Button, Space } from 'antd'
+import { api } from '@/lib/api'
+import type { Quiz } from '@/lib/types'
+import ArticleCard from '@/components/ArticleCard'
+import QuizQuestionComponent from '@/components/QuizQuestion'
+
+const { Title, Text } = Typography
 
 export default function HistoryDetailPage() {
-  const params = useParams();
-  const id = params.id as string;
+  const params = useParams()
+  const id = params.id as string
 
-  const [quiz, setQuiz] = useState<Quiz | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [quiz, setQuiz] = useState<Quiz | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    if (!id) return;
+    if (!id) return
     api
       .getHistoryDetail(id)
       .then(setQuiz)
       .catch(() => setError('Failed to load quiz details'))
-      .finally(() => setLoading(false));
-  }, [id]);
+      .finally(() => setLoading(false))
+  }, [id])
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto space-y-4">
-        <div className="h-8 bg-surface-border rounded w-48 animate-pulse mb-6" />
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-surface-card border border-surface-border rounded-lg p-5 animate-pulse">
-            <div className="h-4 bg-surface-border rounded w-1/4 mb-3" />
-            <div className="h-5 bg-surface-border rounded w-3/4 mb-4" />
-            <div className="space-y-2">
-              {[1, 2, 3, 4].map((j) => (
-                <div key={j} className="h-12 bg-surface-border rounded" />
-              ))}
-            </div>
-          </div>
-        ))}
+      <div style={{ maxWidth: 800, margin: '0 auto' }}>
+        <Spin size="large" style={{ display: 'block', margin: '100px auto' }} />
       </div>
-    );
+    )
   }
 
   if (error) {
     return (
-      <div className="max-w-4xl mx-auto text-center py-12">
-        <p className="text-red-400 mb-4">{error}</p>
-        <button
-          onClick={() => window.location.reload()}
-          className="text-sm bg-accent hover:bg-accent-hover text-surface px-4 py-2 rounded-lg"
-        >
+      <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center', padding: 48 }}>
+        <div style={{ padding: 20, border: '2px solid #000', marginBottom: 16, fontSize: 14, color: '#666' }}>
+          {error}
+        </div>
+        <Button onClick={() => window.location.reload()} style={{ borderRadius: 0, border: '2px solid #000', fontWeight: 600 }}>
           Retry
-        </button>
+        </Button>
       </div>
-    );
+    )
   }
 
-  if (!quiz) return null;
+  if (!quiz) return null
 
   const percentage = quiz.score !== null
     ? Math.round((quiz.score / quiz.total_questions) * 100)
-    : null;
+    : null
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="bg-surface-card border border-surface-border rounded-lg p-6 mb-8">
-        <h1 className="text-2xl font-bold text-text-primary mb-4">
-          {quiz.title || 'Quiz Details'}
-        </h1>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div style={{ maxWidth: 800, margin: '0 auto' }}>
+      <div style={{
+        border: '2px solid #000',
+        padding: 24,
+        background: '#fff',
+        marginBottom: 32,
+      }}>
+        <Title level={4} style={{ margin: 0, marginBottom: 20 }}>{quiz.title || 'Quiz Details'}</Title>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 16 }}>
           <div>
-            <p className="text-xs text-text-muted mb-1">Score</p>
-            <p className="text-lg font-bold text-accent">
+            <Text style={{ color: '#999', fontSize: 12, display: 'block', marginBottom: 4 }}>Score</Text>
+            <div style={{
+              display: 'inline-block',
+              padding: '4px 12px',
+              border: '2px solid #000',
+              fontWeight: 700,
+              fontSize: 15,
+            }}>
               {quiz.score}/{quiz.total_questions}
-              {percentage !== null && <span className="text-sm ml-1">({percentage}%)</span>}
-            </p>
+              {percentage !== null && ` (${percentage}%)`}
+            </div>
           </div>
           <div>
-            <p className="text-xs text-text-muted mb-1">Date</p>
-            <p className="text-sm text-text-primary">
+            <Text style={{ color: '#999', fontSize: 12, display: 'block', marginBottom: 4 }}>Date</Text>
+            <Text style={{ fontSize: 14 }}>
               {new Date(quiz.created_at).toLocaleDateString('en-IN', {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric',
+                day: 'numeric', month: 'short', year: 'numeric',
               })}
-            </p>
+            </Text>
           </div>
           <div>
-            <p className="text-xs text-text-muted mb-1">Time Taken</p>
-            <p className="text-sm text-text-primary">
+            <Text style={{ color: '#999', fontSize: 12, display: 'block', marginBottom: 4 }}>Time Taken</Text>
+            <Text style={{ fontSize: 14 }}>
               {quiz.time_taken_sec
                 ? `${Math.floor(quiz.time_taken_sec / 60)}m ${quiz.time_taken_sec % 60}s`
                 : 'N/A'}
-            </p>
+            </Text>
           </div>
           <div>
-            <p className="text-xs text-text-muted mb-1">Articles</p>
-            <p className="text-sm text-text-primary">{quiz.articles?.length || 0}</p>
+            <Text style={{ color: '#999', fontSize: 12, display: 'block', marginBottom: 4 }}>Articles</Text>
+            <Text style={{ fontSize: 14 }}>{quiz.articles?.length || 0}</Text>
           </div>
         </div>
       </div>
 
       {quiz.articles && quiz.articles.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold text-text-primary mb-4">Linked Articles</h2>
-          <div className="grid gap-4">
+        <div style={{ marginBottom: 32 }}>
+          <Title level={5} style={{ marginBottom: 16 }}>Linked Articles</Title>
+          <Space direction="vertical" size={12} style={{ width: '100%' }}>
             {quiz.articles.map((article) => (
               <ArticleCard key={article.id} article={article} />
             ))}
-          </div>
+          </Space>
         </div>
       )}
 
-      <div className="mb-8">
-        <h2 className="text-lg font-semibold text-text-primary mb-4">Questions & Answers</h2>
-        <div className="space-y-4">
-          {quiz.questions?.map((question, i) => (
-            <QuizQuestionComponent
-              key={question.id}
-              question={question}
-              index={i}
-              selected={question.correct_answer || null}
-              onSelect={() => {}}
-              showResults
-            />
-          ))}
-        </div>
+      <div>
+        <Title level={5} style={{ marginBottom: 16 }}>Questions &amp; Answers</Title>
+        {quiz.questions?.map((question, i) => (
+          <QuizQuestionComponent
+            key={question.id}
+            question={question}
+            index={i}
+            selected={question.correct_answer || null}
+            onSelect={() => {}}
+            showResults
+          />
+        ))}
       </div>
     </div>
-  );
+  )
 }

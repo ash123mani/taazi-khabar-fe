@@ -1,153 +1,160 @@
-'use client';
+'use client'
 
-import { useEffect, useState } from 'react';
-import { api } from '@/lib/api';
-import { TrainingDataset } from '@/lib/types';
+import { useEffect, useState } from 'react'
+import { Typography, Table, Tag, Button, Modal, Form, Input, Select } from 'antd'
+import { PlusOutlined } from '@ant-design/icons'
+import { api } from '@/lib/api'
+import type { TrainingDataset } from '@/lib/types'
 
-const PERSONAS = ['article_summarizer', 'quiz_generator', 'gk_analyst', 'general'];
+const { Title, Text } = Typography
+const PERSONAS = ['article_summarizer', 'quiz_generator', 'gk_analyst', 'general']
 
 export default function DatasetsPage() {
-  const [datasets, setDatasets] = useState<TrainingDataset[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({ name: '', persona: PERSONAS[0] });
-  const [building, setBuilding] = useState(false);
+  const [datasets, setDatasets] = useState<TrainingDataset[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [showForm, setShowForm] = useState(false)
+  const [building, setBuilding] = useState(false)
+  const [form] = Form.useForm()
 
   const fetchDatasets = async () => {
     try {
-      const data = await api.getInteractions({ type: 'datasets' });
-      setDatasets(Array.isArray(data) ? data : data.datasets || []);
+      const data = await api.getInteractions({ type: 'datasets' })
+      setDatasets(Array.isArray(data) ? data : data.datasets || [])
     } catch {
-      setError('Failed to load datasets');
+      setError('Failed to load datasets')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  useEffect(() => {
-    fetchDatasets();
-  }, []);
+  useEffect(() => { fetchDatasets() }, [])
 
-  const handleBuild = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.name.trim()) return;
-    setBuilding(true);
+  const handleBuild = async (values: { name: string; persona: string }) => {
+    setBuilding(true)
     try {
-      await api.buildDataset(formData);
-      setShowForm(false);
-      setFormData({ name: '', persona: PERSONAS[0] });
-      fetchDatasets();
+      await api.buildDataset(values)
+      setShowForm(false)
+      form.resetFields()
+      fetchDatasets()
     } catch (err: any) {
-      setError(err.message || 'Failed to build dataset');
+      setError(err.message || 'Failed to build dataset')
     } finally {
-      setBuilding(false);
+      setBuilding(false)
     }
-  };
+  }
+
+  const columns = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      render: (n: string) => <Text strong>{n}</Text>,
+    },
+    {
+      title: 'Persona',
+      dataIndex: 'persona',
+      key: 'persona',
+      render: (p: string) => (
+        <Tag style={{ border: '1px solid #000', fontWeight: 600 }}>{p.replace(/_/g, ' ')}</Tag>
+      ),
+    },
+    {
+      title: 'Examples',
+      dataIndex: 'num_examples',
+      key: 'num_examples',
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (s: string) => (
+        <Tag style={{
+          border: '1px solid #000',
+          fontWeight: 600,
+          background: s === 'ready' ? '#e8e8e8' : s === 'building' ? '#f5f5f5' : '#fff',
+        }}>
+          {s}
+        </Tag>
+      ),
+    },
+    {
+      title: 'LoRA Adapter',
+      dataIndex: 'lora_adapter_path',
+      key: 'lora_adapter_path',
+      render: (p: string | null) => p
+        ? <Tag style={{ border: '1px solid #000', fontWeight: 600 }}>{p}</Tag>
+        : '-',
+    },
+    {
+      title: 'Created',
+      dataIndex: 'created_at',
+      key: 'created_at',
+      render: (d: string) => (
+        <span style={{ color: '#666', fontSize: 13 }}>
+          {new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+        </span>
+      ),
+    },
+  ]
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <div>
-          <h1 className="text-2xl font-bold text-text-primary">Datasets</h1>
-          <p className="text-text-muted text-sm mt-1">Manage training datasets for fine-tuning</p>
+          <Title level={4} style={{ margin: 0, letterSpacing: '-0.5px' }}>Datasets</Title>
+          <Text style={{ color: '#666' }}>Manage training datasets for fine-tuning</Text>
         </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="bg-accent hover:bg-accent-hover text-surface font-medium px-4 py-2 rounded-lg text-sm transition-colors"
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => setShowForm(true)}
+          style={{ borderRadius: 0, border: '2px solid #000', fontWeight: 600 }}
         >
-          {showForm ? 'Cancel' : 'Build Dataset'}
-        </button>
+          Build Dataset
+        </Button>
       </div>
 
-      {error && (
-        <div className="bg-red-500/10 border border-red-500/30 text-red-300 rounded-lg p-4 mb-6">
-          {error}
-        </div>
-      )}
+      {error && <div style={{ padding: 12, border: '2px solid #000', background: '#f5f5f5', marginBottom: 16 }}>{error}</div>}
 
-      {showForm && (
-        <form onSubmit={handleBuild} className="bg-surface-card border border-surface-border rounded-lg p-5 mb-6">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="block text-sm text-text-secondary mb-1">Dataset Name</label>
-              <input
-                type="text"
-                required
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full bg-surface border border-surface-border rounded-lg px-4 py-2.5 text-text-primary focus:outline-none focus:border-accent"
-                placeholder="e.g., polity-articles-v1"
-              />
-            </div>
-            <div>
-              <label className="block text-sm text-text-secondary mb-1">Persona</label>
-              <select
-                value={formData.persona}
-                onChange={(e) => setFormData({ ...formData, persona: e.target.value })}
-                className="w-full bg-surface border border-surface-border rounded-lg px-4 py-2.5 text-text-primary focus:outline-none focus:border-accent"
-              >
-                {PERSONAS.map((p) => (
-                  <option key={p} value={p}>{p.replace(/_/g, ' ')}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <button
-            type="submit"
-            disabled={building}
-            className="mt-4 bg-accent hover:bg-accent-hover text-surface font-medium px-5 py-2 rounded-lg text-sm transition-colors disabled:opacity-50"
+      <Table
+        dataSource={datasets}
+        columns={columns}
+        rowKey="id"
+        loading={loading}
+        pagination={false}
+        locale={{ emptyText: 'No datasets created yet.' }}
+        size="small"
+        style={{ border: '2px solid #000' }}
+      />
+
+      <Modal
+        title="Build Dataset"
+        open={showForm}
+        onCancel={() => { setShowForm(false); form.resetFields() }}
+        footer={null}
+      >
+        <Form form={form} layout="vertical" onFinish={handleBuild}>
+          <Form.Item name="name" label="Dataset Name" rules={[{ required: true, message: 'Required' }]}>
+            <Input placeholder="e.g., polity-articles-v1" style={{ border: '2px solid #000', borderRadius: 0 }} />
+          </Form.Item>
+          <Form.Item name="persona" label="Persona" initialValue={PERSONAS[0]}>
+            <Select style={{ border: '2px solid #000', borderRadius: 0 }}>
+              {PERSONAS.map((p) => (
+                <Select.Option key={p} value={p}>{p.replace(/_/g, ' ')}</Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={building}
+            style={{ borderRadius: 0, border: '2px solid #000', fontWeight: 600 }}
           >
             {building ? 'Building...' : 'Build Dataset'}
-          </button>
-        </form>
-      )}
-
-      {loading ? (
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-surface-card border border-surface-border rounded-lg p-4 animate-pulse">
-              <div className="h-5 bg-surface-border rounded w-1/3 mb-3" />
-              <div className="h-4 bg-surface-border rounded w-1/2" />
-            </div>
-          ))}
-        </div>
-      ) : datasets.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-text-muted">No datasets created yet.</p>
-        </div>
-      ) : (
-        <div className="grid gap-4">
-          {datasets.map((ds) => (
-            <div key={ds.id} className="bg-surface-card border border-surface-border rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-text-primary font-semibold">{ds.name}</h3>
-                <span
-                  className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                    ds.status === 'ready'
-                      ? 'bg-green-500/20 text-green-300'
-                      : ds.status === 'building'
-                      ? 'bg-amber-500/20 text-amber-300'
-                      : 'bg-surface-border text-text-muted'
-                  }`}
-                >
-                  {ds.status}
-                </span>
-              </div>
-              <div className="flex items-center gap-4 text-xs text-text-muted">
-                <span>Persona: {ds.persona.replace(/_/g, ' ')}</span>
-                <span>{ds.num_examples} examples</span>
-                {ds.lora_adapter_path && <span className="text-accent">LoRA: {ds.lora_adapter_path}</span>}
-              </div>
-              <p className="text-xs text-text-muted mt-1">
-                Created: {new Date(ds.created_at).toLocaleDateString('en-IN', {
-                  day: 'numeric', month: 'short', year: 'numeric',
-                })}
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
+          </Button>
+        </Form>
+      </Modal>
     </div>
-  );
+  )
 }
