@@ -4,26 +4,23 @@ import { useState } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Typography, Button } from 'antd'
+import { Typography, Button, Form, Input, Divider } from 'antd'
 import { MailOutlined, LockOutlined } from '@ant-design/icons'
 
 const { Title, Text } = Typography
 
 export default function LoginPage() {
   const router = useRouter()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (values: { email: string; password: string }) => {
     setLoading(true)
     setError('')
 
     const res = await signIn('credentials', {
-      email,
-      password,
+      email: values.email,
+      password: values.password,
       redirect: false,
     })
 
@@ -36,108 +33,51 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={{ maxWidth: 400, margin: '48px auto' }}>
-      <div style={{ border: '2px solid #000', padding: 32, background: '#fff' }}>
-        <Title level={3} style={{ textAlign: 'center', marginBottom: 4, letterSpacing: '-0.5px' }}>Login</Title>
-        <Text type="secondary" style={{ display: 'block', textAlign: 'center', marginBottom: 24, color: '#666' }}>
+    <div style={{ maxWidth: 420, margin: '48px auto' }}>
+      <div className="glass-card" style={{ padding: 32, borderRadius: 12 }}>
+        <Title level={3} style={{
+          textAlign: 'center',
+          marginBottom: 4,
+          letterSpacing: '-0.5px',
+          background: 'linear-gradient(135deg, #818cf8 0%, #a78bfa 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+        }}>
+          Login
+        </Title>
+        <Text style={{ display: 'block', textAlign: 'center', marginBottom: 28, opacity: 0.5, fontSize: 14 }}>
           Sign in to your Taazi Khabar account
         </Text>
 
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: 16 }}>
-            <label style={{ display: 'block', fontWeight: 600, fontSize: 13, marginBottom: 6, color: '#000' }}>
-              Email
-            </label>
-            <div style={{ display: 'flex', alignItems: 'center', border: '2px solid #000' }}>
-              <span style={{ padding: '0 12px', color: '#999' }}><MailOutlined /></span>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                style={{
-                  flex: 1,
-                  border: 'none',
-                  outline: 'none',
-                  padding: '10px 12px 10px 0',
-                  fontSize: 14,
-                  fontFamily: 'inherit',
-                  background: 'transparent',
-                }}
-              />
-            </div>
-          </div>
+        <Form layout="vertical" onFinish={handleSubmit}>
+          <Form.Item label="Email" name="email" rules={[{ required: true, type: 'email' }]}>
+            <Input prefix={<MailOutlined />} placeholder="you@example.com" size="large" />
+          </Form.Item>
 
-          <div style={{ marginBottom: 16 }}>
-            <label style={{ display: 'block', fontWeight: 600, fontSize: 13, marginBottom: 6, color: '#000' }}>
-              Password
-            </label>
-            <div style={{ display: 'flex', alignItems: 'center', border: '2px solid #000' }}>
-              <span style={{ padding: '0 12px', color: '#999' }}><LockOutlined /></span>
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                style={{
-                  flex: 1,
-                  border: 'none',
-                  outline: 'none',
-                  padding: '10px 12px 10px 0',
-                  fontSize: 14,
-                  fontFamily: 'inherit',
-                  background: 'transparent',
-                }}
-              />
-            </div>
-          </div>
+          <Form.Item label="Password" name="password" rules={[{ required: true }]}>
+            <Input.Password prefix={<LockOutlined />} placeholder="••••••••" size="large" />
+          </Form.Item>
 
           {error && (
-            <div style={{ padding: 10, border: '2px solid #000', background: '#f5f5f5', marginBottom: 16, fontSize: 13 }}>
+            <div style={{ padding: 10, border: '1px solid var(--ant-color-error)', marginBottom: 16, fontSize: 13 }}>
               {error}
             </div>
           )}
 
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={loading}
-            block
-            style={{
-              borderRadius: 0,
-              height: 44,
-              fontWeight: 700,
-              fontSize: 14,
-              border: '2px solid #000',
-            }}
-          >
-            Login
-          </Button>
-        </form>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" loading={loading} block size="large">
+              Login
+            </Button>
+          </Form.Item>
+        </Form>
 
-        <div style={{ display: 'flex', alignItems: 'center', margin: '24px 0' }}>
-          <div style={{ flex: 1, height: 1, background: '#ccc' }} />
-          <span style={{ padding: '0 12px', color: '#999', fontSize: 12 }}>OR</span>
-          <div style={{ flex: 1, height: 1, background: '#ccc' }} />
-        </div>
+        <Divider plain>OR</Divider>
 
         <Button
           block
+          size="large"
           onClick={() => signIn('google', { callbackUrl: '/' })}
-          style={{
-            borderRadius: 0,
-            height: 44,
-            fontWeight: 600,
-            fontSize: 14,
-            border: '2px solid #000',
-            background: '#fff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 8,
-          }}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
         >
           <svg width="18" height="18" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
@@ -149,9 +89,9 @@ export default function LoginPage() {
         </Button>
 
         <div style={{ textAlign: 'center', marginTop: 24 }}>
-          <Text style={{ color: '#666', fontSize: 13 }}>
+          <Text style={{ fontSize: 13, opacity: 0.6 }}>
             Don&apos;t have an account?{' '}
-            <Link href="/register" style={{ color: '#000', fontWeight: 600, textDecoration: 'underline' }}>
+            <Link href="/register" style={{ fontWeight: 600, textDecoration: 'underline' }}>
               Register
             </Link>
           </Text>

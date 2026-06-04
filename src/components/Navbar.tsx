@@ -40,25 +40,33 @@ export default function Navbar() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        background: '#ffffff',
-        borderBottom: '2px solid #000000',
         padding: '0 24px',
         height: 56,
         position: 'sticky',
         top: 0,
         zIndex: 100,
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        borderBottom: '1px solid rgba(255,255,255,0.04)',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <Button
           type="text"
           icon={<MenuOutlined />}
           onClick={toggleSidebar}
-          style={{ fontSize: 18 }}
+          style={{ fontSize: 16, opacity: 0.6 }}
         />
         <Text
           strong
-          style={{ fontSize: 18, cursor: 'pointer', letterSpacing: '-0.5px' }}
+          style={{
+            fontSize: 18,
+            cursor: 'pointer',
+            letterSpacing: '-0.5px',
+            background: 'linear-gradient(135deg, #818cf8 0%, #6366f1 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
           onClick={() => router.push('/')}
         >
           TAAZI KHABAR
@@ -81,7 +89,7 @@ export default function Navbar() {
 
       <Space>
         {session ? (
-          <Button type="text" icon={<LogoutOutlined />} onClick={() => signOut()}>
+          <Button type="text" icon={<LogoutOutlined />} onClick={() => signOut()} style={{ opacity: 0.7 }}>
             Logout
           </Button>
         ) : (

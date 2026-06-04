@@ -19,7 +19,7 @@ export default function DatasetsPage() {
 
   const fetchDatasets = async () => {
     try {
-      const data = await api.getInteractions({ type: 'datasets' })
+      const data = await api.getDatasets()
       setDatasets(Array.isArray(data) ? data : data.datasets || [])
     } catch {
       setError('Failed to load datasets')
@@ -56,7 +56,7 @@ export default function DatasetsPage() {
       dataIndex: 'persona',
       key: 'persona',
       render: (p: string) => (
-        <Tag style={{ border: '1px solid #000', fontWeight: 600 }}>{p.replace(/_/g, ' ')}</Tag>
+        <Tag style={{ fontWeight: 600 }}>{p.replace(/_/g, ' ')}</Tag>
       ),
     },
     {
@@ -69,11 +69,7 @@ export default function DatasetsPage() {
       dataIndex: 'status',
       key: 'status',
       render: (s: string) => (
-        <Tag style={{
-          border: '1px solid #000',
-          fontWeight: 600,
-          background: s === 'ready' ? '#e8e8e8' : s === 'building' ? '#f5f5f5' : '#fff',
-        }}>
+        <Tag style={{ fontWeight: 600 }}>
           {s}
         </Tag>
       ),
@@ -83,7 +79,7 @@ export default function DatasetsPage() {
       dataIndex: 'lora_adapter_path',
       key: 'lora_adapter_path',
       render: (p: string | null) => p
-        ? <Tag style={{ border: '1px solid #000', fontWeight: 600 }}>{p}</Tag>
+        ? <Tag style={{ fontWeight: 600 }}>{p}</Tag>
         : '-',
     },
     {
@@ -91,7 +87,7 @@ export default function DatasetsPage() {
       dataIndex: 'created_at',
       key: 'created_at',
       render: (d: string) => (
-        <span style={{ color: '#666', fontSize: 13 }}>
+        <span style={{ fontSize: 13 }}>
           {new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
         </span>
       ),
@@ -102,20 +98,28 @@ export default function DatasetsPage() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <div>
-          <Title level={4} style={{ margin: 0, letterSpacing: '-0.5px' }}>Datasets</Title>
-          <Text style={{ color: '#666' }}>Manage training datasets for fine-tuning</Text>
+          <Title level={4} style={{
+            margin: 0,
+            letterSpacing: '-0.5px',
+            background: 'linear-gradient(135deg, #818cf8 0%, #a78bfa 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}>
+            Datasets
+          </Title>
+          <Text style={{ opacity: 0.5 }}>Manage training datasets for fine-tuning</Text>
         </div>
         <Button
           type="primary"
           icon={<PlusOutlined />}
           onClick={() => setShowForm(true)}
-          style={{ borderRadius: 0, border: '2px solid #000', fontWeight: 600 }}
+          style={{ fontWeight: 600 }}
         >
           Build Dataset
         </Button>
       </div>
 
-      {error && <div style={{ padding: 12, border: '2px solid #000', background: '#f5f5f5', marginBottom: 16 }}>{error}</div>}
+      {error && <div style={{ padding: 12, border: '1px solid var(--ant-color-error)', marginBottom: 16 }}>{error}</div>}
 
       <Table
         dataSource={datasets}
@@ -125,7 +129,6 @@ export default function DatasetsPage() {
         pagination={false}
         locale={{ emptyText: 'No datasets created yet.' }}
         size="small"
-        style={{ border: '2px solid #000' }}
       />
 
       <Modal
@@ -136,10 +139,10 @@ export default function DatasetsPage() {
       >
         <Form form={form} layout="vertical" onFinish={handleBuild}>
           <Form.Item name="name" label="Dataset Name" rules={[{ required: true, message: 'Required' }]}>
-            <Input placeholder="e.g., polity-articles-v1" style={{ border: '2px solid #000', borderRadius: 0 }} />
+            <Input placeholder="e.g., polity-articles-v1" />
           </Form.Item>
           <Form.Item name="persona" label="Persona" initialValue={PERSONAS[0]}>
-            <Select style={{ border: '2px solid #000', borderRadius: 0 }}>
+            <Select>
               {PERSONAS.map((p) => (
                 <Select.Option key={p} value={p}>{p.replace(/_/g, ' ')}</Select.Option>
               ))}
@@ -149,7 +152,7 @@ export default function DatasetsPage() {
             type="primary"
             htmlType="submit"
             loading={building}
-            style={{ borderRadius: 0, border: '2px solid #000', fontWeight: 600 }}
+            style={{ fontWeight: 600 }}
           >
             {building ? 'Building...' : 'Build Dataset'}
           </Button>

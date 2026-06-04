@@ -24,8 +24,16 @@ export default function HistoryPage() {
 
   return (
     <div>
-      <Title level={3} style={{ marginBottom: 4, letterSpacing: '-0.5px' }}>Quiz History</Title>
-      <Text style={{ color: '#666', display: 'block', marginBottom: 24 }}>
+      <Title level={3} style={{
+        marginBottom: 4,
+        letterSpacing: '-0.5px',
+        background: 'linear-gradient(135deg, #818cf8 0%, #a78bfa 100%)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+      }}>
+        Quiz History
+      </Title>
+      <Text style={{ display: 'block', marginBottom: 28, opacity: 0.5, fontSize: 14 }}>
         Review your past quiz attempts and performance
       </Text>
 
@@ -34,21 +42,19 @@ export default function HistoryPage() {
           <Spin size="large" />
         </div>
       ) : error ? (
-        <div style={{ padding: 20, border: '2px solid #000', fontSize: 14, color: '#666' }}>
+        <div style={{ padding: 20, border: '1px solid var(--ant-color-error)', fontSize: 14 }}>
           {error}
         </div>
       ) : quizzes.length === 0 ? (
         <div style={{
           padding: 60,
-          border: '2px solid #000',
           textAlign: 'center',
-          background: '#fff',
         }}>
-          <Text style={{ color: '#666', display: 'block', marginBottom: 16, fontSize: 15 }}>
+          <Text style={{ display: 'block', marginBottom: 16, fontSize: 15 }}>
             No quizzes attempted yet
           </Text>
           <Link href="/quiz">
-            <Button type="primary" style={{ borderRadius: 0, border: '2px solid #000', fontWeight: 600 }}>
+            <Button type="primary" style={{ fontWeight: 600 }}>
               Take your first quiz
             </Button>
           </Link>

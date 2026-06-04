@@ -11,7 +11,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider >{children}</ThemeProvider>
       </QueryClientProvider>
     </SessionProvider>
   )

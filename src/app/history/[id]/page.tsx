@@ -38,10 +38,10 @@ export default function HistoryDetailPage() {
   if (error) {
     return (
       <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center', padding: 48 }}>
-        <div style={{ padding: 20, border: '2px solid #000', marginBottom: 16, fontSize: 14, color: '#666' }}>
+        <div style={{ padding: 20, border: '1px solid var(--ant-color-error)', marginBottom: 16, fontSize: 14 }}>
           {error}
         </div>
-        <Button onClick={() => window.location.reload()} style={{ borderRadius: 0, border: '2px solid #000', fontWeight: 600 }}>
+        <Button onClick={() => window.location.reload()} style={{ fontWeight: 600 }}>
           Retry
         </Button>
       </div>
@@ -56,20 +56,20 @@ export default function HistoryDetailPage() {
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto' }}>
-      <div style={{
-        border: '2px solid #000',
+      <div className="glass-card" style={{
         padding: 24,
-        background: '#fff',
         marginBottom: 32,
+        borderRadius: 12,
       }}>
         <Title level={4} style={{ margin: 0, marginBottom: 20 }}>{quiz.title || 'Quiz Details'}</Title>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 16 }}>
           <div>
-            <Text style={{ color: '#999', fontSize: 12, display: 'block', marginBottom: 4 }}>Score</Text>
+            <Text style={{ fontSize: 12, display: 'block', marginBottom: 4, opacity: 0.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Score</Text>
             <div style={{
               display: 'inline-block',
-              padding: '4px 12px',
-              border: '2px solid #000',
+              padding: '4px 14px',
+              borderRadius: 8,
+              border: '1px solid rgba(99, 102, 241, 0.2)',
               fontWeight: 700,
               fontSize: 15,
             }}>
@@ -78,7 +78,7 @@ export default function HistoryDetailPage() {
             </div>
           </div>
           <div>
-            <Text style={{ color: '#999', fontSize: 12, display: 'block', marginBottom: 4 }}>Date</Text>
+            <Text style={{ fontSize: 12, display: 'block', marginBottom: 4, opacity: 0.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Date</Text>
             <Text style={{ fontSize: 14 }}>
               {new Date(quiz.created_at).toLocaleDateString('en-IN', {
                 day: 'numeric', month: 'short', year: 'numeric',
@@ -86,7 +86,7 @@ export default function HistoryDetailPage() {
             </Text>
           </div>
           <div>
-            <Text style={{ color: '#999', fontSize: 12, display: 'block', marginBottom: 4 }}>Time Taken</Text>
+            <Text style={{ fontSize: 12, display: 'block', marginBottom: 4, opacity: 0.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Time Taken</Text>
             <Text style={{ fontSize: 14 }}>
               {quiz.time_taken_sec
                 ? `${Math.floor(quiz.time_taken_sec / 60)}m ${quiz.time_taken_sec % 60}s`
@@ -94,7 +94,7 @@ export default function HistoryDetailPage() {
             </Text>
           </div>
           <div>
-            <Text style={{ color: '#999', fontSize: 12, display: 'block', marginBottom: 4 }}>Articles</Text>
+            <Text style={{ fontSize: 12, display: 'block', marginBottom: 4, opacity: 0.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Articles</Text>
             <Text style={{ fontSize: 14 }}>{quiz.articles?.length || 0}</Text>
           </div>
         </div>

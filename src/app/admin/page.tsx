@@ -32,8 +32,16 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      <Title level={4} style={{ marginBottom: 4, letterSpacing: '-0.5px' }}>Admin Dashboard</Title>
-      <Text style={{ color: '#666', display: 'block', marginBottom: 24 }}>
+      <Title level={4} style={{
+        marginBottom: 4,
+        letterSpacing: '-0.5px',
+        background: 'linear-gradient(135deg, #818cf8 0%, #a78bfa 100%)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+      }}>
+        Admin Dashboard
+      </Title>
+      <Text style={{ display: 'block', marginBottom: 24, opacity: 0.5 }}>
         Manage AI training data, datasets, and models
       </Text>
 
@@ -42,17 +50,17 @@ export default function AdminDashboard() {
           <Col xs={24} sm={12} md={8} key={link.href}>
             <div
               onClick={() => router.push(link.href)}
+              className="glass-card glass-card-interactive"
               style={{
-                border: '2px solid #000',
                 padding: 24,
-                background: '#fff',
                 cursor: 'pointer',
                 height: '100%',
+                borderRadius: 12,
               }}
             >
               <div style={{ marginBottom: 16 }}>{link.icon}</div>
               <Title level={5} style={{ margin: 0, marginBottom: 8 }}>{link.title}</Title>
-              <Text style={{ color: '#666', fontSize: 13 }}>{link.description}</Text>
+              <Text type="secondary" style={{ fontSize: 13 }}>{link.description}</Text>
             </div>
           </Col>
         ))}

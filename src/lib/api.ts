@@ -1,9 +1,19 @@
+import { useAuthStore } from '@/stores/authStore'
+
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 async function fetchApi(path: string, options?: RequestInit) {
+  const token = useAuthStore.getState().accessToken
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(options?.headers as Record<string, string>),
+  }
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`
+  }
   const res = await fetch(`${API_BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
     ...options,
+    headers,
   });
   if (!res.ok) {
     const body = await res.text();
@@ -22,7 +32,7 @@ export const api = {
   getMe: () => fetchApi('/auth/me'),
 
   getArticles: (params?: Record<string, string>) =>
-    fetchApi(`/articles?${new URLSearchParams(params)}`),
+    fetchApi(`/articles${params ? `?${new URLSearchParams(params)}` : ''}`),
 
   getArticle: (id: string) => fetchApi(`/articles/${id}`),
 
@@ -41,18 +51,21 @@ export const api = {
     }),
 
   getHistory: (params?: Record<string, string>) =>
-    fetchApi(`/history?${new URLSearchParams(params)}`),
+    fetchApi(`/history${params ? `?${new URLSearchParams(params)}` : ''}`),
 
   getHistoryDetail: (id: string) => fetchApi(`/history/${id}`),
 
   getInteractions: (params?: Record<string, string>) =>
-    fetchApi(`/admin/interactions?${new URLSearchParams(params)}`),
+    fetchApi(`/admin/interactions${params ? `?${new URLSearchParams(params)}` : ''}`),
 
   updateInteraction: (id: string, data: any) =>
     fetchApi(`/admin/interactions/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     }),
+
+  getDatasets: (params?: Record<string, string>) =>
+    fetchApi(`/admin/datasets${params ? `?${new URLSearchParams(params)}` : ''}`),
 
   buildDataset: (data: any) =>
     fetchApi('/admin/datasets', { method: 'POST', body: JSON.stringify(data) }),
@@ -61,4 +74,55 @@ export const api = {
 
   updateModels: (data: any) =>
     fetchApi('/admin/models', { method: 'PUT', body: JSON.stringify(data) }),
+
+  getScrapeDates: (days?: number) =>
+    fetchApi(`/admin/scrape-dates${days ? `?days=${days}` : ''}`),
+
+  scrapeDate: (source: string, date: string) =>
+    fetchApi('/admin/scrape-date', {
+      method: 'POST',
+      body: JSON.stringify({ source, date }),
+    }),
+
+  getArticlesWithoutSummary: (skip?: number, limit?: number) =>
+    fetchApi(`/admin/articles-without-summary?skip=${skip || 0}&limit=${limit || 50}`),
+
+  generateSummaries: (article_ids: string[]) =>
+    fetchApi('/admin/generate-summaries', {
+      method: 'POST',
+      body: JSON.stringify({ article_ids }),
+    }),
+
+  adminGetArticles: (params?: Record<string, string>) =>
+    fetchApi(`/admin/articles${params ? `?${new URLSearchParams(params)}` : ''}`),
+
+  adminDeleteArticle: (id: string) =>
+    fetchApi(`/admin/articles/${id}`, { method: 'DELETE' }),
+
+  adminGetCategories: (params?: Record<string, string>) =>
+    fetchApi(`/admin/categories${params ? `?${new URLSearchParams(params)}` : ''}`),
+
+  adminCreateCategory: (data: any) =>
+    fetchApi('/admin/categories', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  adminUpdateCategory: (id: string, data: any) =>
+    fetchApi(`/admin/categories/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  adminDeleteCategory: (id: string) =>
+    fetchApi(`/admin/categories/${id}`, { method: 'DELETE' }),
+
+  adminGetUsers: (params?: Record<string, string>) =>
+    fetchApi(`/admin/users${params ? `?${new URLSearchParams(params)}` : ''}`),
+
+  adminUpdateUserRole: (id: string, data: any) =>
+    fetchApi(`/admin/users/${id}/role`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
 };

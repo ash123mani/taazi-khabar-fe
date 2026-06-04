@@ -27,17 +27,16 @@ export default function ArticleSelector({ articles, selected, onToggle }: Articl
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         allowClear
-        style={{ border: '2px solid #000', borderRadius: 0 }}
+        size="large"
       />
       {filtered.map((article) => (
         <div key={article.id} style={{ position: 'relative' }}>
-          <div style={{ position: 'absolute', top: 16, right: 16, zIndex: 10 }}>
+          <div style={{ position: 'absolute', top: 16, right: 16, zIndex: 10, opacity: 0.7 }}>
             <Checkbox
               checked={selected.has(article.id)}
               onChange={() => onToggle(article.id)}
-              style={{ border: '2px solid #000' }}
             >
-              <span style={{ fontSize: 12, color: '#666' }}>Select</span>
+              Select
             </Checkbox>
           </div>
           <ArticleCard article={article} />
@@ -46,7 +45,6 @@ export default function ArticleSelector({ articles, selected, onToggle }: Articl
       {filtered.length === 0 && (
         <Empty
           description="No articles found"
-          style={{ padding: 40, border: '2px solid #000', background: '#fff' }}
         />
       )}
     </Space>

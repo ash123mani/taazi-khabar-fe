@@ -51,7 +51,7 @@ export default function TrainingDataPage() {
       title: 'Persona',
       dataIndex: 'persona',
       key: 'persona',
-      render: (p: string) => <Tag style={{ border: '1px solid #000', fontWeight: 600 }}>{p}</Tag>,
+      render: (p: string) => <Tag style={{ fontWeight: 600 }}>{p}</Tag>,
       width: 120,
     },
     {
@@ -59,7 +59,7 @@ export default function TrainingDataPage() {
       dataIndex: 'created_at',
       key: 'created_at',
       render: (d: string) => (
-        <span style={{ fontSize: 13, color: '#666' }}>
+        <span style={{ fontSize: 13 }}>
           {new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
         </span>
       ),
@@ -98,14 +98,14 @@ export default function TrainingDataPage() {
             type={record.user_feedback === 1 ? 'primary' : 'default'}
             icon={<LikeOutlined />}
             onClick={() => handleFeedback(record.id, record.user_feedback === 1 ? null : 1)}
-            style={{ border: '1px solid #000', borderRadius: 0 }}
+            style={{}}
           />
           <Button
             size="small"
             type={record.user_feedback === -1 ? 'primary' : 'default'}
             icon={<DislikeOutlined />}
             onClick={() => handleFeedback(record.id, record.user_feedback === -1 ? null : -1)}
-            style={{ border: '1px solid #000', borderRadius: 0 }}
+            style={{}}
           />
         </div>
       ),
@@ -119,7 +119,7 @@ export default function TrainingDataPage() {
           size="small"
           icon={<EditOutlined />}
           onClick={() => { setEditingId(record.id); setEditResponse(record.response) }}
-          style={{ border: '1px solid #000', borderRadius: 0 }}
+          style={{}}
         />
       ),
     },
@@ -127,12 +127,20 @@ export default function TrainingDataPage() {
 
   return (
     <div>
-      <Title level={4} style={{ marginBottom: 4, letterSpacing: '-0.5px' }}>Training Data</Title>
-      <Text style={{ color: '#666', display: 'block', marginBottom: 16 }}>
+      <Title level={4} style={{
+        marginBottom: 4,
+        letterSpacing: '-0.5px',
+        background: 'linear-gradient(135deg, #818cf8 0%, #a78bfa 100%)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+      }}>
+        Training Data
+      </Title>
+      <Text style={{ display: 'block', marginBottom: 16, opacity: 0.5 }}>
         Browse AI interactions, provide feedback, and edit responses.
       </Text>
 
-      {error && <div style={{ padding: 12, border: '2px solid #000', background: '#f5f5f5', marginBottom: 16 }}>{error}</div>}
+      {error && <div style={{ padding: 12, border: '1px solid var(--ant-color-error)', marginBottom: 16 }}>{error}</div>}
 
       <Table
         dataSource={interactions}
@@ -142,7 +150,6 @@ export default function TrainingDataPage() {
         pagination={{ pageSize: 15, showSizeChanger: false }}
         locale={{ emptyText: 'No interactions recorded yet.' }}
         size="small"
-        style={{ border: '2px solid #000' }}
       />
 
       <Modal
@@ -151,8 +158,8 @@ export default function TrainingDataPage() {
         onOk={() => editingId && handleEdit(editingId)}
         onCancel={() => { setEditingId(null); setEditResponse('') }}
         okText="Save"
-        okButtonProps={{ style: { borderRadius: 0, border: '2px solid #000', fontWeight: 600 } }}
-        cancelButtonProps={{ style: { borderRadius: 0, border: '2px solid #000' } }}
+        okButtonProps={{ style: { fontWeight: 600 } }}
+        cancelButtonProps={{}}
       >
         <TextArea value={editResponse} onChange={(e) => setEditResponse(e.target.value)} rows={6} />
       </Modal>

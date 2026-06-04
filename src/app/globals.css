@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 *,
 *::before,
 *::after {
@@ -7,30 +9,88 @@
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background: #f5f5f5;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(180deg, #08080f 0%, #0d0d1a 50%, #0a0a14 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f5f5f5;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cccccc;
-  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #999999;
+  background: rgba(255, 255, 255, 0.15);
 }
 
 ::selection {
-  background: #000000;
-  color: #ffffff;
+  background: rgba(99, 102, 241, 0.3);
+  color: #fff;
+}
+
+a {
+  transition: color 0.2s ease;
+}
+
+.glass-card {
+  background: rgba(20, 20, 42, 0.6) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  transition: all 0.2s ease !important;
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  background: rgba(24, 24, 48, 0.7) !important;
+}
+
+.glass-card-interactive {
+  cursor: pointer;
+}
+
+.glass-card-interactive:hover {
+  border-color: rgba(99, 102, 241, 0.3) !important;
+  transform: translateY(-1px);
+}
+
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-1px);
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.02) 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
 }

@@ -14,12 +14,13 @@ export function useAuth() {
       return
     }
     if (session?.user) {
+      const token = (session as any).access_token
       setUser({
         id: (session.user as any).id,
         email: session.user.email || '',
         name: session.user.name || '',
         is_admin: (session.user as any).is_admin || false,
-      })
+      }, token)
     } else {
       logout()
     }

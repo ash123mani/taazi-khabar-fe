@@ -72,10 +72,10 @@ export default function TakeQuizPage() {
   if (error) {
     return (
       <div style={{ maxWidth: 720, margin: '0 auto', textAlign: 'center', padding: 48 }}>
-        <div style={{ padding: 20, border: '2px solid #000', marginBottom: 16, fontSize: 14, color: '#666' }}>
+        <div style={{ padding: 20, border: '1px solid var(--ant-color-error)', marginBottom: 16, fontSize: 14 }}>
           {error}
         </div>
-        <Button onClick={() => window.location.reload()} style={{ borderRadius: 0, border: '2px solid #000', fontWeight: 600 }}>
+        <Button onClick={() => window.location.reload()} style={{ fontWeight: 600 }}>
           Retry
         </Button>
       </div>
@@ -107,27 +107,26 @@ export default function TakeQuizPage() {
   return (
     <div style={{ maxWidth: 720, margin: '0 auto' }}>
       <Card
-        style={{
-          border: '2px solid #000',
-          borderRadius: 0,
-          marginBottom: 24,
-          boxShadow: 'none',
-        }}
+        className="glass-card"
         styles={{ body: { padding: 20 } }}
+        style={{ marginBottom: 24 }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <Title level={4} style={{ margin: 0 }}>{quiz.title || 'Quiz'}</Title>
-            <Text style={{ color: '#666', fontSize: 13 }}>
+            <Text style={{ fontSize: 13, opacity: 0.6 }}>
               {total} questions
               {quiz.articles?.length ? ` · ${quiz.articles.length} articles` : ''}
             </Text>
           </div>
           <div style={{
-            padding: '6px 12px',
-            border: '2px solid #000',
+            padding: '6px 14px',
+            borderRadius: 8,
+            border: '1px solid',
             fontWeight: 700,
             fontSize: 14,
+            background: 'rgba(99, 102, 241, 0.08)',
+            borderColor: 'rgba(99, 102, 241, 0.2)',
           }}>
             {answered}/{total}
           </div>
@@ -152,12 +151,10 @@ export default function TakeQuizPage() {
           loading={submitting}
           onClick={handleSubmit}
           style={{
-            borderRadius: 0,
             height: 48,
             padding: '0 40px',
             fontWeight: 700,
             fontSize: 15,
-            border: '3px solid #000',
           }}
         >
           Submit Answers ({answered}/{total})

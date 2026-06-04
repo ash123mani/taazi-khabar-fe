@@ -1,24 +1,14 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Typography, Tag, Button, Spin } from 'antd'
-import { SwapOutlined, CheckOutlined } from '@ant-design/icons'
+import { Typography, Tag, Button, Spin, Select, message } from 'antd'
+import { CheckOutlined, SwapOutlined } from '@ant-design/icons'
 import { api } from '@/lib/api'
 
 const { Title, Text } = Typography
 
-interface Model {
-  id: string
-  name: string
-  version: string
-  status: string
-  active: boolean
-  accuracy: number | null
-  created_at: string
-}
-
 export default function ModelsPage() {
-  const [models, setModels] = useState<Model[]>([])
+  const [grouped, setGrouped] = useState<Record<string, { name: string; provider: string; active: boolean }[]>>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [swapping, setSwapping] = useState<string | null>(null)
@@ -26,7 +16,11 @@ export default function ModelsPage() {
   const fetchModels = async () => {
     try {
       const data = await api.getModels()
-      setModels(Array.isArray(data) ? data : data.models || [])
+      if (data && typeof data === 'object' && !Array.isArray(data)) {
+        setGrouped(data)
+      } else {
+        setGrouped({})
+      }
     } catch {
       setError('Failed to load models')
     } finally {
@@ -36,10 +30,12 @@ export default function ModelsPage() {
 
   useEffect(() => { fetchModels() }, [])
 
-  const handleSwap = async (modelId: string) => {
-    setSwapping(modelId)
+  const handleSwap = async (persona: string, modelName: string) => {
+    const key = `${persona}::${modelName}`
+    setSwapping(key)
     try {
-      await api.updateModels({ active_model_id: modelId })
+      await api.updateModels({ persona, model_name: modelName })
+      message.success(`Switched ${persona} to ${modelName}`)
       fetchModels()
     } catch (err: any) {
       setError(err.message || 'Failed to swap model')
@@ -52,66 +48,82 @@ export default function ModelsPage() {
     return <div style={{ textAlign: 'center', padding: 60 }}><Spin size="large" /></div>
   }
 
+  const personas = Object.keys(grouped)
+
   return (
     <div>
-      <Title level={4} style={{ marginBottom: 4, letterSpacing: '-0.5px' }}>Model Registry</Title>
-      <Text style={{ color: '#666', display: 'block', marginBottom: 24 }}>
-        Manage active model, swap versions, rollback if needed.
+      <Title level={4} style={{
+        marginBottom: 4,
+        letterSpacing: '-0.5px',
+        background: 'linear-gradient(135deg, #818cf8 0%, #a78bfa 100%)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+      }}>
+        Model Registry
+      </Title>
+      <Text style={{ display: 'block', marginBottom: 24, opacity: 0.5 }}>
+        Manage active models per persona.
       </Text>
 
-      {error && <div style={{ padding: 12, border: '2px solid #000', background: '#f5f5f5', marginBottom: 16 }}>{error}</div>}
+      {error && <div style={{ padding: 12, border: '1px solid var(--ant-color-error)', marginBottom: 16 }}>{error}</div>}
 
-      {models.length === 0 ? (
-        <div style={{ padding: 60, border: '2px solid #000', textAlign: 'center', background: '#fff', color: '#666' }}>
+      {personas.length === 0 ? (
+        <div style={{ padding: 60, textAlign: 'center' }}>
           No models registered.
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {models.map((model) => (
-            <div
-              key={model.id}
-              style={{
-                border: `2px solid ${model.active ? '#000' : '#000'}`,
-                padding: 20,
-                background: model.active ? '#f5f5f5' : '#fff',
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                    <Text strong style={{ fontSize: 15 }}>{model.name}</Text>
-                    {model.active && (
-                      <Tag icon={<CheckOutlined />} style={{ border: '1px solid #000', fontWeight: 600, background: '#e8e8e8' }}>
-                        Active
-                      </Tag>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {personas.map((persona) => {
+            const models = grouped[persona]
+            const active = models.find((m) => m.active)
+            return (
+              <div key={persona} className="glass-card" style={{ padding: 20, borderRadius: 12 }}>
+                <div style={{ marginBottom: 12 }}>
+                  <Title level={5} style={{ margin: 0, textTransform: 'capitalize' }}>
+                    {persona.replace(/_/g, ' ')}
+                  </Title>
+                  {active && (
+                    <Text type="secondary" style={{ fontSize: 13 }}>
+                      Active: <Text code>{active.name}</Text>
+                    </Text>
+                  )}
+                </div>
+                {models.map((model) => (
+                  <div
+                    key={model.name}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '8px 12px',
+                      marginBottom: 4,
+                    }}
+                  >
+                    <div>
+                      <Text strong={model.active}>{model.name}</Text>
+                      <Tag style={{ marginLeft: 8 }}>{model.provider}</Tag>
+                      {model.active && (
+                        <Tag icon={<CheckOutlined />}>
+                          Active
+                        </Tag>
+                      )}
+                    </div>
+                    {!model.active && (
+                      <Button
+                        size="small"
+                        icon={<SwapOutlined />}
+                        loading={swapping === `${persona}::${model.name}`}
+                        onClick={() => handleSwap(persona, model.name)}
+                        style={{}}
+                      >
+                        Make Active
+                      </Button>
                     )}
                   </div>
-                  <Text style={{ color: '#666', fontSize: 13 }}>v{model.version}</Text>
-                </div>
-                {!model.active && (
-                  <Button
-                    icon={<SwapOutlined />}
-                    loading={swapping === model.id}
-                    onClick={() => handleSwap(model.id)}
-                    style={{ borderRadius: 0, border: '2px solid #000' }}
-                  >
-                    Make Active
-                  </Button>
-                )}
+                ))}
               </div>
-              <div style={{ marginTop: 12, display: 'flex', gap: 16, fontSize: 13, color: '#666' }}>
-                <Tag style={{ border: '1px solid #000', fontWeight: 600, background: model.status === 'ready' ? '#e8e8e8' : '#f5f5f5' }}>
-                  {model.status}
-                </Tag>
-                {model.accuracy !== null && <span>Accuracy: {(model.accuracy * 100).toFixed(1)}%</span>}
-                <span>
-                  Added: {new Date(model.created_at).toLocaleDateString('en-IN', {
-                    day: 'numeric', month: 'short', year: 'numeric',
-                  })}
-                </span>
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>

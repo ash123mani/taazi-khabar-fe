@@ -9,7 +9,7 @@ const { Content } = Layout
 export default function RootLayoutClient({ children }: { children: React.ReactNode }) {
   return (
     <Providers>
-      <Layout style={{ minHeight: '100vh', background: '#f5f5f5' }}>
+      <Layout style={{ minHeight: '100vh' }}>
         <Navbar />
         <Content style={{ maxWidth: 900, margin: '0 auto', width: '100%', padding: '32px 24px' }}>
           {children}
