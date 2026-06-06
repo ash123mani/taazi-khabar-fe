@@ -7,7 +7,10 @@ import type { Article } from '@/lib/types'
 export function useArticles(params?: Record<string, string>) {
   return useQuery<Article[]>({
     queryKey: ['articles', params],
-    queryFn: () => api.getArticles(params),
+    queryFn: async () => {
+      const data = await api.getArticles(params)
+      return Array.isArray(data) ? data : (data as any).articles || []
+    },
   })
 }
 

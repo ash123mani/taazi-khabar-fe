@@ -8,11 +8,9 @@ import {
   UserOutlined,
   LogoutOutlined,
   LoginOutlined,
-  MenuOutlined,
 } from '@ant-design/icons'
 import { useRouter, usePathname } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
-import { useUIStore } from '@/stores/uiStore'
 
 const { Header } = Layout
 const { Text } = Typography
@@ -21,8 +19,6 @@ export default function Navbar() {
   const router = useRouter()
   const pathname = usePathname()
   const { data: session } = useSession()
-  const sidebarCollapsed = useUIStore((s) => s.sidebarCollapsed)
-  const toggleSidebar = useUIStore((s) => s.toggleSidebar)
 
   const menuItems = [
     { key: '/', icon: <BookOutlined />, label: 'Articles' },
@@ -45,27 +41,18 @@ export default function Navbar() {
         position: 'sticky',
         top: 0,
         zIndex: 100,
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-        borderBottom: '1px solid rgba(255,255,255,0.04)',
+        background: '#ffffff',
+        borderBottom: '1px solid #e0e0e0',
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <Button
-          type="text"
-          icon={<MenuOutlined />}
-          onClick={toggleSidebar}
-          style={{ fontSize: 16, opacity: 0.6 }}
-        />
         <Text
           strong
           style={{
             fontSize: 18,
             cursor: 'pointer',
             letterSpacing: '-0.5px',
-            background: 'linear-gradient(135deg, #818cf8 0%, #6366f1 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
+            color: '#1a1a1a',
           }}
           onClick={() => router.push('/')}
         >
@@ -89,7 +76,7 @@ export default function Navbar() {
 
       <Space>
         {session ? (
-          <Button type="text" icon={<LogoutOutlined />} onClick={() => signOut()} style={{ opacity: 0.7 }}>
+          <Button type="text" icon={<LogoutOutlined />} onClick={() => signOut()} style={{ color: '#757575' }}>
             Logout
           </Button>
         ) : (

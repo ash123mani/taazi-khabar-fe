@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Typography, Space, Button, Spin } from 'antd'
 import { ThunderboltOutlined } from '@ant-design/icons'
 import { api } from '@/lib/api'
+import { useAuthStore } from '@/stores/authStore'
 import type { Article } from '@/lib/types'
 import ArticleSelector from '@/components/ArticleSelector'
 
@@ -14,6 +15,7 @@ export default function QuizContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const preselected = searchParams.get('selected')?.split(',').filter(Boolean) || []
+  const token = useAuthStore((s) => s.accessToken)
 
   const [articles, setArticles] = useState<Article[]>([])
   const [selected, setSelected] = useState<Set<string>>(new Set(preselected))
@@ -22,12 +24,13 @@ export default function QuizContent() {
   const [error, setError] = useState('')
 
   useEffect(() => {
+    if (!token) return
     api
       .getArticles()
       .then((data) => setArticles(Array.isArray(data) ? data : data.articles || []))
       .catch(() => setError('Failed to load articles'))
       .finally(() => setLoading(false))
-  }, [])
+  }, [token])
 
   const toggleSelect = (id: string) => {
     const next = new Set(selected)
@@ -42,7 +45,7 @@ export default function QuizContent() {
     setError('')
     try {
       const data = await api.generateQuiz(Array.from(selected), 10)
-      router.push(`/quiz/${data.id}`)
+      router.push(`/quiz/${data.quiz_id}`)
     } catch (err: any) {
       setError(err.message || 'Failed to generate quiz')
       setGenerating(false)
@@ -68,7 +71,7 @@ export default function QuizContent() {
       </div>
 
       {error && (
-        <div style={{ padding: 12, border: '1px solid var(--ant-color-error)', marginBottom: 16, fontSize: 14 }}>
+        <div style={{ padding: '8px 12px', border: '1px solid #c62828', borderRadius: 4, background: '#ffebee', color: '#c62828', marginBottom: 16, fontSize: 14 }}>
           {error}
         </div>
       )}

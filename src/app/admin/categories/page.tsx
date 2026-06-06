@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { Typography, Table, Tag, Button, Spin, Input, Modal, Form, Space } from 'antd'
+import { Typography, Table, Tag, Button, Spin, Input, Modal, Form, Space, Popconfirm } from 'antd'
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { api } from '@/lib/api'
 
@@ -46,8 +46,9 @@ export default function AdminCategoriesPage() {
     setSearch(value)
   }
 
-  const handleCreate = async (values: { name: string; description: string | null }) => {
+  const handleCreate = async () => {
     try {
+      const values = await form.validateFields()
       await api.adminCreateCategory(values)
       setShowForm(false)
       form.resetFields()
@@ -60,7 +61,7 @@ export default function AdminCategoriesPage() {
   const handleUpdate = async () => {
     if (!editingId) return
     try {
-      const values = form.getFieldsValue()
+      const values = await form.validateFields()
       await api.adminUpdateCategory(editingId, values)
       setEditingId(null)
       form.resetFields()
@@ -109,13 +110,13 @@ export default function AdminCategoriesPage() {
         Manage UPSC syllabus categories
       </Text>
 
-      {error && <div style={{ padding: 12, border: '1px solid var(--ant-color-error)', marginBottom: 16 }}>{error}</div>}
+      {error && <div style={{ padding: '8px 12px', border: '1px solid #c62828', borderRadius: 4, background: '#ffebee', color: '#c62828', marginBottom: 16 }}>{error}</div>}
 
       <Modal
         title={editingId ? 'Edit Category' : 'Add Category'}
         open={!!showForm}
-        onOk={() => (editingId ? handleUpdate() : handleCreate())}
-        onCancel={() => { setShowForm(false); form.resetFields() }}
+        onOk={() => { form.submit() }}
+        onCancel={() => { setShowForm(false); setEditingId(null); form.resetFields() }}
         okText={editingId ? 'Save' : 'Create'}
         cancelText="Cancel"
         width={400}

@@ -70,6 +70,23 @@ export const api = {
   buildDataset: (data: any) =>
     fetchApi('/admin/datasets', { method: 'POST', body: JSON.stringify(data) }),
 
+  downloadDataset: async (id: string) => {
+    const token = useAuthStore.getState().accessToken
+    const res = await fetch(`${API_BASE}/admin/datasets/${id}/download`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    if (!res.ok) throw new Error(`Download failed: ${res.statusText}`)
+    const blob = await res.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = res.headers.get('content-disposition')?.split('filename="')?.[1]?.split('"')?.[0] || 'dataset.jsonl'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  },
+
   getModels: () => fetchApi('/admin/models'),
 
   updateModels: (data: any) =>
@@ -77,7 +94,10 @@ export const api = {
 
   getScrapeDates: (days?: number) =>
     fetchApi(`/admin/scrape-dates${days ? `?days=${days}` : ''}`),
-
+  getScrapeSummary: (days?: number) =>
+    fetchApi(`/admin/scrape-summary${days ? `?days=${days}` : ''}`),
+  getScrapeArticles: (source: string, date: string) =>
+    fetchApi(`/admin/scrape-articles?source=${encodeURIComponent(source)}&date=${encodeURIComponent(date)}`),
   scrapeDate: (source: string, date: string) =>
     fetchApi('/admin/scrape-date', {
       method: 'POST',

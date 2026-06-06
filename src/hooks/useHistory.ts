@@ -6,14 +6,17 @@ import type { Quiz } from '@/lib/types'
 
 export function useHistory(params?: Record<string, string>) {
   return useQuery<Quiz[]>({
-    queryKey: ['history', params],
-    queryFn: () => api.getHistory(params),
+    queryKey: ['history', 'list', params],
+    queryFn: async () => {
+      const data = await api.getHistory(params)
+      return Array.isArray(data) ? data : (data as any).quizzes || []
+    },
   })
 }
 
 export function useHistoryDetail(id: string) {
   return useQuery<Quiz>({
-    queryKey: ['history', id],
+    queryKey: ['history', 'detail', id],
     queryFn: () => api.getHistoryDetail(id),
     enabled: !!id,
   })

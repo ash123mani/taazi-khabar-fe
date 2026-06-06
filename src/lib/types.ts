@@ -14,6 +14,7 @@ export interface Article {
   gk_summary: string | null;
   key_terms: string[] | null;
   syllabus_tag: string | null;
+  image_url: string | null;
 }
 
 export interface Quiz {

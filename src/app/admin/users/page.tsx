@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { Typography, Table, Tag, Button, Spin, Input, Popconfirm, Switch, Space } from 'antd'
+import { Typography, Table, Tag, Button, Spin, Input, Popconfirm, Switch, Space, message } from 'antd'
 import { UserOutlined, EditOutlined } from '@ant-design/icons'
 import { api } from '@/lib/api'
 
@@ -48,7 +48,8 @@ export default function AdminUsersPage() {
     try {
       await api.adminUpdateUserRole(id, { is_admin: checked })
     } catch (err: any) {
-      // Error handled by Switch
+      message.error(err?.message || 'Failed to update role')
+      fetchUsers()
     }
   }
 
@@ -60,7 +61,7 @@ export default function AdminUsersPage() {
           <Input.Search
             placeholder="Search users..."
             value={search}
-            onChange={handleSearch}
+            onChange={(e) => handleSearch(e.target.value)}
             allowClear
             size="middle"
             style={{ width: 220 }}
@@ -81,7 +82,7 @@ export default function AdminUsersPage() {
         Manage user roles and permissions
       </Text>
 
-      {error && <div style={{ padding: 12, border: '1px solid var(--ant-color-error)', marginBottom: 16 }}>{error}</div>}
+      {error && <div style={{ padding: '8px 12px', border: '1px solid #c62828', borderRadius: 4, background: '#ffebee', color: '#c62828', marginBottom: 16 }}>{error}</div>}
 
       <Table
         dataSource={users}
@@ -104,12 +105,12 @@ export default function AdminUsersPage() {
             dataIndex: 'is_admin',
             key: 'is_admin',
             width: 100,
-            render: (isAdmin: boolean) => (
+            render: (isAdmin: boolean, record: UserData) => (
               <Space>
                 <Tag color={isAdmin ? 'purple' : 'default'}>{isAdmin ? 'Admin' : 'User'}</Tag>
                 <Switch
                   checked={isAdmin}
-                  onChange={(checked) => handleToggleRole(id, checked)}
+                  onChange={(checked) => handleToggleRole(record.id, checked)}
                   disabled={false}
                   size="small"
                 />

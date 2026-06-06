@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Typography, Table, Tag, Button, Modal, Form, Input, Select } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
+import { PlusOutlined, DownloadOutlined } from '@ant-design/icons'
 import { api } from '@/lib/api'
 import type { TrainingDataset } from '@/lib/types'
 
@@ -15,6 +15,7 @@ export default function DatasetsPage() {
   const [error, setError] = useState('')
   const [showForm, setShowForm] = useState(false)
   const [building, setBuilding] = useState(false)
+  const [downloading, setDownloading] = useState<string | null>(null)
   const [form] = Form.useForm()
 
   const fetchDatasets = async () => {
@@ -41,6 +42,17 @@ export default function DatasetsPage() {
       setError(err.message || 'Failed to build dataset')
     } finally {
       setBuilding(false)
+    }
+  }
+
+  const handleDownload = async (id: string) => {
+    setDownloading(id)
+    try {
+      await api.downloadDataset(id)
+    } catch (err: any) {
+      setError(err.message || 'Download failed')
+    } finally {
+      setDownloading(null)
     }
   }
 
@@ -92,6 +104,19 @@ export default function DatasetsPage() {
         </span>
       ),
     },
+    {
+      title: '',
+      key: 'actions',
+      width: 80,
+      render: (_: any, record: TrainingDataset) => (
+        <Button
+          type="text"
+          icon={<DownloadOutlined />}
+          loading={downloading === record.id}
+          onClick={() => handleDownload(record.id)}
+        />
+      ),
+    },
   ]
 
   return (
@@ -101,13 +126,11 @@ export default function DatasetsPage() {
           <Title level={4} style={{
             margin: 0,
             letterSpacing: '-0.5px',
-            background: 'linear-gradient(135deg, #818cf8 0%, #a78bfa 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
+            color: '#1a1a1a',
           }}>
             Datasets
           </Title>
-          <Text style={{ opacity: 0.5 }}>Manage training datasets for fine-tuning</Text>
+          <Text style={{ color: '#9e9e9e' }}>Manage training datasets for fine-tuning</Text>
         </div>
         <Button
           type="primary"
@@ -119,7 +142,7 @@ export default function DatasetsPage() {
         </Button>
       </div>
 
-      {error && <div style={{ padding: 12, border: '1px solid var(--ant-color-error)', marginBottom: 16 }}>{error}</div>}
+      {error && <div style={{ padding: '8px 12px', border: '1px solid #c62828', borderRadius: 4, background: '#ffebee', color: '#c62828', marginBottom: 16 }}>{error}</div>}
 
       <Table
         dataSource={datasets}

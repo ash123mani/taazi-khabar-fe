@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Typography, Spin, Button, Space } from 'antd'
 import Link from 'next/link'
 import { api } from '@/lib/api'
+import { useAuthStore } from '@/stores/authStore'
 import type { Quiz } from '@/lib/types'
 import HistoryCard from '@/components/HistoryCard'
 
@@ -13,27 +14,27 @@ export default function HistoryPage() {
   const [quizzes, setQuizzes] = useState<Quiz[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const token = useAuthStore((s) => s.accessToken)
 
   useEffect(() => {
+    if (!token) return
     api
       .getHistory()
       .then((data) => setQuizzes(Array.isArray(data) ? data : data.quizzes || []))
       .catch(() => setError('Failed to load history'))
       .finally(() => setLoading(false))
-  }, [])
+  }, [token])
 
   return (
     <div>
       <Title level={3} style={{
         marginBottom: 4,
         letterSpacing: '-0.5px',
-        background: 'linear-gradient(135deg, #818cf8 0%, #a78bfa 100%)',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
+        color: '#1a1a1a',
       }}>
         Quiz History
       </Title>
-      <Text style={{ display: 'block', marginBottom: 28, opacity: 0.5, fontSize: 14 }}>
+      <Text style={{ display: 'block', marginBottom: 28, color: '#9e9e9e', fontSize: 14 }}>
         Review your past quiz attempts and performance
       </Text>
 
@@ -42,7 +43,7 @@ export default function HistoryPage() {
           <Spin size="large" />
         </div>
       ) : error ? (
-        <div style={{ padding: 20, border: '1px solid var(--ant-color-error)', fontSize: 14 }}>
+        <div style={{ padding: '8px 12px', border: '1px solid #c62828', borderRadius: 4, background: '#ffebee', color: '#c62828', fontSize: 14 }}>
           {error}
         </div>
       ) : quizzes.length === 0 ? (

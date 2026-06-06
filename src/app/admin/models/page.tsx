@@ -55,17 +55,15 @@ export default function ModelsPage() {
       <Title level={4} style={{
         marginBottom: 4,
         letterSpacing: '-0.5px',
-        background: 'linear-gradient(135deg, #818cf8 0%, #a78bfa 100%)',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
+        color: '#1a1a1a',
       }}>
         Model Registry
       </Title>
-      <Text style={{ display: 'block', marginBottom: 24, opacity: 0.5 }}>
+      <Text style={{ display: 'block', marginBottom: 24, color: '#9e9e9e' }}>
         Manage active models per persona.
       </Text>
 
-      {error && <div style={{ padding: 12, border: '1px solid var(--ant-color-error)', marginBottom: 16 }}>{error}</div>}
+      {error && <div style={{ padding: '8px 12px', border: '1px solid #c62828', borderRadius: 4, background: '#ffebee', color: '#c62828', marginBottom: 16 }}>{error}</div>}
 
       {personas.length === 0 ? (
         <div style={{ padding: 60, textAlign: 'center' }}>
@@ -77,7 +75,7 @@ export default function ModelsPage() {
             const models = grouped[persona]
             const active = models.find((m) => m.active)
             return (
-              <div key={persona} className="glass-card" style={{ padding: 20, borderRadius: 12 }}>
+              <div key={persona} className="article-card" style={{ padding: 20 }}>
                 <div style={{ marginBottom: 12 }}>
                   <Title level={5} style={{ margin: 0, textTransform: 'capitalize' }}>
                     {persona.replace(/_/g, ' ')}

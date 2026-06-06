@@ -27,16 +27,10 @@ export default function NewsFeedPage() {
   return (
     <div>
       <div style={{ marginBottom: 28 }}>
-        <Title level={3} style={{
-          margin: 0,
-          letterSpacing: '-0.5px',
-          background: 'linear-gradient(135deg, #818cf8 0%, #a78bfa 100%)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-        }}>
+        <Title level={3} style={{ margin: 0, letterSpacing: '-0.5px', color: '#1a1a1a' }}>
           Today's GK Gist
         </Title>
-        <Text style={{ marginTop: 6, display: 'block', opacity: 0.5, fontSize: 14 }}>
+        <Text style={{ marginTop: 6, display: 'block', color: '#9e9e9e', fontSize: 14 }}>
           AI-curated current affairs summaries for UPSC preparation
         </Text>
       </div>

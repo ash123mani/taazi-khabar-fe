@@ -130,17 +130,15 @@ export default function TrainingDataPage() {
       <Title level={4} style={{
         marginBottom: 4,
         letterSpacing: '-0.5px',
-        background: 'linear-gradient(135deg, #818cf8 0%, #a78bfa 100%)',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
+        color: '#1a1a1a',
       }}>
         Training Data
       </Title>
-      <Text style={{ display: 'block', marginBottom: 16, opacity: 0.5 }}>
+      <Text style={{ display: 'block', marginBottom: 16, color: '#9e9e9e' }}>
         Browse AI interactions, provide feedback, and edit responses.
       </Text>
 
-      {error && <div style={{ padding: 12, border: '1px solid var(--ant-color-error)', marginBottom: 16 }}>{error}</div>}
+      {error && <div style={{ padding: '8px 12px', border: '1px solid #c62828', borderRadius: 4, background: '#ffebee', color: '#c62828', marginBottom: 16 }}>{error}</div>}
 
       <Table
         dataSource={interactions}

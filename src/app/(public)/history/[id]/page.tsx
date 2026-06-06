@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { Typography, Spin, Button, Space } from 'antd'
 import { api } from '@/lib/api'
+import { useAuthStore } from '@/stores/authStore'
 import type { Quiz } from '@/lib/types'
 import ArticleCard from '@/components/ArticleCard'
 import QuizQuestionComponent from '@/components/QuizQuestion'
@@ -13,19 +14,20 @@ const { Title, Text } = Typography
 export default function HistoryDetailPage() {
   const params = useParams()
   const id = params.id as string
+  const token = useAuthStore((s) => s.accessToken)
 
   const [quiz, setQuiz] = useState<Quiz | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
   useEffect(() => {
-    if (!id) return
+    if (!id || !token) return
     api
       .getHistoryDetail(id)
       .then(setQuiz)
       .catch(() => setError('Failed to load quiz details'))
       .finally(() => setLoading(false))
-  }, [id])
+  }, [id, token])
 
   if (loading) {
     return (
@@ -38,7 +40,7 @@ export default function HistoryDetailPage() {
   if (error) {
     return (
       <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center', padding: 48 }}>
-        <div style={{ padding: 20, border: '1px solid var(--ant-color-error)', marginBottom: 16, fontSize: 14 }}>
+        <div style={{ padding: '8px 12px', border: '1px solid #c62828', borderRadius: 4, background: '#ffebee', color: '#c62828', marginBottom: 16, fontSize: 14 }}>
           {error}
         </div>
         <Button onClick={() => window.location.reload()} style={{ fontWeight: 600 }}>
@@ -56,20 +58,19 @@ export default function HistoryDetailPage() {
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto' }}>
-      <div className="glass-card" style={{
+      <div className="article-card" style={{
         padding: 24,
         marginBottom: 32,
-        borderRadius: 12,
       }}>
         <Title level={4} style={{ margin: 0, marginBottom: 20 }}>{quiz.title || 'Quiz Details'}</Title>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 16 }}>
           <div>
-            <Text style={{ fontSize: 12, display: 'block', marginBottom: 4, opacity: 0.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Score</Text>
+            <Text style={{ fontSize: 12, display: 'block', marginBottom: 4, color: '#9e9e9e', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Score</Text>
             <div style={{
               display: 'inline-block',
               padding: '4px 14px',
               borderRadius: 8,
-              border: '1px solid rgba(99, 102, 241, 0.2)',
+              border: '1px solid #e0e0e0',
               fontWeight: 700,
               fontSize: 15,
             }}>
@@ -78,7 +79,7 @@ export default function HistoryDetailPage() {
             </div>
           </div>
           <div>
-            <Text style={{ fontSize: 12, display: 'block', marginBottom: 4, opacity: 0.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Date</Text>
+            <Text style={{ fontSize: 12, display: 'block', marginBottom: 4, color: '#9e9e9e', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Date</Text>
             <Text style={{ fontSize: 14 }}>
               {new Date(quiz.created_at).toLocaleDateString('en-IN', {
                 day: 'numeric', month: 'short', year: 'numeric',
@@ -86,7 +87,7 @@ export default function HistoryDetailPage() {
             </Text>
           </div>
           <div>
-            <Text style={{ fontSize: 12, display: 'block', marginBottom: 4, opacity: 0.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Time Taken</Text>
+            <Text style={{ fontSize: 12, display: 'block', marginBottom: 4, color: '#9e9e9e', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Time Taken</Text>
             <Text style={{ fontSize: 14 }}>
               {quiz.time_taken_sec
                 ? `${Math.floor(quiz.time_taken_sec / 60)}m ${quiz.time_taken_sec % 60}s`
@@ -94,7 +95,7 @@ export default function HistoryDetailPage() {
             </Text>
           </div>
           <div>
-            <Text style={{ fontSize: 12, display: 'block', marginBottom: 4, opacity: 0.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Articles</Text>
+            <Text style={{ fontSize: 12, display: 'block', marginBottom: 4, color: '#9e9e9e', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Articles</Text>
             <Text style={{ fontSize: 14 }}>{quiz.articles?.length || 0}</Text>
           </div>
         </div>

@@ -72,7 +72,7 @@ export default function TakeQuizPage() {
   if (error) {
     return (
       <div style={{ maxWidth: 720, margin: '0 auto', textAlign: 'center', padding: 48 }}>
-        <div style={{ padding: 20, border: '1px solid var(--ant-color-error)', marginBottom: 16, fontSize: 14 }}>
+        <div style={{ padding: '8px 12px', border: '1px solid #c62828', borderRadius: 4, background: '#ffebee', color: '#c62828', marginBottom: 16, fontSize: 14 }}>
           {error}
         </div>
         <Button onClick={() => window.location.reload()} style={{ fontWeight: 600 }}>
@@ -107,14 +107,14 @@ export default function TakeQuizPage() {
   return (
     <div style={{ maxWidth: 720, margin: '0 auto' }}>
       <Card
-        className="glass-card"
+        className="article-card"
         styles={{ body: { padding: 20 } }}
-        style={{ marginBottom: 24 }}
+        style={{ marginBottom: 24, borderRadius: 4 }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <Title level={4} style={{ margin: 0 }}>{quiz.title || 'Quiz'}</Title>
-            <Text style={{ fontSize: 13, opacity: 0.6 }}>
+            <Text style={{ fontSize: 13, color: '#9e9e9e' }}>
               {total} questions
               {quiz.articles?.length ? ` · ${quiz.articles.length} articles` : ''}
             </Text>
@@ -125,8 +125,8 @@ export default function TakeQuizPage() {
             border: '1px solid',
             fontWeight: 700,
             fontSize: 14,
-            background: 'rgba(99, 102, 241, 0.08)',
-            borderColor: 'rgba(99, 102, 241, 0.2)',
+            background: '#f5f5f5',
+            borderColor: '#e0e0e0',
           }}>
             {answered}/{total}
           </div>
