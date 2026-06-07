@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, type ReactNode } from 'react'
-import { Layout, Menu, Typography, Spin, Avatar, Space, Dropdown, Tag } from 'antd'
+import { Layout, Menu, Typography, Spin, Avatar, Space, Dropdown, Tag, Button, Card, Row, Col, Statistic } from 'antd'
 import type { MenuProps } from 'antd'
 import {
   BarChartOutlined,
@@ -18,6 +18,9 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   HomeOutlined,
+  ThunderboltOutlined,
+  TrophyOutlined,
+  ClockCircleOutlined,
 } from '@ant-design/icons'
 import { useRouter, usePathname } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
@@ -60,7 +63,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   if (status === 'loading') {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#f0f2f5' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#0a0a0b' }}>
         <Spin size="large" />
       </div>
     )
@@ -76,8 +79,8 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         key: 'info',
         label: (
           <div style={{ padding: '4px 0' }}>
-            <div style={{ fontWeight: 600, fontSize: 14 }}>{session.user?.name || 'Admin User'}</div>
-            <div style={{ fontSize: 12, color: '#999' }}>{session.user?.email || ''}</div>
+            <div style={{ fontWeight: 600, fontSize: 14, color: '#fafafa' }}>{session.user?.name || 'Admin User'}</div>
+            <div style={{ fontSize: 12, color: '#a1a1aa' }}>{session.user?.email || ''}</div>
           </div>
         ),
         disabled: true,
@@ -97,46 +100,44 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     },
   }
 
-  const sidebarWidth = collapsed ? 64 : 240
+  const sidebarWidth = collapsed ? 80 : 240
 
   return (
-    <Layout style={{ minHeight: '100vh', background: '#f5f5f5' }}>
+    <Layout style={{ minHeight: '100vh' }}>
       <Sider
         width={240}
-        collapsedWidth={64}
+        collapsedWidth={80}
         collapsed={collapsed}
         style={{
-          background: '#1a1a2e',
           position: 'fixed',
           left: 0,
           top: 0,
           bottom: 0,
           overflow: 'auto',
           zIndex: 20,
-          transition: 'all 0.2s',
-          borderRight: 'none',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         }}
       >
         <div
           style={{
-            height: 56,
+            height: 64,
             display: 'flex',
             alignItems: 'center',
             justifyContent: collapsed ? 'center' : 'flex-start',
             padding: collapsed ? 0 : '0 20px',
-            borderBottom: '1px solid rgba(255,255,255,0.06)',
+            borderBottom: '1px solid #27272a',
           }}
         >
           {collapsed ? (
-            <Avatar size={28} icon={<UserOutlined />} style={{ background: '#4361ee' }} />
+            <Avatar size={36} icon={<UserOutlined />} style={{ background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)' }} />
           ) : (
-            <Space size={10}>
-              <Avatar size={28} icon={<UserOutlined />} style={{ background: '#4361ee' }} />
+            <Space size={12}>
+              <Avatar size={36} icon={<UserOutlined />} style={{ background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)' }} />
               <div>
-                <Text style={{ color: '#fff', fontSize: 15, fontWeight: 700, letterSpacing: '-0.3px', display: 'block', lineHeight: 1.2 }}>
+                <Text style={{ fontSize: 16, fontWeight: 700, letterSpacing: '-0.3px', display: 'block', lineHeight: 1.2, color: '#fafafa' }}>
                   Taazi Khabar
                 </Text>
-                <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10, display: 'block', lineHeight: 1.2 }}>
+                <Text style={{ fontSize: 11, display: 'block', lineHeight: 1.2, fontWeight: 500, color: '#a1a1aa' }}>
                   Admin Panel
                 </Text>
               </div>
@@ -152,51 +153,47 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           onClick={({ key }) => {
             if (key !== 'sep1') router.push(key)
           }}
-          style={{
-            background: 'transparent',
-            borderRight: 'none',
-            fontSize: 13,
-            marginTop: 4,
-          }}
+          style={{ borderRight: 'none', fontSize: 13, marginTop: 8, padding: '0 8px' }}
           theme="dark"
         />
 
         {!collapsed && (
-          <div style={{ position: 'absolute', bottom: 16, left: 0, right: 0, textAlign: 'center' }}>
-            <Tag style={{ fontSize: 10, background: 'rgba(255,255,255,0.06)', border: 'none', color: 'rgba(255,255,255,0.3)' }}>
+          <div style={{ position: 'absolute', bottom: 20, left: 0, right: 0, textAlign: 'center' }}>
+            <Tag style={{ fontSize: 10, borderRadius: 6, padding: '2px 8px', background: '#27272a', color: '#a1a1aa', border: '1px solid #3f3f46' }}>
               v1.0.0
             </Tag>
           </div>
         )}
       </Sider>
 
-      <Layout style={{ marginLeft: sidebarWidth, transition: 'margin-left 0.2s', minHeight: '100vh' }}>
+      <Layout style={{ marginLeft: sidebarWidth, transition: 'margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)', minHeight: '100vh', background: '#0a0a0b' }}>
         <Header
           style={{
-            background: '#fff',
             padding: '0 24px',
-            height: 56,
+            height: 64,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             position: 'sticky',
             top: 0,
             zIndex: 10,
-            borderBottom: '1px solid #e8e8e8',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+            background: '#141416',
+            borderBottom: '1px solid #27272a',
           }}
         >
-          <Space
-            style={{ cursor: 'pointer', color: '#888', fontSize: 16, padding: 4 }}
+          <Button
+            type="text"
+            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
-          >
-            {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-          </Space>
+            style={{ fontSize: 16, width: 40, height: 40, borderRadius: 8, color: '#d4d4d8' }}
+          />
 
           <Dropdown menu={userMenu} placement="bottomRight">
-            <Space style={{ cursor: 'pointer', padding: '2px 8px', borderRadius: 6, border: '1px solid #eee' }}>
-              <Avatar size={26} icon={<UserOutlined />} style={{ background: '#4361ee' }} />
-              <span style={{ color: '#555', fontSize: 13, fontWeight: 500 }}>
+            <Space
+              style={{ cursor: 'pointer', padding: '6px 12px', borderRadius: 10, transition: 'all 0.2s ease', background: '#1c1c1f' }}
+            >
+              <Avatar size={28} icon={<UserOutlined />} style={{ background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)' }} />
+              <span style={{ fontSize: 13, fontWeight: 500, color: '#fafafa' }}>
                 {session.user?.name || session.user?.email?.split('@')[0] || 'Admin'}
               </span>
             </Space>
@@ -204,21 +201,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         </Header>
 
         <Content
-          style={{
-            padding: 24,
-            background: '#f5f5f5',
-            minHeight: 'calc(100vh - 56px)',
-          }}
+          style={{ padding: 24, minHeight: 'calc(100vh - 64px)' }}
         >
-          <div
-            style={{
-              background: '#fff',
-              borderRadius: 6,
-              padding: 24,
-              minHeight: 400,
-              border: '1px solid #e8e8e8',
-            }}
-          >
+          <div style={{ borderRadius: 16, minHeight: 400 }}>
             {children}
           </div>
         </Content>

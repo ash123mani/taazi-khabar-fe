@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Typography, Spin, Button, Space } from 'antd'
+import { Typography, Spin, Button, Space, Card, Row, Col, Statistic, Tag, Progress } from 'antd'
+import { HistoryOutlined, TrophyOutlined, ClockCircleOutlined, StarOutlined, FireOutlined, ArrowLeftOutlined } from '@ant-design/icons'
 import Link from 'next/link'
-import { HistoryOutlined } from '@ant-design/icons'
 import { api } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
 import type { Quiz } from '@/lib/types'
@@ -29,47 +29,92 @@ export default function HistoryPage() {
       .finally(() => setLoading(false))
   }, [token])
 
+  const avgScore = quizzes.length > 0
+    ? Math.round(quizzes.reduce((sum, q) => sum + (q.score || 0), 0) / quizzes.length)
+    : 0
+
+  const getScoreColor = (score: number) => {
+    if (score >= 70) return '#10b981'
+    if (score >= 50) return '#f59e0b'
+    return '#ef4444'
+  }
+
   return (
     <div>
-      <Title level={3} style={{ margin: 0, letterSpacing: '-0.5px' }}>
-        Quiz History
-      </Title>
-      <Text style={{ display: 'block', marginBottom: 24, color: '#9e9e9e', fontSize: 14 }}>
-        Review your past quiz attempts and performance
-      </Text>
+      {/* Header */}
+      <Card style={{ marginBottom: 28, borderRadius: 16, background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: '24px 28px' } }}>
+        <Row justify="space-between" align="middle">
+          <Col>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
+              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <HistoryOutlined style={{ fontSize: 20, color: '#fff' }} />
+              </div>
+              <Title level={3} style={{ margin: 0, letterSpacing: '-0.5px', fontWeight: 700, color: '#fafafa' }}>
+                Quiz History
+              </Title>
+            </div>
+            <Text style={{ color: '#a1a1aa', fontSize: 14, display: 'block', marginTop: 4, marginLeft: 52 }}>
+              Review your past quiz attempts and performance
+            </Text>
+          </Col>
+          {quizzes.length > 0 && (
+            <Col>
+              <Space size={20}>
+                <Statistic
+                  title={<Text style={{ color: '#a1a1aa', fontSize: 12 }}>Total Quizzes</Text>}
+                  value={quizzes.length}
+                  prefix={<TrophyOutlined style={{ color: '#f59e0b' }} />}
+                  valueStyle={{ fontWeight: 700, color: '#fafafa' }}
+                />
+                <Statistic
+                  title={<Text style={{ color: '#a1a1aa', fontSize: 12 }}>Avg Score</Text>}
+                  value={avgScore}
+                  suffix="%"
+                  prefix={<StarOutlined style={{ color: '#6366f1' }} />}
+                  valueStyle={{ fontWeight: 700, color: getScoreColor(avgScore) }}
+                />
+              </Space>
+            </Col>
+          )}
+        </Row>
+      </Card>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: 80 }}>
+        <Card style={{ borderRadius: 16, textAlign: 'center', padding: '80px 24px', background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: '80px 24px' } }}>
           <Spin size="large" />
-        </div>
+        </Card>
       ) : !token ? (
-        <div style={{ padding: 80, textAlign: 'center' }}>
-          <HistoryOutlined style={{ fontSize: 40, color: '#d0d0d0', display: 'block', marginBottom: 16 }} />
-          <Text style={{ display: 'block', marginBottom: 16, fontSize: 15, color: '#9e9e9e' }}>
-            Please login to view your quiz history
-          </Text>
+        <Card style={{ borderRadius: 16, textAlign: 'center', padding: '80px 24px', background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: '80px 24px' } }}>
+          <div style={{ width: 72, height: 72, borderRadius: 20, background: '#1c1c1f', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+            <HistoryOutlined style={{ fontSize: 32, color: '#71717a' }} />
+          </div>
+          <Title level={4} style={{ margin: 0, marginBottom: 8, color: '#d4d4d8' }}>Please login to view your quiz history</Title>
+          <Text style={{ color: '#a1a1aa', fontSize: 14, display: 'block', marginBottom: 24 }}>Track your progress and improve your scores</Text>
           <Link href="/login">
-            <Button type="primary" style={{ fontWeight: 600 }}>Login</Button>
+            <Button type="primary" size="large" icon={<ClockCircleOutlined />} style={{ fontWeight: 600, borderRadius: 10, background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', border: 'none', height: 44, padding: '0 28px' }}>
+              Login
+            </Button>
           </Link>
-        </div>
+        </Card>
       ) : error ? (
-        <div style={{ padding: '10px 14px', border: '1px solid #c62828', borderRadius: 6, background: '#ffebee', color: '#c62828', fontSize: 14 }}>
-          {error}
-        </div>
+        <Card style={{ borderRadius: 12, background: '#1c1c1f', border: '1px solid #ef4444' }} styles={{ body: { padding: '16px 20px' } }}>
+          <Text style={{ color: '#fca5a5' }}>{error}</Text>
+        </Card>
       ) : quizzes.length === 0 ? (
-        <div style={{ padding: 80, textAlign: 'center' }}>
-          <HistoryOutlined style={{ fontSize: 40, color: '#d0d0d0', display: 'block', marginBottom: 16 }} />
-          <Text style={{ display: 'block', marginBottom: 16, fontSize: 15, color: '#9e9e9e' }}>
-            No quizzes attempted yet
-          </Text>
+        <Card style={{ borderRadius: 16, textAlign: 'center', padding: '80px 24px', background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: '80px 24px' } }}>
+          <div style={{ width: 72, height: 72, borderRadius: 20, background: '#1c1c1f', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+            <TrophyOutlined style={{ fontSize: 32, color: '#71717a' }} />
+          </div>
+          <Title level={4} style={{ margin: 0, marginBottom: 8, color: '#d4d4d8' }}>No quizzes attempted yet</Title>
+          <Text style={{ color: '#a1a1aa', fontSize: 14, display: 'block', marginBottom: 24 }}>Start your first quiz to track your progress</Text>
           <Link href="/quiz">
-            <Button type="primary" style={{ fontWeight: 600 }}>
+            <Button type="primary" size="large" icon={<FireOutlined />} style={{ fontWeight: 600, borderRadius: 10, background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', border: 'none', height: 44, padding: '0 28px' }}>
               Take your first quiz
             </Button>
           </Link>
-        </div>
+        </Card>
       ) : (
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {quizzes.map((quiz) => (
             <HistoryCard key={quiz.id} quiz={quiz} />
           ))}

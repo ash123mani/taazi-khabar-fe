@@ -19,8 +19,9 @@ export default function SyllabusTag({ tag }: { tag: string | null }) {
   if (!tag) return null
   const subject = tag.split(' > ')[0]
   const label = SUBJECT_LABELS[subject] || subject
+
   return (
-    <Tag style={{ fontWeight: 600, fontSize: 11, letterSpacing: '0.3px' }}>
+    <Tag style={{ fontSize: 11, borderRadius: 4, margin: 0, background: '#27272a', color: '#d4d4d8', border: '1px solid #3f3f46' }}>
       {label}
     </Tag>
   )

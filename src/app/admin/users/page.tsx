@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { Typography, Table, Tag, Button, Spin, Input, Popconfirm, Switch, Space, message } from 'antd'
-import { UserOutlined, EditOutlined } from '@ant-design/icons'
+import { Typography, Table, Tag, Button, Spin, Input, Popconfirm, Switch, Space, message, Card, Row, Col, Statistic } from 'antd'
+import { UserOutlined, UsergroupAddOutlined, SafetyOutlined } from '@ant-design/icons'
 import { api } from '@/lib/api'
 
 const { Title, Text } = Typography
@@ -27,7 +27,7 @@ export default function AdminUsersPage() {
     try {
       const params: Record<string, string> = {}
       if (search) params['search'] = search
-      
+
       const data = await api.adminGetUsers(params)
       setUsers(data.users || [])
       setTotal(data.total || 0)
@@ -53,88 +53,121 @@ export default function AdminUsersPage() {
     }
   }
 
+  const adminCount = users.filter(u => u.is_admin).length
+  const userCount = users.filter(u => !u.is_admin).length
+
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-        <Title level={4} style={{ margin: 0, letterSpacing: '-0.5px' }}>User Management</Title>
-        <Space style={{ display: 'flex', gap: 8 }}>
-          <Input.Search
-            placeholder="Search users..."
-            value={search}
-            onChange={(e) => handleSearch(e.target.value)}
-            allowClear
-            size="middle"
-            style={{ width: 220 }}
-          />
-          <Button
-            icon={<UserOutlined />}
-            onClick={() => {
-              // Could add create user functionality here if needed
-            }}
-            size="small"
-            disabled
-          >
-            Add User (via auth)
-          </Button>
-        </Space>
-      </div>
-      <Text type="secondary" style={{ display: 'block', marginBottom: 24 }}>
-        Manage user roles and permissions
-      </Text>
+      {/* Header Card */}
+      <Card style={{ marginBottom: 24, borderRadius: 16, background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: '24px 28px' } }}>
+        <Row justify="space-between" align="middle">
+          <Col>
+            <Title level={3} style={{ margin: 0, letterSpacing: '-0.5px', fontWeight: 700, color: '#fafafa' }}>
+              User Management
+            </Title>
+            <Text style={{ color: '#a1a1aa', fontSize: 14, display: 'block', marginTop: 4 }}>
+              Manage user roles and permissions
+            </Text>
+          </Col>
+          <Col>
+            <Space size={24}>
+              <Statistic
+                title={<Text style={{ color: '#a1a1aa', fontSize: 12 }}>Total Users</Text>}
+                value={total}
+                prefix={<UsergroupAddOutlined style={{ color: '#6366f1' }} />}
+                valueStyle={{ fontWeight: 700, color: '#fafafa' }}
+              />
+              <Statistic
+                title={<Text style={{ color: '#a1a1aa', fontSize: 12 }}>Admins</Text>}
+                value={adminCount}
+                prefix={<SafetyOutlined style={{ color: '#f59e0b' }} />}
+                valueStyle={{ fontWeight: 700, color: '#fafafa' }}
+              />
+            </Space>
+          </Col>
+        </Row>
+      </Card>
 
-      {error && <div style={{ padding: '8px 12px', border: '1px solid #c62828', borderRadius: 4, background: '#ffebee', color: '#c62828', marginBottom: 16 }}>{error}</div>}
+      {/* Search */}
+      <Card style={{ marginBottom: 16, borderRadius: 12, background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: '16px 20px' } }}>
+        <Row gutter={12} align="middle">
+          <Col flex="auto">
+            <Input.Search
+              placeholder="Search users..."
+              value={search}
+              onChange={(e) => handleSearch(e.target.value)}
+              allowClear
+              size="middle"
+              style={{ width: 280 }}
+            />
+          </Col>
+          <Col>
+            <Button icon={<UserOutlined />} disabled size="middle">
+              Add User (via auth)
+            </Button>
+          </Col>
+        </Row>
+      </Card>
 
-      <Table
-        dataSource={users}
-        columns={[
-          {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
-            width: 140,
-            render: (text: string | null) => text || <span style={{ opacity: 0.5, fontStyle: 'italic' }}>No name</span>,
-          },
-          {
-            title: 'Email',
-            dataIndex: 'email',
-            key: 'email',
-            width: 200,
-          },
-          {
-            title: 'Role',
-            dataIndex: 'is_admin',
-            key: 'is_admin',
-            width: 100,
-            render: (isAdmin: boolean, record: UserData) => (
-              <Space>
-                <Tag color={isAdmin ? 'purple' : 'default'}>{isAdmin ? 'Admin' : 'User'}</Tag>
-                <Switch
-                  checked={isAdmin}
-                  onChange={(checked) => handleToggleRole(record.id, checked)}
-                  disabled={false}
-                  size="small"
-                />
-              </Space>
-            ),
-          },
-          {
-            title: 'Created',
-            dataIndex: 'created_at',
-            key: 'created_at',
-            width: 140,
-            render: (d: string) => (
-              <span style={{ fontSize: 12 }}>
-                {new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-              </span>
-            ),
-          },
-        ]}
-        rowKey="id"
-        loading={loading}
-        pagination={{ pageSize: 20, showSizeChanger: false }}
-        locale={{ emptyText: 'No users found' }}
-        size="small"
-      />
+      {error && (
+        <Card style={{ marginBottom: 16, borderRadius: 12, background: '#1c1c1f', border: '1px solid #ef4444' }} styles={{ body: { padding: '12px 16px' } }}>
+          <Text style={{ color: '#fca5a5' }}>{error}</Text>
+        </Card>
+      )}
+
+      <Card style={{ borderRadius: 12, background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: 0 } }}>
+        <Table
+          dataSource={users}
+          columns={[
+            {
+              title: 'Name',
+              dataIndex: 'name',
+              key: 'name',
+              width: 160,
+              render: (text: string | null) => text ? <Text style={{ color: '#fafafa' }}>{text}</Text> : <Text style={{ color: '#71717a', fontStyle: 'italic' }}>No name</Text>,
+            },
+            {
+              title: 'Email',
+              dataIndex: 'email',
+              key: 'email',
+              width: 220,
+              render: (text: string) => <Text style={{ color: '#d4d4d8' }}>{text}</Text>,
+            },
+            {
+              title: 'Role',
+              dataIndex: 'is_admin',
+              key: 'is_admin',
+              width: 140,
+              render: (isAdmin: boolean, record: UserData) => (
+                <Space>
+                  <Tag color={isAdmin ? 'purple' : 'default'}>{isAdmin ? 'Admin' : 'User'}</Tag>
+                  <Switch
+                    checked={isAdmin}
+                    onChange={(checked) => handleToggleRole(record.id, checked)}
+                    size="small"
+                  />
+                </Space>
+              ),
+            },
+            {
+              title: 'Created',
+              dataIndex: 'created_at',
+              key: 'created_at',
+              width: 150,
+              render: (d: string) => (
+                <span style={{ fontSize: 12, color: '#a1a1aa' }}>
+                  {new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </span>
+              ),
+            },
+          ]}
+          rowKey="id"
+          loading={loading}
+          pagination={{ pageSize: 20, showSizeChanger: false }}
+          locale={{ emptyText: 'No users found' }}
+          size="middle"
+        />
+      </Card>
     </div>
   )
 }

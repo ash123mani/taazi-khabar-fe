@@ -24,14 +24,13 @@ export default function QuizQuestion({
 }: QuizQuestionProps) {
   return (
     <Card
-      className="article-card fade-in"
+      style={{ borderRadius: 12, marginBottom: 14 }}
       styles={{ body: { padding: 20 } }}
-      style={{ marginBottom: 14 }}
     >
-      <Text style={{ fontSize: 11, display: 'block', marginBottom: 8, color: '#bbb', fontWeight: 600, letterSpacing: '0.5px', textTransform: 'uppercase' }}>
+      <Text style={{ fontSize: 11, display: 'block', marginBottom: 8, color: '#64748b', fontWeight: 600, letterSpacing: '0.5px', textTransform: 'uppercase' }}>
         Question {index + 1}
       </Text>
-      <Text strong style={{ display: 'block', marginBottom: 18, fontSize: 15, lineHeight: 1.5, color: '#1a1a1a' }}>
+      <Text strong style={{ display: 'block', marginBottom: 18, fontSize: 15, lineHeight: 1.5, color: '#0f172a' }}>
         {question.question_text}
       </Text>
 
@@ -54,7 +53,7 @@ export default function QuizQuestion({
                 cursor: showResults ? 'default' : 'pointer',
                 transition: 'all 0.15s ease',
                 background: isCorrectAnswer ? '#f1f8e9' : isWrongAnswer ? '#ffebee' : isSelected ? '#f5f5f5' : '#ffffff',
-                borderColor: isCorrectAnswer ? '#a5d6a7' : isWrongAnswer ? '#ef9a9a' : isSelected ? '#bdbdbd' : '#e8e8e8',
+                borderColor: isCorrectAnswer ? '#a5d6a7' : isWrongAnswer ? '#ef9a9a' : isSelected ? '#bdbdbd' : '#e2e8f0',
               }}
               onClick={() => !showResults && onSelect(key)}
             >
@@ -72,12 +71,12 @@ export default function QuizQuestion({
                   flexShrink: 0,
                   background: isCorrectAnswer ? '#c8e6c9' : isWrongAnswer ? '#ffcdd2' : isSelected ? '#e0e0e0' : '#f5f5f5',
                   borderColor: isCorrectAnswer ? '#66bb6a' : isWrongAnswer ? '#ef5350' : isSelected ? '#9e9e9e' : '#e0e0e0',
-                  color: isCorrectAnswer ? '#1b5e20' : isWrongAnswer ? '#b71c1c' : isSelected ? '#424242' : '#757575',
+                  color: isCorrectAnswer ? '#1b5e20' : isWrongAnswer ? '#b71c1c' : isSelected ? '#424242' : '#64748b',
                 }}
               >
                 {OPTION_LABELS[i]}
               </div>
-              <span style={{ fontSize: 14, flex: 1, color: '#1a1a1a', lineHeight: 1.4 }}>{value}</span>
+              <span style={{ fontSize: 14, flex: 1, color: '#0f172a', lineHeight: 1.4 }}>{value}</span>
               {isCorrectAnswer && <span style={{ fontWeight: 700, fontSize: 14, color: '#2e7d32' }}>✓</span>}
               {isWrongAnswer && <span style={{ fontWeight: 700, fontSize: 14, color: '#c62828' }}>✗</span>}
             </div>
@@ -97,11 +96,11 @@ export default function QuizQuestion({
             borderColor: selected === question.correct_answer ? '#a5d6a7' : '#ffe082',
           }}
         >
-          <Text strong style={{ display: 'block', marginBottom: 4, color: '#1a1a1a', fontSize: 13 }}>
+          <Text strong style={{ display: 'block', marginBottom: 4, color: '#0f172a', fontSize: 13 }}>
             {selected === question.correct_answer ? '✅ Correct' : '❌ Incorrect'}
           </Text>
           {question.explanation && (
-            <Text style={{ color: '#616161' }}>{question.explanation}</Text>
+            <Text style={{ color: '#64748b' }}>{question.explanation}</Text>
           )}
         </div>
       )}

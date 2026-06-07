@@ -4,10 +4,10 @@ import ReactMarkdown from 'react-markdown'
 
 interface Section {
   key: string
-  label: string
-  icon: React.ReactNode
+  label?: string
+  icon?: React.ReactNode
   content: string
-  color: string
+  color?: string
 }
 
 const SECTION_ALIASES: [string[], string][] = [
@@ -19,11 +19,11 @@ const SECTION_ALIASES: [string[], string][] = [
 ]
 
 const SECTION_DISPLAY: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
-  summary: { label: 'Summary', icon: <BulbOutlined />, color: '#1a73e8' },
-  pointers: { label: 'Key Facts', icon: <BranchesOutlined />, color: '#188038' },
-  law: { label: 'Law/Rule', icon: <ExperimentOutlined />, color: '#e37400' },
-  syllabus: { label: 'Syllabus', icon: <BookOutlined />, color: '#7b1fa2' },
-  terms: { label: 'Key Terms', icon: <TagsOutlined />, color: '#c5221f' },
+  summary: { label: 'Summary', icon: <BulbOutlined />, color: '#818cf8' },
+  pointers: { label: 'Key Facts', icon: <BranchesOutlined />, color: '#10b981' },
+  law: { label: 'Law/Rule', icon: <ExperimentOutlined />, color: '#f59e0b' },
+  syllabus: { label: 'Syllabus', icon: <BookOutlined />, color: '#a855f7' },
+  terms: { label: 'Key Terms', icon: <TagsOutlined />, color: '#ef4444' },
 }
 
 
@@ -111,22 +111,31 @@ function InlineMarkdown({ text }: { text: string }) {
     <span>
       {parts.map((part, i) => {
         if (part.startsWith('**') && part.endsWith('**')) {
-          return <strong key={i} style={{ fontWeight: 600, color: '#1a1a1a' }}>{part.slice(2, -2)}</strong>
+          return <strong key={i} style={{ fontWeight: 800, color: '#fafafa' }}>{part.slice(2, -2)}</strong>
         }
         const hasColon = part.includes(':')
-        return <span key={i} style={{ fontWeight: hasColon ? 500 : 400 }}>{part}</span>
+        return <span key={i} style={{ fontWeight: hasColon ? 700 : 600, color: '#d4d4d8' }}>{part}</span>
       })}
     </span>
   )
 }
 
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/^#+\s*/, '')
+    .replace(/\*+/g, '')
+    .replace(/<[^>]+>/g, '')
+    .trim()
+}
+
 const LIST_ITEM_STYLE: React.CSSProperties = {
   marginBottom: 8,
-  padding: '5px 12px 5px 14px',
-  borderLeft: '3px solid #e0e0e0',
-  lineHeight: 1.6,
-  fontSize: 13,
-  borderRadius: '0 4px 4px 0',
+  padding: '6px 14px 6px 16px',
+  borderLeft: '4px solid #6366f1',
+  lineHeight: 1.7,
+  fontSize: 14,
+  borderRadius: '0 6px 6px 0',
+  background: '#1c1c1f',
 }
 
 
@@ -170,7 +179,7 @@ function renderNestedBullets(lines: string[], defaultExpanded?: string) {
     const items = groups.map((g) => ({
       key: g.main.slice(0, 30),
       label: (
-        <span style={{ fontSize: 13, fontWeight: 600, color: '#1a1a1a' }}>
+        <span style={{ fontSize: 14, fontWeight: 700, color: '#fafafa' }}>
           <InlineMarkdown text={g.main} />
         </span>
       ),
@@ -178,12 +187,13 @@ function renderNestedBullets(lines: string[], defaultExpanded?: string) {
         <ul style={{ padding: 0, margin: 0, listStyle: 'none' }}>
           {g.subs.map((sub, j) => (
             <li key={j} style={{
-              marginBottom: 4,
-              padding: '3px 8px 3px 10px',
-              borderLeft: '2px solid #e8e8e8',
-              lineHeight: 1.5,
-              fontSize: 12,
-              color: '#555',
+              marginBottom: 6,
+              padding: '4px 10px 4px 12px',
+              borderLeft: '4px solid #6366f1',
+              lineHeight: 1.6,
+              fontSize: 13,
+              color: '#d4d4d8',
+              background: '#141416',
             }}>
               <InlineMarkdown text={sub} />
             </li>
@@ -212,23 +222,24 @@ function renderSingleBullet(lines: string[], indent: number): React.ReactNode {
   const mainText = lines[0]
   const subItems = lines.slice(1)
 
-  return (
+    return (
     <li key={mainText.slice(0, 20)} style={{
       ...LIST_ITEM_STYLE,
-      background: '#f8f8f8',
-      marginBottom: 8,
+      background: '#1c1c1f',
+      marginBottom: 10,
     }}>
       <InlineMarkdown text={mainText} />
       {subItems.length > 0 && (
-        <ul style={{ padding: '4px 0 0 12px', margin: 0, listStyle: 'none' }}>
+        <ul style={{ padding: '6px 0 0 14px', margin: 0, listStyle: 'none' }}>
           {subItems.map((sub, j) => (
             <li key={j} style={{
-              marginBottom: 4,
-              padding: '3px 6px 3px 8px',
-              borderLeft: '2px solid #e8e8e8',
-              lineHeight: 1.5,
-              fontSize: 12,
-              color: '#555',
+              marginBottom: 8,
+              padding: '5px 12px 5px 14px',
+              borderLeft: '4px solid #6366f1',
+              lineHeight: 1.7,
+              fontSize: 14,
+              color: '#d4d4d8',
+              background: '#141416',
             }}>
               <InlineMarkdown text={sub} />
             </li>
@@ -248,7 +259,7 @@ function renderBoldLines(lines: string[]) {
         return (
           <li key={i} style={{
             ...LIST_ITEM_STYLE,
-            background: i % 2 === 0 ? '#f8f8f8' : 'transparent',
+            background: i % 2 === 0 ? '#1c1c1f' : '#141416',
           }}>
             <InlineMarkdown text={text} />
           </li>
@@ -275,44 +286,47 @@ function renderMarkdown(text: string, defaultExpanded?: string) {
     <ReactMarkdown
       components={{
         h2: ({ children }) => {
-          const txt = String(children).replace(/<[^>]+>/g, '')
+          const txt = stripMarkdown(String(children))
           const hasBold = /\*\*/.test(String(children))
           if (txt.length > 60) {
-            return <p style={{ margin: '4px 0', lineHeight: 1.6, fontSize: 13, color: '#424242', fontWeight: hasBold ? 500 : 400 }}>{children}</p>
+            return <p style={{ margin: '4px 0', lineHeight: 1.6, fontSize: 13, color: '#a1a1aa', fontWeight: hasBold ? 500 : 400 }}>{txt}</p>
           }
-          return <p style={{ margin: '4px 0', lineHeight: 1.6, fontSize: 13, color: '#333', fontWeight: txt.includes(':') ? 600 : 500 }}>{children}</p>
+          return <p style={{ margin: '4px 0', lineHeight: 1.6, fontSize: 13, color: '#d4d4d8', fontWeight: txt.includes(':') ? 600 : 500 }}>{txt}</p>
         },
         h3: ({ children }) => {
-          const txt = String(children).replace(/<[^>]+>/g, '').trim().toLowerCase()
+          const txt = stripMarkdown(String(children)).toLowerCase()
           const isSectionHeader = Object.values(SECTION_DISPLAY).some((d) => d.label.toLowerCase() === txt) ||
             ['what & why', 'key data & facts', 'people & institutions', 'why this matters', 'upsc syllabus connect',
               'gk summary', 'gk pointers', 'law/rule change', 'syllabus tag', 'key terms'].some((k) => txt.startsWith(k))
           if (isSectionHeader) return null
-          return <p style={{ margin: '6px 0 2px', fontWeight: 600, fontSize: 13, color: '#333' }}>{children}</p>
+          return <p style={{ margin: '6px 0 2px', fontWeight: 600, fontSize: 13, color: '#d4d4d8' }}>{stripMarkdown(String(children))}</p>
         },
-        strong: ({ children }) => <strong style={{ fontWeight: 600, color: '#1a1a1a' }}>{children}</strong>,
+        strong: ({ children }) => <strong style={{ fontWeight: 600, color: '#fafafa' }}>{children}</strong>,
         ul: ({ children }) => <ul style={{ paddingLeft: 16, margin: '4px 0', listStyle: 'none' }}>{children}</ul>,
         li: ({ children }) => (
           <li style={{
             ...LIST_ITEM_STYLE,
-            background: '#fafafa',
+            background: '#1c1c1f',
           }}>
             {children}
           </li>
         ),
         p: ({ children }) => {
-          const txt = String(children).replace(/<[^>]+>/g, '').trim()
+          const txt = stripMarkdown(String(children))
           if (!txt) return null
-          return <p style={{ margin: '4px 0', lineHeight: 1.6, fontSize: 13, color: '#424242' }}>{children}</p>
+          return <p style={{ margin: '4px 0', lineHeight: 1.6, fontSize: 13, color: '#a1a1aa' }}>{txt}</p>
         },
-        h4: ({ children }) => <h4 style={{ fontSize: 12, fontWeight: 600, margin: '6px 0 2px', color: '#555' }}>{children}</h4>,
+        h4: ({ children }) => {
+          const txt = stripMarkdown(String(children))
+          return <p style={{ fontSize: 12, fontWeight: 600, margin: '6px 0 2px', color: '#a1a1aa' }}>{txt}</p>
+        },
         table: ({ children }) => (
-          <div style={{ overflowX: 'auto', margin: '6px 0', border: '1px solid #e8e8e8', borderRadius: 4 }}>
+          <div style={{ overflowX: 'auto', margin: '6px 0', border: '1px solid #27272a', borderRadius: 4 }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>{children}</table>
           </div>
         ),
-        th: ({ children }) => <th style={{ background: '#fafafa', padding: '4px 8px', borderBottom: '2px solid #e8e8e8', fontWeight: 600, textAlign: 'left', fontSize: 12 }}>{children}</th>,
-        td: ({ children }) => <td style={{ padding: '4px 8px', borderBottom: '1px solid #f0f0f0', fontSize: 12 }}>{children}</td>,
+        th: ({ children }) => <th style={{ background: '#1c1c1f', padding: '4px 8px', borderBottom: '2px solid #27272a', fontWeight: 600, textAlign: 'left', fontSize: 12, color: '#fafafa' }}>{children}</th>,
+        td: ({ children }) => <td style={{ padding: '4px 8px', borderBottom: '1px solid #27272a', fontSize: 12, color: '#d4d4d8' }}>{children}</td>,
       }}
     >
       {text}
@@ -327,7 +341,7 @@ function renderContent(text: string, sectionKey: string, defaultExpanded?: strin
     return (
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
         {terms.map((t) => (
-          <Tag key={t} style={{ fontSize: 11, borderRadius: 4, margin: 0 }}>{t}</Tag>
+          <Tag key={t} style={{ fontSize: 11, borderRadius: 4, margin: 0, background: '#27272a', color: '#a1a1aa', border: '1px solid #3f3f46' }}>{t}</Tag>
         ))}
       </div>
     )
@@ -354,7 +368,7 @@ export default function FormattedSummary({ summary, compact, defaultExpanded }: 
         </span>
       ),
       children: (
-        <div style={{ fontSize: 13, lineHeight: 1.6, color: '#424242', paddingTop: 2 }}>
+        <div style={{ fontSize: 13, lineHeight: 1.6, color: '#a1a1aa', paddingTop: 2 }}>
           {renderContent(s.content, s.key)}
         </div>
       ),
@@ -363,7 +377,7 @@ export default function FormattedSummary({ summary, compact, defaultExpanded }: 
 
   return (
     <div>
-      <div style={{ fontSize: 13, lineHeight: 1.6, color: '#424242' }}>
+      <div style={{ fontSize: 13, lineHeight: 1.6, color: '#d4d4d8' }}>
         {renderContent(firstSection.content, firstSection.key, defaultExpanded)}
       </div>
       {!compact && collapseItems.length > 0 && (

@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Typography, Button, Spin, DatePicker, Tag, Card, Empty } from 'antd'
-import { CalendarOutlined, ThunderboltOutlined, DeleteOutlined, CheckCircleFilled } from '@ant-design/icons'
+import { Typography, Button, Spin, DatePicker, Tag, Card, Empty, Row, Col, Statistic, Divider, Tooltip, Progress } from 'antd'
+import { CalendarOutlined, ThunderboltOutlined, DeleteOutlined, CheckCircleFilled, FireOutlined, TrophyOutlined, ClockCircleOutlined, BookOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import { api } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
@@ -53,7 +53,7 @@ export default function QuizContent() {
     setDragOver(false)
     const id = e.dataTransfer.getData('text/plain')
     if (id && !selected.has(id)) {
-      setSelected(new Set([...selected, id]))
+      setSelected(new Set([...Array.from(selected), id]))
     }
   }
 
@@ -89,168 +89,200 @@ export default function QuizContent() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>
-        <div>
-          <Title level={3} style={{ marginBottom: 4, letterSpacing: '-0.5px' }}>Generate Quiz</Title>
-          <Text type="secondary">
-            Drag articles to the right panel to select them for quiz generation
-          </Text>
-        </div>
-        <DatePicker
-          value={dayjs(date)}
-          onChange={(d) => { if (d) { setDate(d.format('YYYY-MM-DD')); setSelected(new Set()) } }}
-          allowClear={false}
-          suffixIcon={<CalendarOutlined />}
-          style={{ width: 160 }}
-        />
-      </div>
+      {/* Header */}
+      <Card style={{ marginBottom: 28, borderRadius: 16, background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: '24px 28px' } }}>
+        <Row justify="space-between" align="middle">
+          <Col>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
+              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ThunderboltOutlined style={{ fontSize: 20, color: '#fff' }} />
+              </div>
+              <Title level={3} style={{ margin: 0, letterSpacing: '-0.5px', fontWeight: 700, color: '#fafafa' }}>
+                Generate Quiz
+              </Title>
+            </div>
+            <Text style={{ color: '#a1a1aa', fontSize: 14, display: 'block', marginTop: 4, marginLeft: 52 }}>
+              Drag articles to the right panel to select them for quiz generation
+            </Text>
+          </Col>
+          <Col>
+            <DatePicker
+              value={dayjs(date)}
+              onChange={(d) => { if (d) { setDate(d.format('YYYY-MM-DD')); setSelected(new Set()) } }}
+              allowClear={false}
+              suffixIcon={<CalendarOutlined />}
+              style={{ width: 160 }}
+              size="large"
+            />
+          </Col>
+        </Row>
+      </Card>
 
       {error && (
-        <div style={{ padding: '10px 14px', border: '1px solid #c62828', borderRadius: 4, background: '#ffebee', color: '#c62828', marginBottom: 16, fontSize: 14, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span>{error}</span>
-          {error.includes('login') && (
-            <Button type="primary" size="small" onClick={handleLoginRedirect} style={{ fontWeight: 600 }}>
-              Login
-            </Button>
-          )}
-        </div>
+        <Card style={{ marginBottom: 20, borderRadius: 12, background: '#1c1c1f', border: '1px solid #ef4444' }} styles={{ body: { padding: '14px 20px' } }}>
+          <Row justify="space-between" align="middle">
+            <Col>
+              <Text style={{ color: '#fca5a5' }}>{error}</Text>
+            </Col>
+            {error.includes('login') && (
+              <Col>
+                <Button type="primary" size="small" onClick={handleLoginRedirect}>Login</Button>
+              </Col>
+            )}
+          </Row>
+        </Card>
       )}
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: 60 }}>
+        <Card style={{ borderRadius: 16, textAlign: 'center', padding: '80px 24px', background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: '80px 24px' } }}>
           <Spin size="large" />
-        </div>
+        </Card>
       ) : (
-        <div style={{ display: 'flex', gap: 16, minHeight: 400 }}>
+        <Row gutter={20} style={{ minHeight: 500 }}>
           {/* Available Articles */}
-          <div style={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: 4, background: '#fafafa', padding: 12 }}>
-            <Text strong style={{ fontSize: 13, display: 'block', marginBottom: 12, color: '#555' }}>
-              Available Articles ({availableArticles.length})
-            </Text>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {availableArticles.map((article) => (
-                <div
-                  key={article.id}
-                  draggable
-                  onDragStart={(e) => handleDragStart(e, article.id)}
-                  onClick={() => setSelected(new Set([...selected, article.id]))}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <Card
-                    size="small"
-                    hoverable
-                    style={{ borderRadius: 4, background: '#fff', border: '1px solid #e0e0e0' }}
-                    styles={{ body: { padding: '10px 12px' } }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
-                      <Text style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.4, flex: 1, color: '#1a1a1a' }}>
-                        {article.headline}
-                      </Text>
-                      {article.has_quiz && (
-                        <Tag icon={<CheckCircleFilled />} color="green" style={{ fontSize: 10, margin: 0, whiteSpace: 'nowrap' }}>
-                          Quizzed
-                        </Tag>
-                      )}
-                    </div>
-                    <div style={{ display: 'flex', gap: 4, marginTop: 6, flexWrap: 'wrap' }}>
-                      {article.syllabus_tag && (
-                        <Tag style={{ fontSize: 9, borderRadius: 2, margin: 0, background: '#f5f5f5', color: '#555', borderColor: '#e0e0e0', padding: '0 4px', lineHeight: '18px' }}>
-                          {article.syllabus_tag}
-                        </Tag>
-                      )}
-                      <Text style={{ color: '#bbb', fontSize: 9 }}>
-                        {article.source === 'thehindu' ? 'The Hindu' : 'Indian Express'}
-                      </Text>
-                    </div>
-                  </Card>
-                </div>
-              ))}
-              {availableArticles.length === 0 && (
-                <Empty description="No articles available" image={Empty.PRESENTED_IMAGE_SIMPLE} />
-              )}
-            </div>
-          </div>
-
-          {/* Drop Zone */}
-          <div
-            onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
-            onDragLeave={() => setDragOver(false)}
-            onDrop={handleDrop}
-            style={{
-              flex: 1,
-              border: `2px dashed ${dragOver ? '#1a73e8' : selectedArticles.length > 0 ? '#2e7d32' : '#d0d0d0'}`,
-              borderRadius: 4,
-              background: dragOver ? '#e8f0fe' : selectedArticles.length > 0 ? '#f1f8e9' : '#fafafa',
-              padding: 12,
-              transition: 'all 0.2s',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            <Text strong style={{ fontSize: 13, display: 'block', marginBottom: 12, color: '#555' }}>
-              Selected for Quiz ({selectedArticles.length})
-            </Text>
-
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {selectedArticles.length === 0 ? (
-                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Text style={{ color: '#bbb', fontSize: 13 }}>
-                    Drag articles here
-                  </Text>
-                </div>
-              ) : (
-                selectedArticles.map((article) => (
-                  <div key={article.id}>
+          <Col xs={24} lg={12}>
+            <Card
+              style={{ borderRadius: 16, height: '100%', background: '#141416', border: '1px solid #27272a' }}
+              styles={{ body: { padding: '20px' } }}
+              title={
+                <Row justify="space-between" align="middle">
+                  <Col>
+                    <Text strong style={{ fontSize: 14, color: '#fafafa' }}>
+                      Available Articles
+                    </Text>
+                    <Tag style={{ marginLeft: 8, borderRadius: 6, background: '#27272a', color: '#a1a1aa', border: 'none' }}>{availableArticles.length}</Tag>
+                  </Col>
+                </Row>
+              }
+            >
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 500, overflowY: 'auto' }}>
+                {availableArticles.map((article) => (
+                  <Tooltip title="Click or drag to select" key={article.id}>
                     <Card
                       size="small"
-                      style={{ borderRadius: 4, background: '#fff', border: '1px solid #c8e6c9' }}
-                      styles={{ body: { padding: '10px 12px' } }}
+                      hoverable
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, article.id)}
+                      onClick={() => setSelected(new Set([...Array.from(selected), article.id]))}
+                      style={{ borderRadius: 12, cursor: 'grab', border: '1px solid #27272a', background: '#1c1c1f', transition: 'all 0.2s' }}
+                      styles={{ body: { padding: '12px 14px' } }}
                     >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
-                        <Text style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.4, flex: 1, color: '#1a1a1a' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10 }}>
+                        <Text style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.5, flex: 1, color: '#fafafa' }}>
                           {article.headline}
                         </Text>
-                        <Button
-                          type="text"
-                          size="small"
-                          icon={<DeleteOutlined style={{ color: '#999', fontSize: 12 }} />}
-                          onClick={() => removeSelected(article.id)}
-                          style={{ padding: 0, height: 'auto', marginTop: -2 }}
-                        />
+                        {article.has_quiz && (
+                          <Tag icon={<CheckCircleFilled />} color="success" style={{ fontSize: 10, margin: 0, whiteSpace: 'nowrap', borderRadius: 4, flexShrink: 0 }}>
+                            Quizzed
+                          </Tag>
+                        )}
                       </div>
-                      <div style={{ display: 'flex', gap: 4, marginTop: 6, flexWrap: 'wrap' }}>
-                        <Text style={{ color: '#999', fontSize: 9 }}>
+                      <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                        {article.syllabus_tag && (
+                          <Tag style={{ fontSize: 10, borderRadius: 4, margin: 0, background: '#27272a', color: '#a1a1aa', border: '1px solid #3f3f46', padding: '0 6px', lineHeight: 18 }}>
+                            {article.syllabus_tag}
+                          </Tag>
+                        )}
+                        <Text style={{ color: '#a1a1aa', fontSize: 10 }}>
                           {article.source === 'thehindu' ? 'The Hindu' : 'Indian Express'}
                         </Text>
                       </div>
                     </Card>
-                  </div>
-                ))
-              )}
-            </div>
+                  </Tooltip>
+                ))}
+                {availableArticles.length === 0 && (
+                  <Empty description="No articles available" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                )}
+              </div>
+            </Card>
+          </Col>
 
-            {selectedArticles.length > 0 && (
-              <div style={{ marginTop: 16, textAlign: 'center' }}>
+          {/* Drop Zone */}
+          <Col xs={24} lg={12}>
+            <Card
+              style={{
+                borderRadius: 16,
+                height: '100%',
+                border: dragOver ? '2px dashed #6366f1' : selectedArticles.length > 0 ? '2px dashed #10b981' : '2px dashed #3f3f46',
+                background: dragOver ? '#1c1c1f' : selectedArticles.length > 0 ? '#1c1c1f' : '#141416',
+                transition: 'all 0.3s',
+              }}
+              styles={{ body: { padding: '20px' } }}
+              title={
+                <Row justify="space-between" align="middle">
+                  <Col>
+                    <Text strong style={{ fontSize: 14, color: '#fafafa' }}>
+                      Selected for Quiz
+                    </Text>
+                    <Tag color={selectedArticles.length > 0 ? 'success' : 'default'} style={{ marginLeft: 8, borderRadius: 6, background: selectedArticles.length > 0 ? '#10b981' : '#27272a', color: selectedArticles.length > 0 ? '#fff' : '#a1a1aa', border: 'none' }}>
+                      {selectedArticles.length}
+                    </Tag>
+                  </Col>
+                </Row>
+              }
+              onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={handleDrop}
+            >
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 380, overflowY: 'auto', marginBottom: 16 }}>
+                {selectedArticles.length === 0 ? (
+                  <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 0' }}>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ width: 64, height: 64, borderRadius: 16, background: '#1c1c1f', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+                        <ThunderboltOutlined style={{ fontSize: 28, color: '#71717a' }} />
+                      </div>
+                      <Text style={{ color: '#a1a1aa', fontSize: 14, display: 'block', marginBottom: 4 }}>Drag articles here</Text>
+                      <Text style={{ color: '#71717a', fontSize: 12 }}>or click on articles to select</Text>
+                    </div>
+                  </div>
+                ) : (
+                  selectedArticles.map((article) => (
+                    <Card
+                      key={article.id}
+                      size="small"
+                      style={{ borderRadius: 10, background: '#1c1c1f', border: '1px solid #10b981' }}
+                      styles={{ body: { padding: '10px 12px' } }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                        <Text style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.4, flex: 1, color: '#fafafa' }}>
+                          {article.headline}
+                        </Text>
+                        <Tooltip title="Remove">
+                          <Button
+                            type="text"
+                            size="small"
+                            icon={<DeleteOutlined style={{ color: '#a1a1aa', fontSize: 12 }} />}
+                            onClick={() => removeSelected(article.id)}
+                            style={{ padding: 0, height: 'auto', marginTop: -2, color: '#a1a1aa' }}
+                          />
+                        </Tooltip>
+                      </div>
+                      <div style={{ display: 'flex', gap: 6, marginTop: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                        <Text style={{ color: '#a1a1aa', fontSize: 10 }}>
+                          {article.source === 'thehindu' ? 'The Hindu' : 'Indian Express'}
+                        </Text>
+                      </div>
+                    </Card>
+                  ))
+                )}
+              </div>
+
+              {selectedArticles.length > 0 && (
                 <Button
                   type="primary"
                   size="large"
                   icon={<ThunderboltOutlined />}
                   loading={generating}
                   onClick={handleGenerate}
-                  style={{
-                    height: 48,
-                    padding: '0 36px',
-                    fontWeight: 700,
-                    fontSize: 15,
-                    width: '100%',
-                  }}
+                  block
+                  style={{ height: 48, fontWeight: 700, fontSize: 15, borderRadius: 12, background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', border: 'none', boxShadow: '0 10px 25px -5px rgba(99,102,241,0.4)' }}
                 >
                   Generate Quiz ({selectedArticles.length} article{selectedArticles.length !== 1 ? 's' : ''})
                 </Button>
-              </div>
-            )}
-          </div>
-        </div>
+              )}
+            </Card>
+          </Col>
+        </Row>
       )}
     </div>
   )

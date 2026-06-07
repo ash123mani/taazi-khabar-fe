@@ -99,16 +99,16 @@ export default function ScrapePage() {
     return (
       <div style={{ padding: '4px 0' }}>
         {catEntries.length > 0 && (
-          <div style={{ padding: '4px 12px 8px', borderBottom: catEntries.length > 0 && (!articles || articles.length === 0) ? 'none' : '1px solid #f0f0f0' }}>
-            <Text type="secondary" style={{ fontSize: 12, marginRight: 8 }}>Categories:</Text>
+          <div style={{ padding: '4px 12px 8px', borderBottom: catEntries.length > 0 && (!articles || articles.length === 0) ? 'none' : '1px solid #27272a' }}>
+            <Text style={{ fontSize: 12, marginRight: 8, color: '#a1a1aa' }}>Categories:</Text>
             {catEntries.map(([cat, count]) => (
-              <Tag key={cat} style={{ fontSize: 11, marginBottom: 2 }}>{cat}: {count}</Tag>
+              <Tag key={cat} style={{ fontSize: 11, marginBottom: 2, background: '#27272a', color: '#a1a1aa', border: '1px solid #3f3f46' }}>{cat}: {count}</Tag>
             ))}
             {record.scrape_times.length > 0 && (
               <div style={{ marginTop: 4 }}>
-                <Text type="secondary" style={{ fontSize: 12, marginRight: 8 }}>Scraped at:</Text>
+                <Text style={{ fontSize: 12, marginRight: 8, color: '#a1a1aa' }}>Scraped at:</Text>
                 {record.scrape_times.map((t) => (
-                  <Text key={t} type="secondary" style={{ fontSize: 12, marginRight: 12 }}>
+                  <Text key={t} style={{ fontSize: 12, marginRight: 12, color: '#a1a1aa' }}>
                     {new Date(t).toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' })}
                   </Text>
                 ))}
@@ -120,7 +120,7 @@ export default function ScrapePage() {
         {loading && <Spin style={{ display: 'block', padding: 16 }} />}
 
         {!loading && (!articles || articles.length === 0) && (
-          <Text type="secondary" style={{ padding: 12, display: 'block' }}>No articles found.</Text>
+          <Text style={{ padding: 12, display: 'block', color: '#71717a' }}>No articles found.</Text>
         )}
 
         {!loading && articles && articles.map((a) => (
@@ -128,7 +128,7 @@ export default function ScrapePage() {
             key={a.id}
             style={{
               padding: '8px 12px',
-              borderBottom: '1px solid #f0f0f0',
+              borderBottom: '1px solid #27272a',
               display: 'flex',
               alignItems: 'flex-start',
               gap: 8,
@@ -146,12 +146,12 @@ export default function ScrapePage() {
                 href={a.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ fontWeight: 500, fontSize: 13, lineHeight: 1.4 }}
+                style={{ fontWeight: 500, fontSize: 13, lineHeight: 1.4, color: '#fafafa' }}
               >
                 {a.headline}
               </a>
               {a.syllabus_tag && (
-                <Tag style={{ fontSize: 10, marginLeft: 4 }}>{a.syllabus_tag}</Tag>
+                <Tag style={{ fontSize: 10, marginLeft: 4, background: '#27272a', color: '#a1a1aa', border: '1px solid #3f3f46' }}>{a.syllabus_tag}</Tag>
               )}
               {a.gk_summary && (
                 <div style={{ marginTop: 4 }}>
@@ -161,13 +161,13 @@ export default function ScrapePage() {
               {a.key_terms && a.key_terms.length > 0 && (
                 <div style={{ marginTop: 2 }}>
                   {a.key_terms.map((t: string) => (
-                    <Tag key={t} style={{ fontSize: 10, marginRight: 2 }}>{t}</Tag>
+                    <Tag key={t} style={{ fontSize: 10, marginRight: 2, background: '#27272a', color: '#a1a1aa', border: '1px solid #3f3f46' }}>{t}</Tag>
                   ))}
                 </div>
               )}
             </div>
             <a href={a.url} target="_blank" rel="noopener noreferrer" style={{ flexShrink: 0, marginTop: 4 }}>
-              <LinkOutlined style={{ color: '#999' }} />
+              <LinkOutlined style={{ color: '#a1a1aa' }} />
             </a>
           </div>
         ))}
@@ -186,7 +186,7 @@ export default function ScrapePage() {
         const today = new Date()
         const isToday = dt.toDateString() === today.toDateString()
         return (
-          <Text strong style={isToday ? { color: '#1a1a1a' } : undefined}>
+          <Text strong style={isToday ? { color: '#fafafa' } : { color: '#d4d4d8' }}>
             {d}{isToday ? ' (Today)' : ''}
           </Text>
         )
@@ -199,7 +199,7 @@ export default function ScrapePage() {
       key: 'total_articles',
       width: 90,
       render: (n: number) => (
-        <Tag color={n > 0 ? 'green' : 'default'}>{n}</Tag>
+        <Tag color={n > 0 ? 'success' : 'default'}>{n}</Tag>
       ),
     },
     {
@@ -258,15 +258,15 @@ export default function ScrapePage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-        <Title level={4} style={{ margin: 0, letterSpacing: '-0.5px', color: '#1a1a1a' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4, flexWrap: 'wrap', gap: 12 }}>
+        <Title level={4} style={{ margin: 0, letterSpacing: '-0.5px', color: '#fafafa' }}>
           Scrape by Date
         </Title>
         <Button icon={<ReloadOutlined />} onClick={fetchSummary} loading={loading} size="small">
           Refresh
         </Button>
       </div>
-      <Text style={{ display: 'block', marginBottom: 20, color: '#9e9e9e' }}>
+      <Text style={{ display: 'block', marginBottom: 20, color: '#a1a1aa' }}>
         Click a date row to expand and view articles. Unscraped dates show a Scrape button.
       </Text>
 

@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Typography, Table, Tag, Button, Modal, Form, Input, Select } from 'antd'
-import { PlusOutlined, DownloadOutlined } from '@ant-design/icons'
+import { Typography, Table, Tag, Button, Modal, Form, Input, Select, Card, Row, Col, Statistic, Space } from 'antd'
+import { PlusOutlined, DownloadOutlined, DatabaseOutlined } from '@ant-design/icons'
 import { api } from '@/lib/api'
 import type { TrainingDataset } from '@/lib/types'
 
@@ -61,27 +61,28 @@ export default function DatasetsPage() {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      render: (n: string) => <Text strong>{n}</Text>,
+      render: (n: string) => <Text strong style={{ color: '#fafafa' }}>{n}</Text>,
     },
     {
       title: 'Persona',
       dataIndex: 'persona',
       key: 'persona',
       render: (p: string) => (
-        <Tag style={{ fontWeight: 600 }}>{p.replace(/_/g, ' ')}</Tag>
+        <Tag style={{ background: '#27272a', color: '#a1a1aa', border: '1px solid #3f3f46' }}>{p.replace(/_/g, ' ')}</Tag>
       ),
     },
     {
       title: 'Examples',
       dataIndex: 'num_examples',
       key: 'num_examples',
+      render: (n: number) => <Text style={{ color: '#a1a1aa' }}>{n}</Text>,
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
       render: (s: string) => (
-        <Tag style={{ fontWeight: 600 }}>
+        <Tag color={s === 'ready' ? 'success' : s === 'building' ? 'processing' : 'default'} style={{ background: s === 'ready' ? '#10b981' : s === 'building' ? '#6366f1' : '#27272a', color: '#fff', border: 'none' }}>
           {s}
         </Tag>
       ),
@@ -91,15 +92,15 @@ export default function DatasetsPage() {
       dataIndex: 'lora_adapter_path',
       key: 'lora_adapter_path',
       render: (p: string | null) => p
-        ? <Tag style={{ fontWeight: 600 }}>{p}</Tag>
-        : '-',
+        ? <Tag style={{ background: '#27272a', color: '#a1a1aa', border: '1px solid #3f3f46' }}>{p}</Tag>
+        : <Text style={{ color: '#71717a' }}>-</Text>,
     },
     {
       title: 'Created',
       dataIndex: 'created_at',
       key: 'created_at',
       render: (d: string) => (
-        <span style={{ fontSize: 13 }}>
+        <span style={{ fontSize: 12, color: '#a1a1aa' }}>
           {new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
         </span>
       ),
@@ -111,7 +112,7 @@ export default function DatasetsPage() {
       render: (_: any, record: TrainingDataset) => (
         <Button
           type="text"
-          icon={<DownloadOutlined />}
+          icon={<DownloadOutlined style={{ color: '#a1a1aa' }} />}
           loading={downloading === record.id}
           onClick={() => handleDownload(record.id)}
         />
@@ -121,62 +122,62 @@ export default function DatasetsPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <div>
-          <Title level={4} style={{
-            margin: 0,
-            letterSpacing: '-0.5px',
-            color: '#1a1a1a',
-          }}>
-            Datasets
-          </Title>
-          <Text style={{ color: '#9e9e9e' }}>Manage training datasets for fine-tuning</Text>
-        </div>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => setShowForm(true)}
-          style={{ fontWeight: 600 }}
-        >
-          Build Dataset
-        </Button>
-      </div>
+      {/* Header */}
+      <Card style={{ marginBottom: 24, borderRadius: 16, background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: '24px 28px' } }}>
+        <Row justify="space-between" align="middle">
+          <Col>
+            <Title level={3} style={{ margin: 0, letterSpacing: '-0.5px', fontWeight: 700, color: '#fafafa' }}>
+              Datasets
+            </Title>
+            <Text style={{ color: '#a1a1aa', fontSize: 14, display: 'block', marginTop: 4 }}>
+              Manage training datasets for fine-tuning
+            </Text>
+          </Col>
+          <Col>
+            <Button type="primary" icon={<PlusOutlined />} onClick={() => setShowForm(true)} size="middle">
+              Build Dataset
+            </Button>
+          </Col>
+        </Row>
+      </Card>
 
-      {error && <div style={{ padding: '8px 12px', border: '1px solid #c62828', borderRadius: 4, background: '#ffebee', color: '#c62828', marginBottom: 16 }}>{error}</div>}
+      {error && (
+        <Card style={{ marginBottom: 16, borderRadius: 12, background: '#1c1c1f', border: '1px solid #ef4444' }} styles={{ body: { padding: '12px 16px' } }}>
+          <Text style={{ color: '#fca5a5' }}>{error}</Text>
+        </Card>
+      )}
 
-      <Table
-        dataSource={datasets}
-        columns={columns}
-        rowKey="id"
-        loading={loading}
-        pagination={false}
-        locale={{ emptyText: 'No datasets created yet.' }}
-        size="small"
-      />
+      <Card style={{ borderRadius: 12, background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: 0 } }}>
+        <Table
+          dataSource={datasets}
+          columns={columns}
+          rowKey="id"
+          loading={loading}
+          pagination={false}
+          locale={{ emptyText: 'No datasets created yet.' }}
+          size="middle"
+        />
+      </Card>
 
       <Modal
         title="Build Dataset"
         open={showForm}
         onCancel={() => { setShowForm(false); form.resetFields() }}
         footer={null}
+        styles={{ body: { background: '#141416' }, header: { background: '#141416', borderBottom: '1px solid #27272a' } }}
       >
         <Form form={form} layout="vertical" onFinish={handleBuild}>
-          <Form.Item name="name" label="Dataset Name" rules={[{ required: true, message: 'Required' }]}>
+          <Form.Item name="name" label={<Text style={{ color: '#a1a1aa' }}>Dataset Name</Text>} rules={[{ required: true, message: 'Required' }]}>
             <Input placeholder="e.g., polity-articles-v1" />
           </Form.Item>
-          <Form.Item name="persona" label="Persona" initialValue={PERSONAS[0]}>
+          <Form.Item name="persona" label={<Text style={{ color: '#a1a1aa' }}>Persona</Text>} initialValue={PERSONAS[0]}>
             <Select>
               {PERSONAS.map((p) => (
                 <Select.Option key={p} value={p}>{p.replace(/_/g, ' ')}</Select.Option>
               ))}
             </Select>
           </Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={building}
-            style={{ fontWeight: 600 }}
-          >
+          <Button type="primary" htmlType="submit" loading={building} block style={{ borderRadius: 8, background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', border: 'none' }}>
             {building ? 'Building...' : 'Build Dataset'}
           </Button>
         </Form>

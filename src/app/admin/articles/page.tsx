@@ -69,10 +69,10 @@ export default function AdminArticlesPage() {
           href={record.url}
           target="_blank"
           rel="noopener noreferrer"
-          style={{ fontSize: 15, fontWeight: 600, color: '#1a1a1a' }}
+          style={{ fontSize: 15, fontWeight: 600, color: '#fafafa' }}
         >
           {record.headline}
-          <LinkOutlined style={{ marginLeft: 6, color: '#999', fontSize: 13 }} />
+          <LinkOutlined style={{ marginLeft: 6, fontSize: 13, color: '#a1a1aa' }} />
         </a>
       </div>
       {record.gk_summary ? (
@@ -83,7 +83,7 @@ export default function AdminArticlesPage() {
       {record.key_terms && record.key_terms.length > 0 && (
         <div style={{ marginTop: 8 }}>
           {record.key_terms.map((t: string) => (
-            <Tag key={t} style={{ fontSize: 11, marginBottom: 2 }}>{t}</Tag>
+            <Tag key={t} style={{ fontSize: 11, marginBottom: 2, background: '#27272a', color: '#a1a1aa', border: '1px solid #3f3f46' }}>{t}</Tag>
           ))}
         </div>
       )}
@@ -97,7 +97,7 @@ export default function AdminArticlesPage() {
       key: 'headline',
       ellipsis: true,
       render: (text: string, record: ArticleData) => (
-        <a href={record.url} target="_blank" rel="noopener noreferrer" style={{ fontWeight: 500, fontSize: 13 }}>
+        <a href={record.url} target="_blank" rel="noopener noreferrer" style={{ fontWeight: 500, fontSize: 13, color: '#fafafa' }}>
           {text}
         </a>
       ),
@@ -115,7 +115,7 @@ export default function AdminArticlesPage() {
       key: 'published_at',
       width: 110,
       render: (d: string) => (
-        <span style={{ fontSize: 12 }}>
+        <span style={{ fontSize: 12, color: '#a1a1aa' }}>
           {new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
         </span>
       ),
@@ -139,9 +139,9 @@ export default function AdminArticlesPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4, flexWrap: 'wrap', gap: 12 }}>
         <Space size={16}>
-          <Title level={4} style={{ margin: 0, letterSpacing: '-0.5px' }}>Articles</Title>
+          <Title level={4} style={{ margin: 0, letterSpacing: '-0.5px', color: '#fafafa' }}>Articles</Title>
           <DatePicker
             value={dayjs(date)}
             onChange={(d) => { if (d) setDate(d.format('YYYY-MM-DD')) }}
@@ -154,7 +154,7 @@ export default function AdminArticlesPage() {
           Refresh
         </Button>
       </div>
-      <Text type="secondary" style={{ display: 'block', marginBottom: 20 }}>
+      <Text type="secondary" style={{ display: 'block', marginBottom: 20, color: '#a1a1aa' }}>
         Articles for {date} · {articles.length} total
       </Text>
 

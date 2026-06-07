@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Typography, Spin, Card, Progress, Row, Col, Statistic, Space, Button } from 'antd'
-import { TrophyOutlined, CheckCircleOutlined, QuestionCircleOutlined, BookOutlined } from '@ant-design/icons'
+import { Typography, Spin, Card, Progress, Row, Col, Statistic, Space, Button, Table, Tag } from 'antd'
+import { TrophyOutlined, CheckCircleOutlined, QuestionCircleOutlined, BookOutlined, FireOutlined, AimOutlined, ArrowLeftOutlined } from '@ant-design/icons'
 import Link from 'next/link'
 import { api } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
@@ -60,133 +60,211 @@ export default function AnalyticsPage() {
   }, [token])
 
   const getColor = (acc: number) => {
-    if (acc >= 70) return '#2e7d32'
-    if (acc >= 50) return '#e65100'
-    return '#c62828'
+    if (acc >= 70) return '#10b981'
+    if (acc >= 50) return '#f59e0b'
+    return '#ef4444'
   }
+
+  const getScoreLabel = (acc: number) => {
+    if (acc >= 70) return 'Excellent'
+    if (acc >= 50) return 'Good'
+    return 'Needs Practice'
+  }
+
+  const columns = [
+    {
+      title: 'Topic',
+      dataIndex: 'topic',
+      key: 'topic',
+      render: (text: string) => {
+        const { short, full } = shortenTag(text)
+        return <Text strong style={{ color: '#fafafa' }} title={full}>{short}</Text>
+      },
+    },
+    {
+      title: 'Questions',
+      dataIndex: 'total',
+      key: 'total',
+      align: 'center' as const,
+      render: (val: number) => <Text style={{ color: '#a1a1aa' }}>{val}</Text>,
+    },
+    {
+      title: 'Correct',
+      dataIndex: 'correct',
+      key: 'correct',
+      align: 'center' as const,
+      render: (val: number) => <Text style={{ color: '#10b981', fontWeight: 600 }}>{val}</Text>,
+    },
+    {
+      title: 'Accuracy',
+      dataIndex: 'accuracy',
+      key: 'accuracy',
+      align: 'center' as const,
+      render: (val: number) => (
+        <Space>
+          <Progress
+            type="circle"
+            size={48}
+            percent={val}
+            strokeColor={getColor(val)}
+            trailColor="#27272a"
+            format={() => `${val}%`}
+          />
+        </Space>
+      ),
+    },
+    {
+      title: 'Status',
+      key: 'status',
+      align: 'center' as const,
+        render: (_: any, record: TopicData) => (
+        <Tag color={record.accuracy >= 70 ? 'success' : record.accuracy >= 50 ? 'warning' : 'error'} style={{ borderRadius: 6, fontWeight: 500 }}>
+          {getScoreLabel(record.accuracy)}
+        </Tag>
+      ),
+    },
+  ]
 
   if (!token) {
     return (
-      <div style={{ textAlign: 'center', padding: 80 }}>
-        <TrophyOutlined style={{ fontSize: 40, color: '#d0d0d0', display: 'block', marginBottom: 16 }} />
-        <Text style={{ display: 'block', fontSize: 15, color: '#9e9e9e' }}>
-          Please login to view your performance
-        </Text>
-        <Link href="/login" style={{ display: 'inline-block', marginTop: 12 }}>
-          <Button type="primary" style={{ fontWeight: 600 }}>Login</Button>
+      <Card style={{ borderRadius: 16, textAlign: 'center', padding: '80px 24px', background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: '80px 24px' } }}>
+        <div style={{ width: 72, height: 72, borderRadius: 20, background: '#1c1c1f', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+          <TrophyOutlined style={{ fontSize: 32, color: '#71717a' }} />
+        </div>
+        <Title level={4} style={{ margin: 0, marginBottom: 8, color: '#d4d4d8' }}>Please login to view your performance</Title>
+        <Text style={{ color: '#a1a1aa', fontSize: 14, display: 'block', marginBottom: 24 }}>Track your progress and improve your scores</Text>
+        <Link href="/login">
+          <Button type="primary" size="large" icon={<BookOutlined />} style={{ fontWeight: 600, borderRadius: 10, background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', border: 'none', height: 44, padding: '0 28px' }}>
+            Login
+          </Button>
         </Link>
-      </div>
+      </Card>
     )
   }
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: 80 }}>
+      <Card style={{ borderRadius: 16, textAlign: 'center', padding: '80px 24px', background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: '80px 24px' } }}>
         <Spin size="large" />
-      </div>
+      </Card>
     )
   }
 
   if (error) {
     return (
-      <div style={{ padding: '10px 14px', border: '1px solid #c62828', borderRadius: 6, background: '#ffebee', color: '#c62828', fontSize: 14 }}>
-        {error}
-      </div>
+      <Card style={{ borderRadius: 12, background: '#1c1c1f', border: '1px solid #ef4444' }} styles={{ body: { padding: '16px 20px' } }}>
+        <Text style={{ color: '#fca5a5' }}>{error}</Text>
+      </Card>
     )
   }
 
   if (!data || data.total_questions === 0) {
     return (
-      <div style={{ padding: 80, textAlign: 'center' }}>
-        <TrophyOutlined style={{ fontSize: 40, color: '#d0d0d0', display: 'block', marginBottom: 16 }} />
-        <Text style={{ display: 'block', fontSize: 15, color: '#9e9e9e' }}>
-          No quiz data yet. Take some quizzes to see your performance!
-        </Text>
-        <Link href="/quiz" style={{ display: 'inline-block', marginTop: 12 }}>
-          <Button type="primary" style={{ fontWeight: 600 }}>Take a Quiz</Button>
+      <Card style={{ borderRadius: 16, textAlign: 'center', padding: '80px 24px', background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: '80px 24px' } }}>
+        <div style={{ width: 72, height: 72, borderRadius: 20, background: '#1c1c1f', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+          <TrophyOutlined style={{ fontSize: 32, color: '#71717a' }} />
+        </div>
+        <Title level={4} style={{ margin: 0, marginBottom: 8, color: '#d4d4d8' }}>No quiz data yet</Title>
+        <Text style={{ color: '#a1a1aa', fontSize: 14, display: 'block', marginBottom: 24 }}>Take some quizzes to see your performance!</Text>
+        <Link href="/quiz">
+          <Button type="primary" size="large" icon={<QuestionCircleOutlined />} style={{ fontWeight: 600, borderRadius: 10, background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', border: 'none', height: 44, padding: '0 28px' }}>
+            Take a Quiz
+          </Button>
         </Link>
-      </div>
+      </Card>
     )
   }
 
   return (
     <div>
-      <Title level={3} style={{ margin: 0, letterSpacing: '-0.5px' }}>
-        Performance Analytics
-      </Title>
-      <Text style={{ display: 'block', marginBottom: 24, color: '#9e9e9e', fontSize: 14 }}>
-        Track your UPSC topic-wise progress
-      </Text>
+      {/* Header */}
+      <Card style={{ marginBottom: 28, borderRadius: 16, background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: '24px 28px' } }}>
+        <Row justify="space-between" align="middle">
+          <Col>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
+              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <AimOutlined style={{ fontSize: 20, color: '#fff' }} />
+              </div>
+              <Title level={3} style={{ margin: 0, letterSpacing: '-0.5px', fontWeight: 700, color: '#fafafa' }}>
+                Performance Analytics
+              </Title>
+            </div>
+            <Text style={{ color: '#a1a1aa', fontSize: 14, display: 'block', marginTop: 4, marginLeft: 52 }}>
+              Track your UPSC topic-wise progress
+            </Text>
+          </Col>
+          <Col>
+            <Space size={20}>
+              <Statistic
+                title={<Text style={{ color: '#a1a1aa', fontSize: 12 }}>Quizzes</Text>}
+                value={data.total_quizzes}
+                prefix={<FireOutlined style={{ color: '#f59e0b' }} />}
+                valueStyle={{ fontWeight: 700, color: '#fafafa' }}
+              />
+            </Space>
+          </Col>
+        </Row>
+      </Card>
 
+      {/* Stats Grid */}
       <Row gutter={16} style={{ marginBottom: 28 }}>
-        <Col xs={12} sm={6}>
-          <Card className="article-card" styles={{ body: { padding: 16, textAlign: 'center' } }}>
+        <Col xs={24} sm={12} md={6}>
+          <Card style={{ borderRadius: 14, textAlign: 'center', background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: '20px 24px' } }}>
             <Statistic
-              title="Overall Accuracy"
+              title={<Text style={{ color: '#a1a1aa', fontSize: 13 }}>Overall Accuracy</Text>}
               value={data.overall_accuracy}
               suffix="%"
-              valueStyle={{ color: getColor(data.overall_accuracy), fontWeight: 700 }}
-              prefix={<TrophyOutlined />}
+              valueStyle={{ color: getColor(data.overall_accuracy), fontWeight: 700, fontSize: 24 }}
+              prefix={<TrophyOutlined style={{ color: getColor(data.overall_accuracy) }} />}
             />
           </Card>
         </Col>
-        <Col xs={12} sm={6}>
-          <Card className="article-card" styles={{ body: { padding: 16, textAlign: 'center' } }}>
+        <Col xs={24} sm={12} md={6}>
+          <Card style={{ borderRadius: 14, textAlign: 'center', background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: '20px 24px' } }}>
             <Statistic
-              title="Quizzes Taken"
-              value={data.total_quizzes}
-              valueStyle={{ color: '#1a1a1a', fontWeight: 700 }}
-              prefix={<BookOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col xs={12} sm={6}>
-          <Card className="article-card" styles={{ body: { padding: 16, textAlign: 'center' } }}>
-            <Statistic
-              title="Questions"
+              title={<Text style={{ color: '#a1a1aa', fontSize: 13 }}>Questions</Text>}
               value={data.total_questions}
-              valueStyle={{ color: '#1a1a1a', fontWeight: 700 }}
-              prefix={<QuestionCircleOutlined />}
+              valueStyle={{ fontWeight: 700, color: '#fafafa', fontSize: 24 }}
+              prefix={<QuestionCircleOutlined style={{ color: '#6366f1' }} />}
             />
           </Card>
         </Col>
-        <Col xs={12} sm={6}>
-          <Card className="article-card" styles={{ body: { padding: 16, textAlign: 'center' } }}>
+        <Col xs={24} sm={12} md={6}>
+          <Card style={{ borderRadius: 14, textAlign: 'center', background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: '20px 24px' } }}>
             <Statistic
-              title="Correct"
+              title={<Text style={{ color: '#a1a1aa', fontSize: 13 }}>Correct</Text>}
               value={data.total_correct}
               suffix={`/ ${data.total_questions}`}
-              valueStyle={{ color: '#2e7d32', fontWeight: 700 }}
-              prefix={<CheckCircleOutlined />}
+              valueStyle={{ fontWeight: 700, color: '#10b981', fontSize: 24 }}
+              prefix={<CheckCircleOutlined style={{ color: '#10b981' }} />}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} md={6}>
+          <Card style={{ borderRadius: 14, textAlign: 'center', background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: '20px 24px' } }}>
+            <Statistic
+              title={<Text style={{ color: '#a1a1aa', fontSize: 13 }}>Topics</Text>}
+              value={data.topics.length}
+              prefix={<BookOutlined style={{ color: '#8b5cf6' }} />}
+              valueStyle={{ fontWeight: 700, color: '#fafafa', fontSize: 24 }}
             />
           </Card>
         </Col>
       </Row>
 
-      <Title level={5} style={{ marginBottom: 16 }}>Topic-wise Breakdown</Title>
-
-      <Space direction="vertical" size={12} style={{ width: '100%' }}>
-        {data.topics.map((topic) => {
-          const { short, full } = shortenTag(topic.topic)
-          return (
-            <Card key={topic.topic} className="article-card" styles={{ body: { padding: '14px 18px' } }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
-                <Text strong style={{ fontSize: 13, color: '#1a1a1a' }} title={full}>{short}</Text>
-                <Text style={{ fontSize: 12, color: '#888' }}>
-                  {topic.correct}/{topic.total} ({topic.accuracy}%)
-                </Text>
-              </div>
-              <Progress
-                percent={topic.accuracy}
-                showInfo={false}
-                strokeColor={getColor(topic.accuracy)}
-                trailColor="#e8e8e8"
-                size="small"
-              />
-            </Card>
-          )
-        })}
-      </Space>
+      {/* Topic Breakdown Table */}
+      <Card style={{ borderRadius: 14, background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: '24px' } }}>
+        <Title level={4} style={{ margin: 0, marginBottom: 20, color: '#fafafa', letterSpacing: '-0.5px' }}>
+          Topic-wise Breakdown
+        </Title>
+        <Table
+          dataSource={data.topics.map((topic, index) => ({ ...topic, key: index }))}
+          columns={columns}
+          pagination={false}
+          size="middle"
+          style={{ background: 'transparent' }}
+        />
+      </Card>
     </div>
   )
 }
