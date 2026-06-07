@@ -2,8 +2,9 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { Typography, DatePicker, Table, Tag, Button, Space, Popconfirm, message } from 'antd'
-import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons'
+import { DeleteOutlined, ReloadOutlined, LinkOutlined } from '@ant-design/icons'
 import { api } from '@/lib/api'
+import FormattedSummary from '@/components/FormattedSummary'
 import dayjs from 'dayjs'
 
 const { Title, Text } = Typography
@@ -61,6 +62,34 @@ export default function AdminArticlesPage() {
     }
   }
 
+  const expandedRowRender = (record: ArticleData) => (
+    <div style={{ padding: '8px 0' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 8 }}>
+        <a
+          href={record.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ fontSize: 15, fontWeight: 600, color: '#1a1a1a' }}
+        >
+          {record.headline}
+          <LinkOutlined style={{ marginLeft: 6, color: '#999', fontSize: 13 }} />
+        </a>
+      </div>
+      {record.gk_summary ? (
+        <FormattedSummary summary={record.gk_summary} />
+      ) : (
+        <Tag color="warning" style={{ fontSize: 11 }}>No summary</Tag>
+      )}
+      {record.key_terms && record.key_terms.length > 0 && (
+        <div style={{ marginTop: 8 }}>
+          {record.key_terms.map((t: string) => (
+            <Tag key={t} style={{ fontSize: 11, marginBottom: 2 }}>{t}</Tag>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+
   const columns = [
     {
       title: 'Headline',
@@ -79,16 +108,6 @@ export default function AdminArticlesPage() {
       key: 'source',
       width: 110,
       render: (s: string) => <Tag color={s === 'thehindu' ? 'blue' : 'orange'}>{SOURCE_LABELS[s] || s}</Tag>,
-    },
-    {
-      title: 'Summary',
-      dataIndex: 'gk_summary',
-      key: 'gk_summary',
-      width: 200,
-      ellipsis: true,
-      render: (s: string | null) => s
-        ? <Text style={{ fontSize: 12, color: '#666' }}>{s.slice(0, 100)}...</Text>
-        : <Tag color="warning" style={{ fontSize: 11 }}>No summary</Tag>,
     },
     {
       title: 'Date',
@@ -145,6 +164,7 @@ export default function AdminArticlesPage() {
           columns={columns}
           rowKey="id"
           loading={loading}
+          expandable={{ expandedRowRender, rowExpandable: () => true }}
           pagination={{ pageSize: 20, showSizeChanger: false }}
           locale={{ emptyText: 'No articles for this date' }}
           size="small"

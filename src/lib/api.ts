@@ -1,6 +1,7 @@
 import { useAuthStore } from '@/stores/authStore'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+const rawUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE = rawUrl.replace(/\/+$/, '').replace(/\/api$/, '') + '/api';
 
 async function fetchApi(path: string, options?: RequestInit) {
   const token = useAuthStore.getState().accessToken
@@ -145,4 +146,13 @@ export const api = {
       method: 'PUT',
       body: JSON.stringify(data),
     }),
+
+  getBookmarkedIds: () => fetchApi('/bookmarks'),
+
+  getBookmarkedArticles: () => fetchApi('/bookmarks/articles'),
+
+  toggleBookmark: (articleId: string) =>
+    fetchApi(`/bookmarks/${articleId}`, { method: 'POST' }),
+
+  getPerformance: () => fetchApi('/analytics/performance'),
 };

@@ -46,24 +46,16 @@ export default function AdminCategoriesPage() {
     setSearch(value)
   }
 
-  const handleCreate = async () => {
+  const handleFinish = async () => {
     try {
       const values = await form.validateFields()
-      await api.adminCreateCategory(values)
+      if (editingId) {
+        await api.adminUpdateCategory(editingId, values)
+        setEditingId(null)
+      } else {
+        await api.adminCreateCategory(values)
+      }
       setShowForm(false)
-      form.resetFields()
-      await fetchCategories()
-    } catch (err: any) {
-      // Error handled by form
-    }
-  }
-
-  const handleUpdate = async () => {
-    if (!editingId) return
-    try {
-      const values = await form.validateFields()
-      await api.adminUpdateCategory(editingId, values)
-      setEditingId(null)
       form.resetFields()
       await fetchCategories()
     } catch (err: any) {
@@ -125,7 +117,7 @@ export default function AdminCategoriesPage() {
           form={form}
           layout="vertical"
           name="category_form"
-          onFinish={editingId ? handleUpdate : handleCreate}
+          onFinish={handleFinish}
         >
           <Form.Item
             label="Name"

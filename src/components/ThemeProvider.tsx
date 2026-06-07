@@ -19,17 +19,18 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
           colorBorder: '#e0e0e0',
           colorTextBase: '#1a1a1a',
           colorTextSecondary: '#757575',
-          borderRadius: 4,
+          borderRadius: 6,
           fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
           fontSize: 14,
           controlHeight: 38,
           wireframe: true,
+          boxShadow: '0 1px 3px 0 rgba(0,0,0,0.06)',
+          boxShadowSecondary: '0 4px 12px 0 rgba(0,0,0,0.08)',
         },
         components: {
           Card: {
             paddingLG: 20,
-            borderRadiusLG: 4,
-            boxShadowTertiary: '0 1px 3px 0 rgba(0,0,0,0.08)',
+            borderRadiusLG: 6,
           },
           Table: {
             headerBg: '#f5f5f5',
@@ -39,20 +40,22 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
           },
           Menu: {
             itemBg: 'transparent',
-            itemBorderRadius: 4,
+            itemBorderRadius: 6,
             horizontalItemSelectedColor: '#1a1a1a',
-            itemColor: '#1a1a1a',
+            itemColor: '#555',
             itemHoverBg: '#f0f0f0',
+            itemHoverColor: '#1a1a1a',
           },
           Tag: {
             defaultBg: '#f5f5f5',
-            defaultColor: '#1a1a1a',
+            defaultColor: '#555',
           },
           Button: {
             fontWeight: 600,
             primaryShadow: 'none',
             controlHeight: 38,
             defaultBorderColor: '#d0d0d0',
+            primaryColor: '#fff',
           },
           Input: {
             controlHeight: 40,
@@ -79,6 +82,18 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
           },
           Switch: {
             trackMinWidth: 40,
+          },
+          Collapse: {
+            headerBg: '#fff',
+            contentBg: '#fff',
+            headerPadding: '8px 0',
+            contentPadding: '0 0 4px 0',
+            borderRadiusLG: 6,
+          },
+          DatePicker: {
+            activeBorderColor: '#1a1a1a',
+            hoverBorderColor: '#1a1a1a',
+            activeShadow: '0 0 0 2px rgba(26,26,26,0.08)',
           },
         },
       }}

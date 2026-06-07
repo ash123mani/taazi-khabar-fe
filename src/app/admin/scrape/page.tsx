@@ -154,8 +154,8 @@ export default function ScrapePage() {
                 <Tag style={{ fontSize: 10, marginLeft: 4 }}>{a.syllabus_tag}</Tag>
               )}
               {a.gk_summary && (
-                <div style={{ fontSize: 12, color: '#666', marginTop: 2, lineHeight: 1.4 }}>
-                  <FormattedSummary summary={a.gk_summary.slice(0, 300)} />
+                <div style={{ marginTop: 4 }}>
+                  <FormattedSummary summary={a.gk_summary} />
                 </div>
               )}
               {a.key_terms && a.key_terms.length > 0 && (

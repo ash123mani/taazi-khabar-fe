@@ -9,9 +9,10 @@ interface ArticleSelectorProps {
   articles: Article[]
   selected: Set<string>
   onToggle: (id: string) => void
+  defaultExpanded?: string
 }
 
-export default function ArticleSelector({ articles, selected, onToggle }: ArticleSelectorProps) {
+export default function ArticleSelector({ articles, selected, onToggle, defaultExpanded }: ArticleSelectorProps) {
   const [search, setSearch] = useState('')
 
   const filtered = articles.filter(
@@ -39,7 +40,7 @@ export default function ArticleSelector({ articles, selected, onToggle }: Articl
               Select
             </Checkbox>
           </div>
-          <ArticleCard article={article} />
+          <ArticleCard article={article} defaultExpanded={defaultExpanded} />
         </div>
       ))}
       {filtered.length === 0 && (

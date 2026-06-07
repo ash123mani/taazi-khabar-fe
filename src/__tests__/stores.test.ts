@@ -44,13 +44,12 @@ describe('authStore', () => {
 
 describe('uiStore', () => {
   beforeEach(() => {
-    useUIStore.setState({ sidebarCollapsed: false, theme: 'dark' });
+    useUIStore.setState({ sidebarCollapsed: false });
   });
 
   it('starts with defaults', () => {
     const s = useUIStore.getState();
     expect(s.sidebarCollapsed).toBe(false);
-    expect(s.theme).toBe('dark');
   });
 
   it('toggleSidebar flips boolean', () => {
@@ -58,19 +57,5 @@ describe('uiStore', () => {
     expect(useUIStore.getState().sidebarCollapsed).toBe(true);
     useUIStore.getState().toggleSidebar();
     expect(useUIStore.getState().sidebarCollapsed).toBe(false);
-  });
-
-  it('toggleTheme switches between dark and light', () => {
-    useUIStore.getState().toggleTheme();
-    expect(useUIStore.getState().theme).toBe('light');
-    useUIStore.getState().toggleTheme();
-    expect(useUIStore.getState().theme).toBe('dark');
-  });
-
-  it('setTheme sets specific theme', () => {
-    useUIStore.getState().setTheme('light');
-    expect(useUIStore.getState().theme).toBe('light');
-    useUIStore.getState().setTheme('dark');
-    expect(useUIStore.getState().theme).toBe('dark');
   });
 });

@@ -44,20 +44,18 @@ body {
 a {
   transition: color 0.15s ease;
 }
-a:hover {
-  color: #000;
-}
 
 .article-card {
   position: relative;
   overflow: hidden;
   background: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  transition: box-shadow 0.2s ease;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 .article-card:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
 }
 
 .article-card .card-bg {
@@ -79,14 +77,18 @@ a:hover {
 }
 
 .fade-in {
-  animation: fadeIn 0.3s ease;
+  animation: fadeIn 0.35s ease both;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 b, strong {
   font-weight: 600;
+}
+
+.quiz-drop-zone {
+  transition: all 0.2s ease;
 }

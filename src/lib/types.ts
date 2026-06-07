@@ -15,6 +15,8 @@ export interface Article {
   key_terms: string[] | null;
   syllabus_tag: string | null;
   image_url: string | null;
+  has_quiz?: boolean;
+  is_bookmarked?: boolean;
 }
 
 export interface Quiz {
@@ -35,6 +37,7 @@ export interface QuizQuestion {
   correct_answer?: string;
   explanation?: string;
   difficulty?: string;
+  selected_answer?: string | null;
 }
 
 export interface AIInteraction {

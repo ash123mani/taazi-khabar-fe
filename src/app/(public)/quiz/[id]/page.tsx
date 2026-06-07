@@ -1,14 +1,17 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { useParams } from 'next/navigation'
-import { Button, Typography, Spin, Card } from 'antd'
+import { Button, Typography, Spin, Card, Progress, Modal } from 'antd'
 import { api } from '@/lib/api'
 import type { Quiz } from '@/lib/types'
 import QuizQuestionComponent from '@/components/QuizQuestion'
 import QuizResult from '@/components/QuizResult'
+import { QuizSkeleton } from '@/components/Skeletons'
 
 const { Title, Text } = Typography
+
+const QUIZ_TIME_LIMIT_SEC = 600
 
 export default function TakeQuizPage() {
   const params = useParams()
@@ -20,6 +23,8 @@ export default function TakeQuizPage() {
   const [submitting, setSubmitting] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [timeLeft, setTimeLeft] = useState(QUIZ_TIME_LIMIT_SEC)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => {
     if (!id) return
@@ -35,17 +40,9 @@ export default function TakeQuizPage() {
       .finally(() => setLoading(false))
   }, [id])
 
-  const handleSelect = (questionId: string, optionKey: string) => {
+  const doSubmit = useCallback(async () => {
+    if (timerRef.current) clearInterval(timerRef.current)
     if (submitted) return
-    setAnswers((prev) => ({ ...prev, [questionId]: optionKey }))
-  }
-
-  const handleSubmit = async () => {
-    const unanswered = Object.entries(answers).filter(([, v]) => !v)
-    if (unanswered.length > 0) {
-      if (!confirm(`${unanswered.length} question(s) unanswered. Submit anyway?`)) return
-    }
-
     setSubmitting(true)
     try {
       const data = await api.submitQuiz(id, answers)
@@ -56,28 +53,61 @@ export default function TakeQuizPage() {
     } finally {
       setSubmitting(false)
     }
+  }, [id, answers, submitted])
+
+  useEffect(() => {
+    if (loading || submitted || error) return
+    timerRef.current = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          doSubmit()
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current)
+    }
+  }, [loading, submitted, error, doSubmit])
+
+  const handleSubmit = () => {
+    const unanswered = Object.entries(answers).filter(([, v]) => !v)
+    if (unanswered.length > 0) {
+      Modal.confirm({
+        title: 'Submit quiz?',
+        content: `${unanswered.length} question(s) unanswered. Submit anyway?`,
+        okText: 'Submit',
+        cancelText: 'Review',
+        onOk: doSubmit,
+      })
+    } else {
+      doSubmit()
+    }
   }
 
   const answered = Object.values(answers).filter(Boolean).length
   const total = quiz?.questions?.length || 0
 
-  if (loading) {
-    return (
-      <div style={{ maxWidth: 720, margin: '0 auto' }}>
-        <Spin size="large" style={{ display: 'block', margin: '100px auto' }} />
-      </div>
-    )
+  const formatTime = (sec: number) => {
+    const m = Math.floor(sec / 60)
+    const s = sec % 60
+    return `${m}:${String(s).padStart(2, '0')}`
   }
+
+  if (loading) return <QuizSkeleton />
 
   if (error) {
     return (
-      <div style={{ maxWidth: 720, margin: '0 auto', textAlign: 'center', padding: 48 }}>
-        <div style={{ padding: '8px 12px', border: '1px solid #c62828', borderRadius: 4, background: '#ffebee', color: '#c62828', marginBottom: 16, fontSize: 14 }}>
+      <div style={{ textAlign: 'center', padding: 48 }}>
+        <div style={{ padding: '10px 14px', border: '1px solid #c62828', borderRadius: 6, background: '#ffebee', color: '#c62828', marginBottom: 16, fontSize: 14, display: 'inline-block' }}>
           {error}
         </div>
-        <Button onClick={() => window.location.reload()} style={{ fontWeight: 600 }}>
-          Retry
-        </Button>
+        <div>
+          <Button onClick={() => window.location.reload()} style={{ fontWeight: 600 }}>
+            Retry
+          </Button>
+        </div>
       </div>
     )
   }
@@ -86,9 +116,12 @@ export default function TakeQuizPage() {
 
   if (submitted && quiz.score !== null) {
     return (
-      <div style={{ maxWidth: 720, margin: '0 auto' }}>
+      <div>
         <QuizResult quiz={quiz} />
-        <div style={{ marginTop: 32 }}>
+        <div style={{ marginTop: 28 }}>
+          <Text strong style={{ fontSize: 15, display: 'block', marginBottom: 16 }}>
+            Questions &amp; Answers
+          </Text>
           {quiz.questions?.map((question, i) => (
             <QuizQuestionComponent
               key={question.id}
@@ -105,32 +138,44 @@ export default function TakeQuizPage() {
   }
 
   return (
-    <div style={{ maxWidth: 720, margin: '0 auto' }}>
+    <div>
       <Card
         className="article-card"
-        styles={{ body: { padding: 20 } }}
-        style={{ marginBottom: 24, borderRadius: 4 }}
+        styles={{ body: { padding: 18 } }}
+        style={{ marginBottom: 20 }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
           <div>
-            <Title level={4} style={{ margin: 0 }}>{quiz.title || 'Quiz'}</Title>
-            <Text style={{ fontSize: 13, color: '#9e9e9e' }}>
-              {total} questions
-              {quiz.articles?.length ? ` · ${quiz.articles.length} articles` : ''}
-            </Text>
+            <Title level={4} style={{ margin: 0, fontSize: 16 }}>{quiz.title || 'Quiz'}</Title>
+            {quiz.articles?.length ? (
+              <Text style={{ fontSize: 12, color: '#9e9e9e' }}>
+                Based on {quiz.articles.length} article{quiz.articles.length > 1 ? 's' : ''}
+              </Text>
+            ) : null}
           </div>
-          <div style={{
-            padding: '6px 14px',
-            borderRadius: 8,
-            border: '1px solid',
-            fontWeight: 700,
-            fontSize: 14,
-            background: '#f5f5f5',
-            borderColor: '#e0e0e0',
-          }}>
-            {answered}/{total}
+          <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
+            <div style={{ textAlign: 'center' }}>
+              <Text strong style={{ fontSize: 15, color: timeLeft < 60 ? '#c62828' : timeLeft < 180 ? '#e65100' : '#555' }}>
+                {formatTime(timeLeft)}
+              </Text>
+              <Text style={{ fontSize: 12, color: '#bbb', display: 'block' }}>remaining</Text>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <Text strong style={{ fontSize: 15, color: answered === total ? '#2e7d32' : '#555' }}>
+                {answered}/{total}
+              </Text>
+              <Text style={{ fontSize: 12, color: '#bbb', display: 'block' }}>answered</Text>
+            </div>
           </div>
         </div>
+        <Progress
+          percent={Math.round((answered / total) * 100)}
+          showInfo={false}
+          strokeColor={answered === total ? '#2e7d32' : '#1a1a1a'}
+          trailColor="#e8e8e8"
+          size="small"
+          style={{ marginTop: 12, marginBottom: 0 }}
+        />
       </Card>
 
       {quiz.questions?.map((question, i) => (
@@ -139,19 +184,22 @@ export default function TakeQuizPage() {
           question={question}
           index={i}
           selected={answers[question.id] || null}
-          onSelect={(optionKey) => handleSelect(question.id, optionKey)}
+          onSelect={(optionKey) => {
+            if (submitted) return
+            setAnswers((prev) => ({ ...prev, [question.id]: optionKey }))
+          }}
           showResults={false}
         />
       ))}
 
-      <div style={{ textAlign: 'center', marginTop: 32, marginBottom: 32 }}>
+      <div style={{ textAlign: 'center', marginTop: 28, marginBottom: 32 }}>
         <Button
           type="primary"
           size="large"
           loading={submitting}
           onClick={handleSubmit}
           style={{
-            height: 48,
+            height: 46,
             padding: '0 40px',
             fontWeight: 700,
             fontSize: 15,

@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, Typography, Radio, Space } from 'antd'
+import { Card, Typography } from 'antd'
 import type { QuizQuestion as QuizQuestionType } from '@/lib/types'
 
 const { Text } = Typography
@@ -25,86 +25,80 @@ export default function QuizQuestion({
   return (
     <Card
       className="article-card fade-in"
-      styles={{ body: { padding: 24 } }}
-      style={{ marginBottom: 16 }}
+      styles={{ body: { padding: 20 } }}
+      style={{ marginBottom: 14 }}
     >
-      <Text style={{ fontSize: 12, display: 'block', marginBottom: 10, color: '#9e9e9e', fontWeight: 600, letterSpacing: '0.5px', textTransform: 'uppercase' }}>
+      <Text style={{ fontSize: 11, display: 'block', marginBottom: 8, color: '#bbb', fontWeight: 600, letterSpacing: '0.5px', textTransform: 'uppercase' }}>
         Question {index + 1}
       </Text>
-      <Text strong style={{ display: 'block', marginBottom: 20, fontSize: 16, lineHeight: 1.45, color: '#1a1a1a' }}>
+      <Text strong style={{ display: 'block', marginBottom: 18, fontSize: 15, lineHeight: 1.5, color: '#1a1a1a' }}>
         {question.question_text}
       </Text>
 
-      <Radio.Group
-        value={selected}
-        onChange={(e) => onSelect(e.target.value)}
-        disabled={showResults}
-        style={{ width: '100%' }}
-      >
-        <Space direction="vertical" style={{ width: '100%' }} size={8}>
-          {Object.entries(question.options).map(([key, value], i) => {
-            const isCorrectAnswer = showResults && key === question.correct_answer
-            const isWrongAnswer = showResults && key === selected && selected !== question.correct_answer
-            const isSelected = key === selected
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {Object.entries(question.options).map(([key, value], i) => {
+          const isCorrectAnswer = showResults && key === question.correct_answer
+          const isWrongAnswer = showResults && key === selected && selected !== question.correct_answer
+          const isSelected = key === selected
 
-            return (
+          return (
+            <div
+              key={key}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                padding: '11px 14px',
+                borderRadius: 6,
+                border: '1px solid',
+                cursor: showResults ? 'default' : 'pointer',
+                transition: 'all 0.15s ease',
+                background: isCorrectAnswer ? '#f1f8e9' : isWrongAnswer ? '#ffebee' : isSelected ? '#f5f5f5' : '#ffffff',
+                borderColor: isCorrectAnswer ? '#a5d6a7' : isWrongAnswer ? '#ef9a9a' : isSelected ? '#bdbdbd' : '#e8e8e8',
+              }}
+              onClick={() => !showResults && onSelect(key)}
+            >
               <div
-                key={key}
                 style={{
+                  width: 26,
+                  height: 26,
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 12,
-                  padding: '12px 16px',
-                  borderRadius: 4,
+                  justifyContent: 'center',
+                  borderRadius: 6,
                   border: '1px solid',
-                  cursor: showResults ? 'default' : 'pointer',
-                  transition: 'all 0.15s ease',
-                  background: isSelected && !showResults ? '#f5f5f5' : '#ffffff',
-                  borderColor: isCorrectAnswer ? '#2e7d32' : isWrongAnswer ? '#c62828' : isSelected && !showResults ? '#9e9e9e' : '#e0e0e0',
+                  fontWeight: 700,
+                  fontSize: 11,
+                  flexShrink: 0,
+                  background: isCorrectAnswer ? '#c8e6c9' : isWrongAnswer ? '#ffcdd2' : isSelected ? '#e0e0e0' : '#f5f5f5',
+                  borderColor: isCorrectAnswer ? '#66bb6a' : isWrongAnswer ? '#ef5350' : isSelected ? '#9e9e9e' : '#e0e0e0',
+                  color: isCorrectAnswer ? '#1b5e20' : isWrongAnswer ? '#b71c1c' : isSelected ? '#424242' : '#757575',
                 }}
-                onClick={() => !showResults && onSelect(key)}
               >
-                <div
-                  style={{
-                    width: 28,
-                    height: 28,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderRadius: 4,
-                    border: '1px solid',
-                    fontWeight: 700,
-                    fontSize: 12,
-                    flexShrink: 0,
-                    background: isCorrectAnswer ? '#e8f5e9' : isWrongAnswer ? '#ffebee' : isSelected && !showResults ? '#eeeeee' : '#fafafa',
-                    borderColor: isCorrectAnswer ? '#2e7d32' : isWrongAnswer ? '#c62828' : isSelected && !showResults ? '#9e9e9e' : '#e0e0e0',
-                  }}
-                >
-                  {OPTION_LABELS[i]}
-                </div>
-                <span style={{ fontSize: 14, flex: 1, color: '#1a1a1a' }}>{value}</span>
-                {isCorrectAnswer && <span style={{ fontWeight: 700, fontSize: 13, color: '#2e7d32' }}>✓</span>}
-                {isWrongAnswer && <span style={{ fontWeight: 700, fontSize: 13, color: '#c62828' }}>✗</span>}
+                {OPTION_LABELS[i]}
               </div>
-            )
-          })}
-        </Space>
-      </Radio.Group>
+              <span style={{ fontSize: 14, flex: 1, color: '#1a1a1a', lineHeight: 1.4 }}>{value}</span>
+              {isCorrectAnswer && <span style={{ fontWeight: 700, fontSize: 14, color: '#2e7d32' }}>✓</span>}
+              {isWrongAnswer && <span style={{ fontWeight: 700, fontSize: 14, color: '#c62828' }}>✗</span>}
+            </div>
+          )
+        })}
+      </div>
 
       {showResults && (
         <div
           style={{
-            marginTop: 16,
-            padding: 14,
-            borderRadius: 4,
+            marginTop: 14,
+            padding: 12,
+            borderRadius: 6,
             border: '1px solid',
-            fontSize: 14,
-            background: selected === question.correct_answer ? '#f1f8e9' : '#fff3e0',
-            borderColor: selected === question.correct_answer ? '#a5d6a7' : '#ffcc80',
+            fontSize: 13,
+            background: selected === question.correct_answer ? '#f1f8e9' : '#fff8e1',
+            borderColor: selected === question.correct_answer ? '#a5d6a7' : '#ffe082',
           }}
         >
-          <Text strong style={{ display: 'block', marginBottom: 6, color: '#1a1a1a' }}>
-            {selected === question.correct_answer ? 'Correct' : 'Incorrect'}
+          <Text strong style={{ display: 'block', marginBottom: 4, color: '#1a1a1a', fontSize: 13 }}>
+            {selected === question.correct_answer ? '✅ Correct' : '❌ Incorrect'}
           </Text>
           {question.explanation && (
             <Text style={{ color: '#616161' }}>{question.explanation}</Text>

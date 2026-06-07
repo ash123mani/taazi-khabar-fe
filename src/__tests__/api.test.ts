@@ -40,8 +40,8 @@ describe('api', () => {
 
   it('getArticles calls GET /articles with params', async () => {
     mockFetch.mockResolvedValueOnce(ok({ articles: [], total: 0 }));
-    await api.getArticles({ source: 'the_hindu' });
-    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/articles?source=the_hindu'), expect.any(Object));
+    await api.getArticles({ source: 'thehindu' });
+    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/articles?source=thehindu'), expect.any(Object));
   });
 
   it('getArticle calls GET /articles/:id', async () => {
@@ -94,8 +94,8 @@ describe('api', () => {
 
   it('adminGetArticles calls GET /admin/articles with params', async () => {
     mockFetch.mockResolvedValueOnce(ok({ articles: [], total: 0 }));
-    await api.adminGetArticles({ search: 'test', source: 'the_hindu' });
-    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/admin/articles?search=test&source=the_hindu'), expect.any(Object));
+    await api.adminGetArticles({ search: 'test', source: 'thehindu' });
+    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/admin/articles?search=test&source=thehindu'), expect.any(Object));
   });
 
   it('adminDeleteArticle calls DELETE /admin/articles/:id', async () => {
