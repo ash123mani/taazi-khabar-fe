@@ -100,11 +100,11 @@ export default function TakeQuizPage() {
   if (error) {
     return (
       <div style={{ textAlign: 'center', padding: 48 }}>
-        <div style={{ padding: '10px 14px', border: '1px solid #c62828', borderRadius: 6, background: '#ffebee', color: '#c62828', marginBottom: 16, fontSize: 14, display: 'inline-block' }}>
+        <div style={{ padding: '10px 14px', border: '1px solid #ef4444', borderRadius: 6, background: 'rgba(239,68,68,0.1)', color: '#fca5a5', marginBottom: 16, fontSize: 14, display: 'inline-block' }}>
           {error}
         </div>
         <div>
-          <Button onClick={() => window.location.reload()} style={{ fontWeight: 600 }}>
+          <Button onClick={() => window.location.reload()} type="default" style={{ fontWeight: 600, borderRadius: 8 }}>
             Retry
           </Button>
         </div>
@@ -119,8 +119,8 @@ export default function TakeQuizPage() {
       <div>
         <QuizResult quiz={quiz} />
         <div style={{ marginTop: 28 }}>
-          <Text strong style={{ fontSize: 15, display: 'block', marginBottom: 16 }}>
-            Questions &amp; Answers
+          <Text strong style={{ fontSize: 15, display: 'block', marginBottom: 16, color: '#ffffff' }}>
+            Questions & Answers
           </Text>
           {quiz.questions?.map((question, i) => (
             <QuizQuestionComponent
@@ -140,39 +140,38 @@ export default function TakeQuizPage() {
   return (
     <div>
       <Card
-        className="article-card"
+        style={{ marginBottom: 20, background: '#0a0a0a', border: '1px solid #1f1f1f', borderRadius: 12 }}
         styles={{ body: { padding: 18 } }}
-        style={{ marginBottom: 20 }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
           <div>
-            <Title level={4} style={{ margin: 0, fontSize: 16 }}>{quiz.title || 'Quiz'}</Title>
+            <Title level={4} style={{ margin: 0, fontSize: 16, color: '#ffffff' }}>{quiz.title || 'Quiz'}</Title>
             {quiz.articles?.length ? (
-              <Text style={{ fontSize: 12, color: '#9e9e9e' }}>
+              <Text style={{ fontSize: 12, color: '#6b6b6b' }}>
                 Based on {quiz.articles.length} article{quiz.articles.length > 1 ? 's' : ''}
               </Text>
             ) : null}
           </div>
           <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
             <div style={{ textAlign: 'center' }}>
-              <Text strong style={{ fontSize: 15, color: timeLeft < 60 ? '#c62828' : timeLeft < 180 ? '#e65100' : '#555' }}>
+              <Text strong style={{ fontSize: 15, color: timeLeft < 60 ? '#ef4444' : timeLeft < 180 ? '#eab308' : '#a1a1a1' }}>
                 {formatTime(timeLeft)}
               </Text>
-              <Text style={{ fontSize: 12, color: '#bbb', display: 'block' }}>remaining</Text>
+              <Text style={{ fontSize: 12, color: '#6b6b6b', display: 'block' }}>remaining</Text>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <Text strong style={{ fontSize: 15, color: answered === total ? '#2e7d32' : '#555' }}>
+              <Text strong style={{ fontSize: 15, color: answered === total ? '#22c55e' : '#a1a1a1' }}>
                 {answered}/{total}
               </Text>
-              <Text style={{ fontSize: 12, color: '#bbb', display: 'block' }}>answered</Text>
+              <Text style={{ fontSize: 12, color: '#6b6b6b', display: 'block' }}>answered</Text>
             </div>
           </div>
         </div>
         <Progress
           percent={Math.round((answered / total) * 100)}
           showInfo={false}
-          strokeColor={answered === total ? '#2e7d32' : '#1a1a1a'}
-          trailColor="#e8e8e8"
+          strokeColor={answered === total ? '#22c55e' : '#6366f1'}
+          trailColor="#1f1f1f"
           size="small"
           style={{ marginTop: 12, marginBottom: 0 }}
         />
@@ -203,6 +202,7 @@ export default function TakeQuizPage() {
             padding: '0 40px',
             fontWeight: 700,
             fontSize: 15,
+            borderRadius: 12,
           }}
         >
           Submit Answers ({answered}/{total})

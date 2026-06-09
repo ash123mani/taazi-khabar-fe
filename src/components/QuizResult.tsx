@@ -2,7 +2,6 @@
 
 import { Button, Typography, Card } from 'antd'
 import Link from 'next/link'
-import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons'
 import type { Quiz } from '@/lib/types'
 
 const { Text } = Typography
@@ -11,9 +10,9 @@ export default function QuizResult({ quiz }: { quiz: Quiz }) {
   const percentage = Math.round(((quiz.score || 0) / quiz.total_questions) * 100)
 
   const getColor = () => {
-    if (percentage >= 80) return '#2e7d32'
-    if (percentage >= 50) return '#e65100'
-    return '#c62828'
+    if (percentage >= 80) return '#22c55e'
+    if (percentage >= 50) return '#eab308'
+    return '#ef4444'
   }
 
   const getLabel = () => {
@@ -23,24 +22,25 @@ export default function QuizResult({ quiz }: { quiz: Quiz }) {
   }
 
   return (
-    <Card style={{ borderRadius: 12, marginBottom: 28, textAlign: 'center' }} styles={{ body: { padding: 32 } }}>
+    <Card style={{ borderRadius: 12, marginBottom: 28, textAlign: 'center', background: '#0a0a0a', border: '1px solid #1f1f1f' }} styles={{ body: { padding: 32 } }}>
       <div style={{
         fontSize: 64,
         fontWeight: 800,
         marginBottom: 2,
         color: getColor(),
         lineHeight: 1,
+        letterSpacing: '-2px',
       }}>
         {percentage}%
       </div>
       <Text style={{ fontSize: 18, fontWeight: 600, color: getColor(), display: 'block', marginBottom: 12 }}>
         {getLabel()}
       </Text>
-      <div style={{ fontSize: 14, marginBottom: 6, color: '#64748b' }}>
+      <div style={{ fontSize: 14, marginBottom: 6, color: '#6b6b6b' }}>
         {quiz.score} / {quiz.total_questions} correct
       </div>
       {quiz.time_taken_sec && (
-        <div style={{ fontSize: 13, marginBottom: 24, color: '#94a3b8' }}>
+        <div style={{ fontSize: 13, marginBottom: 24, color: '#4a4a4a' }}>
           Time taken: {Math.floor(quiz.time_taken_sec / 60)}m {quiz.time_taken_sec % 60}s
         </div>
       )}
@@ -52,10 +52,14 @@ export default function QuizResult({ quiz }: { quiz: Quiz }) {
         marginTop: quiz.time_taken_sec ? 0 : 24,
       }}>
         <Link href={`/history/${quiz.id}`}>
-          <Button style={{ height: 40, padding: '0 24px', fontWeight: 600 }}>Review Answers</Button>
+          <Button type="default" style={{ height: 40, padding: '0 24px', fontWeight: 600, borderRadius: 8 }}>
+            Review Answers
+          </Button>
         </Link>
         <Link href="/quiz">
-          <Button type="primary" style={{ height: 40, padding: '0 24px', fontWeight: 600 }}>New Quiz</Button>
+          <Button type="primary" style={{ height: 40, padding: '0 24px', fontWeight: 600, borderRadius: 8 }}>
+            New Quiz
+          </Button>
         </Link>
       </div>
     </Card>

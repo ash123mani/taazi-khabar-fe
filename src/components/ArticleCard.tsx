@@ -36,25 +36,32 @@ export default function ArticleCard({ article, defaultExpanded }: { article: Art
 
   return (
     <Card
-      style={{ borderRadius: 12, marginBottom: 16, transition: 'all 0.2s ease', background: '#141416', border: '1px solid #27272a' }}
+      style={{
+        borderRadius: 12,
+        marginBottom: 16,
+        transition: 'all 0.2s ease',
+        background: '#0a0a0a',
+        border: '1px solid #1f1f1f',
+      }}
       styles={{ body: { padding: 0 } }}
+      hoverable
     >
       <div style={{ padding: '20px 24px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <Text strong style={{ fontSize: 15, color: '#fafafa', lineHeight: 1.4, display: 'block' }}>
+            <Text strong style={{ fontSize: 15, color: '#ffffff', lineHeight: 1.4, display: 'block' }}>
               <a
                 href={article.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ color: '#fafafa', textDecoration: 'none', transition: 'color 0.2s' }}
-                onMouseEnter={(e) => e.currentTarget.style.color = '#818cf8'}
-                onMouseLeave={(e) => e.currentTarget.style.color = '#fafafa'}
+                style={{ color: '#ffffff', textDecoration: 'none', transition: 'color 0.2s' }}
+                onMouseEnter={(e) => e.currentTarget.style.color = '#6366f1'}
+                onMouseLeave={(e) => e.currentTarget.style.color = '#ffffff'}
               >
                 {article.headline}
               </a>
             </Text>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6, color: '#d4d4d8', fontSize: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6, color: '#6b6b6b', fontSize: 12 }}>
               <LinkOutlined style={{ fontSize: 11 }} />
               <span>{new URL(article.url).hostname}</span>
             </div>
@@ -67,9 +74,9 @@ export default function ArticleCard({ article, defaultExpanded }: { article: Art
             icon={bookmarked ? (
               <HeartFilled style={{ color: '#ef4444' }} />
             ) : (
-              <HeartOutlined style={{ color: '#a1a1aa' }} />
+              <HeartOutlined style={{ color: '#6b6b6b' }} />
             )}
-            style={{ color: bookmarked ? '#ef4444' : '#a1a1aa' }}
+            style={{ color: bookmarked ? '#ef4444' : '#6b6b6b', flexShrink: 0 }}
           />
         </div>
 
@@ -82,9 +89,9 @@ export default function ArticleCard({ article, defaultExpanded }: { article: Art
         <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap', alignItems: 'center' }}>
           {article.syllabus_tag && <SyllabusTag tag={article.syllabus_tag} />}
           {article.key_terms?.slice(0, 3).map((term) => (
-            <Tag key={term} style={{ fontSize: 11, borderRadius: 4, margin: 0, background: '#27272a', color: '#a1a1aa', border: '1px solid #3f3f46' }}>{term}</Tag>
+            <Tag key={term} style={{ fontSize: 11, borderRadius: 4, margin: 0, background: '#141414', color: '#a1a1a1', border: '1px solid #1f1f1f' }}>{term}</Tag>
           ))}
-          <Text style={{ color: '#a1a1aa', fontSize: 12, marginLeft: 'auto' }}>
+          <Text style={{ color: '#6b6b6b', fontSize: 12, marginLeft: 'auto' }}>
             {article.source === 'thehindu' ? 'The Hindu' : 'Indian Express'} · {new Date(article.published_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
           </Text>
         </div>

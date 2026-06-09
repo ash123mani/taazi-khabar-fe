@@ -1,211 +1,147 @@
 'use client'
 
-import { useEffect, useState, type ReactNode } from 'react'
-import { Layout, Menu, Typography, Spin, Avatar, Space, Dropdown, Tag, Button, Card, Row, Col, Statistic } from 'antd'
-import type { MenuProps } from 'antd'
+import { useState } from 'react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { Layout, Menu, Button, Typography, Dropdown, Avatar, Space, theme } from 'antd'
 import {
-  BarChartOutlined,
-  CalendarOutlined,
+  DashboardOutlined,
   FileTextOutlined,
-  OrderedListOutlined,
   TagsOutlined,
-  UsergroupAddOutlined,
   DatabaseOutlined,
-  BuildOutlined,
   RobotOutlined,
-  LogoutOutlined,
+  ScissorOutlined,
+  FileSearchOutlined,
+  SafetyOutlined,
   UserOutlined,
+  LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  HomeOutlined,
-  ThunderboltOutlined,
-  TrophyOutlined,
-  ClockCircleOutlined,
 } from '@ant-design/icons'
-import { useRouter, usePathname } from 'next/navigation'
-import { useSession, signOut } from 'next-auth/react'
+import { useAuthStore } from '@/stores/authStore'
 
-const { Sider, Content, Header } = Layout
+const { Header, Sider, Content } = Layout
 const { Text } = Typography
 
-const menuItems: MenuProps['items'] = [
-  { key: '/admin', icon: <BarChartOutlined />, label: 'Dashboard' },
-  { key: '/admin/scrape', icon: <CalendarOutlined />, label: 'Scrape' },
-  { key: '/admin/summaries', icon: <FileTextOutlined />, label: 'Summaries' },
-  { key: '/admin/articles', icon: <OrderedListOutlined />, label: 'Articles' },
+const menuItems = [
+  { key: '/admin', icon: <DashboardOutlined />, label: 'Dashboard' },
+  { key: '/admin/articles', icon: <FileTextOutlined />, label: 'Articles' },
   { key: '/admin/categories', icon: <TagsOutlined />, label: 'Categories' },
-  { key: '/admin/users', icon: <UsergroupAddOutlined />, label: 'Users' },
-  { type: 'divider', key: 'sep1' },
-  { key: '/admin/training-data', icon: <DatabaseOutlined />, label: 'Training Data' },
-  { key: '/admin/datasets', icon: <BuildOutlined />, label: 'Datasets' },
+  { key: '/admin/datasets', icon: <DatabaseOutlined />, label: 'Datasets' },
   { key: '/admin/models', icon: <RobotOutlined />, label: 'Models' },
+  { key: '/admin/scrape', icon: <ScissorOutlined />, label: 'Scrape' },
+  { key: '/admin/summaries', icon: <FileSearchOutlined />, label: 'Summaries' },
+  { key: '/admin/training-data', icon: <DatabaseOutlined />, label: 'Training Data' },
+  { key: '/admin/users', icon: <SafetyOutlined />, label: 'Users' },
 ]
 
-const routeKeys = menuItems.filter((m) => m && 'key' in m && typeof (m as any).key === 'string').map((m) => (m as any).key as string)
-
-function getSelectedKey(pathname: string): string {
-  if (pathname === '/admin') return '/admin'
-  const match = routeKeys.find((k) => k !== '/admin' && pathname.startsWith(k))
-  return match || '/admin'
-}
-
-export default function AdminLayout({ children }: { children: ReactNode }) {
-  const router = useRouter()
-  const pathname = usePathname()
-  const { data: session, status } = useSession()
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false)
+  const pathname = usePathname()
+  const { user, logout } = useAuthStore()
+  const {
+    token: { colorBgContainer, colorBgElevated, colorText, colorTextSecondary },
+  } = theme.useToken()
 
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login')
-    }
-  }, [status, router])
-
-  if (status === 'loading') {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#0a0a0b' }}>
-        <Spin size="large" />
-      </div>
-    )
+  const handleLogout = () => {
+    logout()
+    window.location.href = '/login'
   }
 
-  if (!session) {
-    return null
-  }
-
-  const userMenu = {
-    items: [
-      {
-        key: 'info',
-        label: (
-          <div style={{ padding: '4px 0' }}>
-            <div style={{ fontWeight: 600, fontSize: 14, color: '#fafafa' }}>{session.user?.name || 'Admin User'}</div>
-            <div style={{ fontSize: 12, color: '#a1a1aa' }}>{session.user?.email || ''}</div>
-          </div>
-        ),
-        disabled: true,
-      },
-      { type: 'divider' as const },
-      {
-        key: 'home',
-        icon: <HomeOutlined />,
-        label: 'Visit Site',
-      },
-      { type: 'divider' as const },
-      { key: 'logout', icon: <LogoutOutlined />, label: 'Sign Out', danger: true },
-    ],
-    onClick: ({ key }: { key: string }) => {
-      if (key === 'logout') signOut({ callbackUrl: '/login' })
-      if (key === 'home') router.push('/')
+  const userMenuItems = [
+    {
+      key: 'profile',
+      icon: <UserOutlined />,
+      label: 'Profile',
     },
-  }
-
-  const sidebarWidth = collapsed ? 80 : 240
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: 'Logout',
+      onClick: handleLogout,
+    },
+  ]
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider
-        width={240}
-        collapsedWidth={80}
+        trigger={null}
+        collapsible
         collapsed={collapsed}
         style={{
-          position: 'fixed',
-          left: 0,
-          top: 0,
-          bottom: 0,
-          overflow: 'auto',
-          zIndex: 20,
-          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          background: '#000000',
+          borderRight: '1px solid #1f1f1f',
         }}
+        width={240}
       >
-        <div
-          style={{
-            height: 64,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: collapsed ? 'center' : 'flex-start',
-            padding: collapsed ? 0 : '0 20px',
-            borderBottom: '1px solid #27272a',
-          }}
-        >
-          {collapsed ? (
-            <Avatar size={36} icon={<UserOutlined />} style={{ background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)' }} />
-          ) : (
-            <Space size={12}>
-              <Avatar size={36} icon={<UserOutlined />} style={{ background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)' }} />
-              <div>
-                <Text style={{ fontSize: 16, fontWeight: 700, letterSpacing: '-0.3px', display: 'block', lineHeight: 1.2, color: '#fafafa' }}>
-                  Taazi Khabar
-                </Text>
-                <Text style={{ fontSize: 11, display: 'block', lineHeight: 1.2, fontWeight: 500, color: '#a1a1aa' }}>
-                  Admin Panel
-                </Text>
-              </div>
-            </Space>
-          )}
+        <div style={{
+          height: 64,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderBottom: '1px solid #1f1f1f',
+        }}>
+          <Link href="/" style={{ textDecoration: 'none' }}>
+            <Text strong style={{
+              fontSize: collapsed ? 16 : 18,
+              color: '#ffffff',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+            }}>
+              {collapsed ? 'TK' : 'Taazi Khabar'}
+            </Text>
+          </Link>
         </div>
-
         <Menu
           mode="inline"
-          inlineCollapsed={collapsed}
-          selectedKeys={[getSelectedKey(pathname)]}
+          selectedKeys={[pathname]}
           items={menuItems}
-          onClick={({ key }) => {
-            if (key !== 'sep1') router.push(key)
+          style={{
+            background: '#000000',
+            borderRight: 0,
+            padding: '8px 0',
           }}
-          style={{ borderRight: 'none', fontSize: 13, marginTop: 8, padding: '0 8px' }}
           theme="dark"
         />
-
-        {!collapsed && (
-          <div style={{ position: 'absolute', bottom: 20, left: 0, right: 0, textAlign: 'center' }}>
-            <Tag style={{ fontSize: 10, borderRadius: 6, padding: '2px 8px', background: '#27272a', color: '#a1a1aa', border: '1px solid #3f3f46' }}>
-              v1.0.0
-            </Tag>
-          </div>
-        )}
       </Sider>
-
-      <Layout style={{ marginLeft: sidebarWidth, transition: 'margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)', minHeight: '100vh', background: '#0a0a0b' }}>
-        <Header
-          style={{
-            padding: '0 24px',
-            height: 64,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            position: 'sticky',
-            top: 0,
-            zIndex: 10,
-            background: '#141416',
-            borderBottom: '1px solid #27272a',
-          }}
-        >
+      <Layout>
+        <Header style={{
+          padding: '0 24px',
+          background: colorBgContainer,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          borderBottom: '1px solid #1f1f1f',
+          height: 64,
+        }}>
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
-            style={{ fontSize: 16, width: 40, height: 40, borderRadius: 8, color: '#d4d4d8' }}
+            style={{
+              fontSize: 16,
+              width: 48,
+              height: 48,
+              color: colorText,
+            }}
           />
-
-          <Dropdown menu={userMenu} placement="bottomRight">
-            <Space
-              style={{ cursor: 'pointer', padding: '6px 12px', borderRadius: 10, transition: 'all 0.2s ease', background: '#1c1c1f' }}
-            >
-              <Avatar size={28} icon={<UserOutlined />} style={{ background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)' }} />
-              <span style={{ fontSize: 13, fontWeight: 500, color: '#fafafa' }}>
-                {session.user?.name || session.user?.email?.split('@')[0] || 'Admin'}
-              </span>
-            </Space>
-          </Dropdown>
+          <Space size={16}>
+            <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+              <Space style={{ cursor: 'pointer' }}>
+                <Avatar style={{ backgroundColor: '#ffffff', color: '#000000' }} icon={<UserOutlined />} />
+                <Text style={{ color: colorText }}>{user?.name || user?.email || 'Admin'}</Text>
+              </Space>
+            </Dropdown>
+          </Space>
         </Header>
-
-        <Content
-          style={{ padding: 24, minHeight: 'calc(100vh - 64px)' }}
-        >
-          <div style={{ borderRadius: 16, minHeight: 400 }}>
-            {children}
-          </div>
+        <Content style={{
+          margin: 24,
+          padding: 24,
+          minHeight: 280,
+          background: colorBgContainer,
+          borderRadius: 12,
+        }}>
+          {children}
         </Content>
       </Layout>
     </Layout>

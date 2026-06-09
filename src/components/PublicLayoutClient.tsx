@@ -47,7 +47,7 @@ export default function PublicLayoutClient({ children }: { children: React.React
   ]
 
   return (
-    <Layout style={{ minHeight: '100vh', background: '#f8fafc' }}>
+    <Layout style={{ minHeight: '100vh', background: '#000000' }}>
       <Header
         style={{
           display: 'flex',
@@ -58,10 +58,10 @@ export default function PublicLayoutClient({ children }: { children: React.React
           position: 'sticky',
           top: 0,
           zIndex: 100,
-          background: 'rgba(255, 255, 255, 0.85)',
+          background: 'rgba(0, 0, 0, 0.85)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
-          borderBottom: '1px solid #e2e8f0',
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
         }}
       >
         <Space
@@ -73,7 +73,7 @@ export default function PublicLayoutClient({ children }: { children: React.React
             width: 32,
             height: 32,
             borderRadius: 8,
-            background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -81,11 +81,11 @@ export default function PublicLayoutClient({ children }: { children: React.React
             fontSize: 13,
             fontWeight: 800,
             letterSpacing: -1,
-            boxShadow: '0 2px 8px rgba(79, 70, 229, 0.3)',
+            boxShadow: '0 2px 8px rgba(99, 102, 241, 0.3)',
           }}>
             TK
           </div>
-          <Text strong style={{ fontSize: 17, letterSpacing: '-0.5px', color: '#0f172a', fontWeight: 700 }}>
+          <Text strong style={{ fontSize: 17, letterSpacing: '-0.5px', color: '#ffffff', fontWeight: 700 }}>
             Taazi Khabar
           </Text>
         </Space>
@@ -108,7 +108,7 @@ export default function PublicLayoutClient({ children }: { children: React.React
 
         <Space style={{ flexShrink: 0 }}>
           {session ? (
-            <Button type="text" icon={<LogoutOutlined />} onClick={() => signOut()} style={{ color: '#64748b' }}>
+            <Button type="text" icon={<LogoutOutlined />} onClick={() => signOut()} style={{ color: '#a1a1a1' }}>
               Logout
             </Button>
           ) : (
@@ -121,7 +121,7 @@ export default function PublicLayoutClient({ children }: { children: React.React
 
       <div style={{
         height: 3,
-        background: 'linear-gradient(90deg, #4f46e5 0%, #7c3aed 50%, #4f46e5 100%)',
+        background: 'linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, #6366f1 100%)',
         opacity: 0.9,
       }} />
 
@@ -140,17 +140,17 @@ export default function PublicLayoutClient({ children }: { children: React.React
 
       <Footer
         style={{
-          background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)',
+          background: 'linear-gradient(180deg, #0a0a0a 0%, #000000 100%)',
           padding: '24px',
           textAlign: 'center',
-          borderTop: '1px solid rgba(255,255,255,0.06)',
+          borderTop: '1px solid rgba(255,255,255,0.04)',
         }}
       >
-        <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, fontWeight: 500 }}>
+        <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13, fontWeight: 500 }}>
           &copy; {new Date().getFullYear()} Taazi Khabar &mdash; AI-Powered UPSC Current Affairs
         </Text>
         <div style={{ marginTop: 4 }}>
-          <Text style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12 }}>
+          <Text style={{ color: 'rgba(255,255,255,0.2)', fontSize: 12 }}>
             Built with Next.js, FastAPI &middot; NVIDIA NIM
           </Text>
         </div>

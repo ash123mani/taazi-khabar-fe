@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Typography, Button, Form, Input, Card, Row, Col, Divider, Space } from 'antd'
+import { Typography, Button, Form, Input, Card, Row, Col, Divider } from 'antd'
 import { MailOutlined, LockOutlined, BookOutlined, SafetyOutlined } from '@ant-design/icons'
 import { useAuthStore } from '@/stores/authStore'
 
@@ -40,13 +40,12 @@ export default function LoginPage() {
   }
 
   return (
-    <Row justify="center" align="middle" style={{ minHeight: '100vh', background: '#0a0a0b', padding: '24px' }}>
+    <Row justify="center" align="middle" style={{ minHeight: '100vh', padding: '24px' }}>
       <Col xs={24} sm={20} md={16} lg={12} xl={10}>
         <Card
-          style={{ borderRadius: 24, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.6)', border: '1px solid #27272a', background: '#141416', overflow: 'hidden' }}
+          style={{ borderRadius: 24, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.8)', border: '1px solid #1f1f1f', background: '#0a0a0a', overflow: 'hidden' }}
           styles={{ body: { padding: '48px 40px' } }}
         >
-          {/* Header */}
           <div style={{ textAlign: 'center', marginBottom: 36 }}>
             <div style={{
               width: 64,
@@ -57,31 +56,29 @@ export default function LoginPage() {
               alignItems: 'center',
               justifyContent: 'center',
               marginBottom: 20,
-              boxShadow: '0 10px 25px -5px rgba(99,102,241,0.4)',
+              boxShadow: '0 10px 25px -5px rgba(99, 102, 241, 0.3)',
             }}>
-              <BookOutlined style={{ fontSize: 32, color: '#fff' }} />
+              <BookOutlined style={{ fontSize: 32, color: '#ffffff' }} />
             </div>
-            <Title level={3} style={{ margin: 0, letterSpacing: '-0.5px', fontWeight: 700, color: '#fafafa', fontSize: 26 }}>
+            <Title level={3} style={{ margin: 0, letterSpacing: '-0.5px', fontWeight: 700, color: '#ffffff', fontSize: 26 }}>
               Welcome back
             </Title>
-            <Paragraph style={{ color: '#a1a1aa', fontSize: 15, marginBottom: 0, marginTop: 8, lineHeight: 1.5 }}>
+            <Paragraph style={{ color: '#6b6b6b', fontSize: 15, marginBottom: 0, marginTop: 8, lineHeight: 1.5 }}>
               Sign in to your Taazi Khabar account
             </Paragraph>
           </div>
 
-          {/* Features */}
           <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginBottom: 32 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#a1a1aa', fontSize: 13 }}>
-              <SafetyOutlined style={{ color: '#10b981' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#6b6b6b', fontSize: 13 }}>
+              <SafetyOutlined style={{ color: '#22c55e' }} />
               <span>Secure Login</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#a1a1aa', fontSize: 13 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#6b6b6b', fontSize: 13 }}>
               <BookOutlined style={{ color: '#6366f1' }} />
               <span>UPSC Prep</span>
             </div>
           </div>
 
-          {/* Error Alert */}
           {error && (
             <div style={{
               padding: '12px 16px',
@@ -102,31 +99,28 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/* Form */}
           <Form layout="vertical" onFinish={handleSubmit} requiredMark={false} size="large">
             <Form.Item
-              label={<Text style={{ color: '#d4d4d8', fontWeight: 500, fontSize: 14 }}>Email</Text>}
+              label={<Text style={{ color: '#a1a1a1', fontWeight: 500, fontSize: 14 }}>Email</Text>}
               name="email"
               rules={[{ required: true, type: 'email', message: 'Please enter a valid email' }]}
               style={{ marginBottom: 20 }}
             >
               <Input
-                prefix={<MailOutlined style={{ color: '#a1a1aa' }} />}
+                prefix={<MailOutlined style={{ color: '#6b6b6b' }} />}
                 placeholder="you@example.com"
-                style={{ borderRadius: 10, background: '#0a0a0b', border: '1px solid #27272a', padding: '10px 14px' }}
               />
             </Form.Item>
 
             <Form.Item
-              label={<Text style={{ color: '#d4d4d8', fontWeight: 500, fontSize: 14 }}>Password</Text>}
+              label={<Text style={{ color: '#a1a1a1', fontWeight: 500, fontSize: 14 }}>Password</Text>}
               name="password"
               rules={[{ required: true, message: 'Please enter your password' }]}
               style={{ marginBottom: 24 }}
             >
               <Input.Password
-                prefix={<LockOutlined style={{ color: '#a1a1aa' }} />}
+                prefix={<LockOutlined style={{ color: '#6b6b6b' }} />}
                 placeholder="••••••••"
-                style={{ borderRadius: 10, background: '#0a0a0b', border: '1px solid #27272a', padding: '10px 14px' }}
               />
             </Form.Item>
 
@@ -136,14 +130,12 @@ export default function LoginPage() {
                 htmlType="submit"
                 loading={loading}
                 block
+                size="large"
                 style={{
                   height: 50,
                   borderRadius: 12,
                   fontWeight: 600,
-                  background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-                  border: 'none',
                   fontSize: 16,
-                  boxShadow: '0 10px 25px -5px rgba(99,102,241,0.4)'
                 }}
               >
                 Sign In
@@ -151,21 +143,21 @@ export default function LoginPage() {
             </Form.Item>
           </Form>
 
-          <Divider style={{ margin: '28px 0', borderColor: '#27272a' }} />
+          <Divider style={{ margin: '28px 0', borderColor: '#1f1f1f' }} />
 
           <div style={{ textAlign: 'center' }}>
-            <Text style={{ fontSize: 14, color: '#a1a1aa' }}>
+            <Text style={{ fontSize: 14, color: '#6b6b6b' }}>
               Don't have an account?{' '}
               <Link
                 href="/register"
                 style={{
                   fontWeight: 600,
-                  color: '#818cf8',
+                  color: '#ffffff',
                   textDecoration: 'none',
                   transition: 'color 0.2s'
                 }}
                 onMouseEnter={(e) => e.currentTarget.style.color = '#6366f1'}
-                onMouseLeave={(e) => e.currentTarget.style.color = '#818cf8'}
+                onMouseLeave={(e) => e.currentTarget.style.color = '#ffffff'}
               >
                 Create one now
               </Link>

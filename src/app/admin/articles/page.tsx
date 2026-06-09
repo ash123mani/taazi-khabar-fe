@@ -1,175 +1,122 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
-import { Typography, DatePicker, Table, Tag, Button, Space, Popconfirm, message } from 'antd'
-import { DeleteOutlined, ReloadOutlined, LinkOutlined } from '@ant-design/icons'
+import { useEffect, useState } from 'react'
+import { Typography, Table, Tag, Space, Button, message, Card, Input, Popconfirm } from 'antd'
 import { api } from '@/lib/api'
-import FormattedSummary from '@/components/FormattedSummary'
+import type { Article } from '@/lib/types'
 import dayjs from 'dayjs'
 
-const { Title, Text } = Typography
+const { Title } = Typography
+const { Search } = Input
 
-interface ArticleData {
-  id: string
-  source: string
-  headline: string
-  url: string
-  published_at: string
-  gk_summary: string | null
-  key_terms: string[] | null
-  syllabus_tag: string | null
-}
-
-const SOURCES = ['thehindu', 'indianexpress']
-const SOURCE_LABELS: Record<string, string> = {
-  thehindu: 'The Hindu',
-  indianexpress: 'The Indian Express',
-}
-
-export default function AdminArticlesPage() {
-  const [date, setDate] = useState<string>(new Date().toISOString().slice(0, 10))
-  const [articles, setArticles] = useState<ArticleData[]>([])
+export default function ArticlesPage() {
+  const [articles, setArticles] = useState<Article[]>([])
   const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const [date, setDate] = useState<string>(new Date().toISOString().slice(0, 10))
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 10 })
 
-  const fetchArticles = useCallback(async (d: string) => {
+  const fetchArticles = async () => {
     setLoading(true)
     try {
-      const results = await Promise.all(
-        SOURCES.map((s) => api.getScrapeArticles(s, d).then(r => ({
-          source: s,
-          articles: (r.articles || []).map((a: any) => ({ ...a, source: s })),
-        })).catch(() => ({ source: s, articles: [] })))
-      )
-      const all = results.flatMap(r => r.articles)
-      all.sort((a: any, b: any) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
-      setArticles(all)
-    } catch {
-      message.error('Failed to load articles')
+      const data = await api.getArticles({ date })
+      setArticles(data)
+    } catch (err: any) {
+      message.error(err.message || 'Failed to load articles')
     } finally {
       setLoading(false)
     }
-  }, [])
+  }
 
-  useEffect(() => { fetchArticles(date) }, [date, fetchArticles])
+  useEffect(() => {
+    fetchArticles()
+  }, [date])
 
   const handleDelete = async (id: string) => {
     try {
-      await api.adminDeleteArticle(id)
-      setArticles(prev => prev.filter(a => a.id !== id))
-      message.success('Article deleted')
-    } catch {
-      message.error('Failed to delete article')
+      await api.deleteArticle(id)
+      message.success('Article deleted successfully')
+      fetchArticles()
+    } catch (err: any) {
+      message.error(err.message || 'Failed to delete article')
     }
   }
 
-  const expandedRowRender = (record: ArticleData) => (
-    <div style={{ padding: '8px 0' }}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 8 }}>
-        <a
-          href={record.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ fontSize: 15, fontWeight: 600, color: '#fafafa' }}
-        >
-          {record.headline}
-          <LinkOutlined style={{ marginLeft: 6, fontSize: 13, color: '#a1a1aa' }} />
-        </a>
-      </div>
-      {record.gk_summary ? (
-        <FormattedSummary summary={record.gk_summary} />
-      ) : (
-        <Tag color="warning" style={{ fontSize: 11 }}>No summary</Tag>
-      )}
-      {record.key_terms && record.key_terms.length > 0 && (
-        <div style={{ marginTop: 8 }}>
-          {record.key_terms.map((t: string) => (
-            <Tag key={t} style={{ fontSize: 11, marginBottom: 2, background: '#27272a', color: '#a1a1aa', border: '1px solid #3f3f46' }}>{t}</Tag>
-          ))}
-        </div>
-      )}
-    </div>
-  )
+  const filteredArticles = articles.filter((article) => {
+    const matchesSearch = !search ||
+      article.headline?.toLowerCase().includes(search.toLowerCase()) ||
+      article.source?.toLowerCase().includes(search.toLowerCase())
+    return matchesSearch
+  })
 
   const columns = [
     {
-      title: 'Headline',
+      title: 'Title',
       dataIndex: 'headline',
       key: 'headline',
-      ellipsis: true,
-      render: (text: string, record: ArticleData) => (
-        <a href={record.url} target="_blank" rel="noopener noreferrer" style={{ fontWeight: 500, fontSize: 13, color: '#fafafa' }}>
-          {text}
-        </a>
-      ),
+      render: (text: string) => <span style={{ color: '#ffffff', fontWeight: 500 }}>{text}</span>,
     },
     {
       title: 'Source',
       dataIndex: 'source',
       key: 'source',
-      width: 110,
-      render: (s: string) => <Tag color={s === 'thehindu' ? 'blue' : 'orange'}>{SOURCE_LABELS[s] || s}</Tag>,
+      render: (text: string) => <span style={{ color: '#a1a1a1' }}>{text}</span>,
     },
     {
       title: 'Date',
       dataIndex: 'published_at',
       key: 'published_at',
-      width: 110,
-      render: (d: string) => (
-        <span style={{ fontSize: 12, color: '#a1a1aa' }}>
-          {new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-        </span>
-      ),
+      render: (date: string) => <span style={{ color: '#6b6b6b' }}>{new Date(date).toLocaleDateString('en-IN')}</span>,
     },
     {
-      title: 'Action',
-      key: 'action',
-      width: 90,
-      render: (_: any, record: ArticleData) => (
-        <Popconfirm
-          title="Delete this article?"
-          onConfirm={() => handleDelete(record.id)}
-          okText="Yes"
-          cancelText="No"
-        >
-          <Button danger size="small" icon={<DeleteOutlined />}>Delete</Button>
-        </Popconfirm>
+      title: 'Actions',
+      key: 'actions',
+      render: (_: any, record: Article) => (
+        <Space>
+          <Button size="small" type="default" style={{ fontWeight: 600, borderRadius: 6 }}>Edit</Button>
+          <Popconfirm
+            title="Delete article"
+            description="Are you sure you want to delete this article?"
+            onConfirm={() => handleDelete(record.id)}
+            okText="Delete"
+            cancelText="Cancel"
+            okButtonProps={{ danger: true }}
+          >
+            <Button danger size="small" style={{ borderRadius: 6 }}>Delete</Button>
+          </Popconfirm>
+        </Space>
       ),
     },
   ]
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4, flexWrap: 'wrap', gap: 12 }}>
-        <Space size={16}>
-          <Title level={4} style={{ margin: 0, letterSpacing: '-0.5px', color: '#fafafa' }}>Articles</Title>
-          <DatePicker
-            value={dayjs(date)}
-            onChange={(d) => { if (d) setDate(d.format('YYYY-MM-DD')) }}
-            allowClear={false}
-            size="small"
-            style={{ width: 140 }}
-          />
-        </Space>
-        <Button icon={<ReloadOutlined />} onClick={() => fetchArticles(date)} loading={loading} size="small">
-          Refresh
-        </Button>
-      </div>
-      <Text type="secondary" style={{ display: 'block', marginBottom: 20, color: '#a1a1aa' }}>
-        Articles for {date} · {articles.length} total
-      </Text>
-
-      <div style={{ overflowX: 'auto' }}>
+      <Title level={4} style={{ margin: 0, marginBottom: 20, fontSize: 16, color: '#ffffff' }}>Article Management</Title>
+      <Card style={{ background: '#0a0a0a', border: '1px solid #1f1f1f', borderRadius: 12 }} styles={{ body: { padding: 18 } }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
+          <Space>
+            <Search
+              placeholder="Search articles..."
+              onChange={(e) => setSearch(e.target.value)}
+              style={{ width: 260 }}
+              allowClear
+            />
+          </Space>
+          <Button onClick={fetchArticles} type="default" style={{ fontWeight: 600, borderRadius: 8 }}>Refresh</Button>
+        </div>
         <Table
-          dataSource={articles}
           columns={columns}
+          dataSource={filteredArticles}
           rowKey="id"
           loading={loading}
-          expandable={{ expandedRowRender, rowExpandable: () => true }}
-          pagination={{ pageSize: 20, showSizeChanger: false }}
-          locale={{ emptyText: 'No articles for this date' }}
-          size="small"
+          pagination={{
+            ...pagination,
+            showSizeChanger: true,
+            showTotal: (total) => <span style={{ color: '#6b6b6b' }}>Total {total} articles</span>,
+          }}
+          onChange={(p) => setPagination({ current: p.current || 1, pageSize: p.pageSize || 10 })}
         />
-      </div>
+      </Card>
     </div>
   )
 }

@@ -52,9 +52,27 @@ export interface AIInteraction {
 export interface TrainingDataset {
   id: string;
   name: string;
+  description: string | null;
   persona: string;
   num_examples: number;
   status: string;
   lora_adapter_path: string | null;
+  created_at: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  description: string | null;
+  article_count: number;
+  created_at: string;
+}
+
+export interface ModelRegistry {
+  id: string;
+  name: string;
+  provider: string;
+  status: string;
+  model_type: string | null;
   created_at: string;
 }

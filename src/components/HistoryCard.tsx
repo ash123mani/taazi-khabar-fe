@@ -13,31 +13,38 @@ export default function HistoryCard({ quiz }: { quiz: Quiz }) {
     : null
 
   const color = quiz.score !== null
-    ? percentage! >= 60 ? '#10b981' : percentage! >= 30 ? '#f59e0b' : '#ef4444'
-    : '#a1a1aa'
+    ? percentage! >= 60 ? '#22c55e' : percentage! >= 30 ? '#eab308' : '#ef4444'
+    : '#6b6b6b'
 
   return (
     <Link href={`/history/${quiz.id}`} style={{ textDecoration: 'none', display: 'block' }}>
       <Card
-        style={{ borderRadius: 12, marginBottom: 12, transition: 'all 0.2s ease', background: '#141416', border: '1px solid #27272a' }}
+        style={{
+          borderRadius: 12,
+          marginBottom: 12,
+          transition: 'all 0.2s ease',
+          background: '#0a0a0a',
+          border: '1px solid #1f1f1f',
+        }}
         styles={{ body: { padding: '16px 20px' }}}
+        hoverable
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <Text strong style={{ fontSize: 14, display: 'block', color: '#fafafa' }}>
+            <Text strong style={{ fontSize: 14, display: 'block', color: '#ffffff' }}>
               {quiz.title || 'Quiz'}
             </Text>
             <Space size={12} style={{ marginTop: 6 }}>
-              <Text style={{ color: '#d4d4d8', fontSize: 12 }}>
+              <Text style={{ color: '#6b6b6b', fontSize: 12 }}>
                 {new Date(quiz.created_at).toLocaleDateString('en-IN', {
                   day: 'numeric', month: 'short', year: 'numeric',
                 })}
               </Text>
-              <Text style={{ color: '#a1a1aa', fontSize: 12 }}>
+              <Text style={{ color: '#6b6b6b', fontSize: 12 }}>
                 {quiz.total_questions} questions
               </Text>
               {quiz.articles?.length ? (
-                <Text style={{ color: '#a1a1aa', fontSize: 12 }}>
+                <Text style={{ color: '#6b6b6b', fontSize: 12 }}>
                   {quiz.articles.length} articles
                 </Text>
               ) : null}
@@ -59,7 +66,7 @@ export default function HistoryCard({ quiz }: { quiz: Quiz }) {
                 {percentage}%
               </Tag>
             )}
-            <RightOutlined style={{ color: '#a1a1aa', fontSize: 12 }} />
+            <RightOutlined style={{ color: '#6b6b6b', fontSize: 12 }} />
           </div>
         </div>
       </Card>

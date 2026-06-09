@@ -1,187 +1,148 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Typography, Table, Tag, Button, Modal, Form, Input, Select, Card, Row, Col, Statistic, Space } from 'antd'
-import { PlusOutlined, DownloadOutlined, DatabaseOutlined } from '@ant-design/icons'
+import { Typography, Table, Tag, Space, Button, message, Card, Input, Select, Popconfirm } from 'antd'
 import { api } from '@/lib/api'
 import type { TrainingDataset } from '@/lib/types'
 
-const { Title, Text } = Typography
-const PERSONAS = ['article_summarizer', 'quiz_generator', 'gk_analyst', 'general']
+const { Title } = Typography
+const { Search } = Input
 
 export default function DatasetsPage() {
   const [datasets, setDatasets] = useState<TrainingDataset[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [showForm, setShowForm] = useState(false)
-  const [building, setBuilding] = useState(false)
-  const [downloading, setDownloading] = useState<string | null>(null)
-  const [form] = Form.useForm()
+  const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState<string>('')
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 10 })
 
   const fetchDatasets = async () => {
+    setLoading(true)
     try {
-      const data = await api.getDatasets()
-      setDatasets(Array.isArray(data) ? data : data.datasets || [])
-    } catch {
-      setError('Failed to load datasets')
+      const data = await api.getTrainingDatasets()
+      setDatasets(data)
+    } catch (err: any) {
+      message.error(err.message || 'Failed to load datasets')
     } finally {
       setLoading(false)
     }
   }
 
-  useEffect(() => { fetchDatasets() }, [])
+  useEffect(() => {
+    fetchDatasets()
+  }, [])
 
-  const handleBuild = async (values: { name: string; persona: string }) => {
-    setBuilding(true)
+  const handleDelete = async (id: string) => {
     try {
-      await api.buildDataset(values)
-      setShowForm(false)
-      form.resetFields()
+      await api.deleteTrainingDataset(id)
+      message.success('Dataset deleted successfully')
       fetchDatasets()
     } catch (err: any) {
-      setError(err.message || 'Failed to build dataset')
-    } finally {
-      setBuilding(false)
+      message.error(err.message || 'Failed to delete dataset')
     }
   }
 
-  const handleDownload = async (id: string) => {
-    setDownloading(id)
-    try {
-      await api.downloadDataset(id)
-    } catch (err: any) {
-      setError(err.message || 'Download failed')
-    } finally {
-      setDownloading(null)
-    }
-  }
+  const filteredDatasets = datasets.filter((dataset) => {
+    const matchesSearch = !search ||
+      dataset.name?.toLowerCase().includes(search.toLowerCase()) ||
+      dataset.description?.toLowerCase().includes(search.toLowerCase())
+    const matchesStatus = !statusFilter || dataset.status === statusFilter
+    return matchesSearch && matchesStatus
+  })
 
   const columns = [
     {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      render: (n: string) => <Text strong style={{ color: '#fafafa' }}>{n}</Text>,
+      render: (text: string) => <span style={{ color: '#ffffff', fontWeight: 500 }}>{text}</span>,
     },
     {
-      title: 'Persona',
-      dataIndex: 'persona',
-      key: 'persona',
-      render: (p: string) => (
-        <Tag style={{ background: '#27272a', color: '#a1a1aa', border: '1px solid #3f3f46' }}>{p.replace(/_/g, ' ')}</Tag>
-      ),
-    },
-    {
-      title: 'Examples',
-      dataIndex: 'num_examples',
-      key: 'num_examples',
-      render: (n: number) => <Text style={{ color: '#a1a1aa' }}>{n}</Text>,
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
+      render: (text: string) => <span style={{ color: '#a1a1a1' }}>{text || 'N/A'}</span>,
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
-      render: (s: string) => (
-        <Tag color={s === 'ready' ? 'success' : s === 'building' ? 'processing' : 'default'} style={{ background: s === 'ready' ? '#10b981' : s === 'building' ? '#6366f1' : '#27272a', color: '#fff', border: 'none' }}>
-          {s}
-        </Tag>
-      ),
+      render: (status: string) => {
+        const color = status === 'ready' ? '#22c55e' : status === 'processing' ? '#eab308' : '#ef4444'
+        return <Tag color={color} style={{ borderRadius: 6, fontWeight: 600, fontSize: 12 }}>{status}</Tag>
+      },
     },
     {
-      title: 'LoRA Adapter',
-      dataIndex: 'lora_adapter_path',
-      key: 'lora_adapter_path',
-      render: (p: string | null) => p
-        ? <Tag style={{ background: '#27272a', color: '#a1a1aa', border: '1px solid #3f3f46' }}>{p}</Tag>
-        : <Text style={{ color: '#71717a' }}>-</Text>,
+      title: 'Records',
+      dataIndex: 'record_count',
+      key: 'record_count',
+      render: (count: number) => <span style={{ color: '#a1a1a1' }}>{count?.toLocaleString() || 0}</span>,
     },
     {
       title: 'Created',
       dataIndex: 'created_at',
       key: 'created_at',
-      render: (d: string) => (
-        <span style={{ fontSize: 12, color: '#a1a1aa' }}>
-          {new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-        </span>
-      ),
+      render: (date: string) => <span style={{ color: '#6b6b6b' }}>{new Date(date).toLocaleDateString('en-IN')}</span>,
     },
     {
-      title: '',
+      title: 'Actions',
       key: 'actions',
-      width: 80,
       render: (_: any, record: TrainingDataset) => (
-        <Button
-          type="text"
-          icon={<DownloadOutlined style={{ color: '#a1a1aa' }} />}
-          loading={downloading === record.id}
-          onClick={() => handleDownload(record.id)}
-        />
+        <Space>
+          <Button size="small" type="default" style={{ fontWeight: 600, borderRadius: 6 }}>View</Button>
+          <Popconfirm
+            title="Delete dataset"
+            description="Are you sure you want to delete this dataset?"
+            onConfirm={() => handleDelete(record.id)}
+            okText="Delete"
+            cancelText="Cancel"
+            okButtonProps={{ danger: true }}
+          >
+            <Button danger size="small" style={{ borderRadius: 6 }}>Delete</Button>
+          </Popconfirm>
+        </Space>
       ),
     },
   ]
 
   return (
     <div>
-      {/* Header */}
-      <Card style={{ marginBottom: 24, borderRadius: 16, background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: '24px 28px' } }}>
-        <Row justify="space-between" align="middle">
-          <Col>
-            <Title level={3} style={{ margin: 0, letterSpacing: '-0.5px', fontWeight: 700, color: '#fafafa' }}>
-              Datasets
-            </Title>
-            <Text style={{ color: '#a1a1aa', fontSize: 14, display: 'block', marginTop: 4 }}>
-              Manage training datasets for fine-tuning
-            </Text>
-          </Col>
-          <Col>
-            <Button type="primary" icon={<PlusOutlined />} onClick={() => setShowForm(true)} size="middle">
-              Build Dataset
-            </Button>
-          </Col>
-        </Row>
-      </Card>
-
-      {error && (
-        <Card style={{ marginBottom: 16, borderRadius: 12, background: '#1c1c1f', border: '1px solid #ef4444' }} styles={{ body: { padding: '12px 16px' } }}>
-          <Text style={{ color: '#fca5a5' }}>{error}</Text>
-        </Card>
-      )}
-
-      <Card style={{ borderRadius: 12, background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: 0 } }}>
+      <Title level={4} style={{ margin: 0, marginBottom: 20, fontSize: 16, color: '#ffffff' }}>Datasets</Title>
+      <Card style={{ background: '#0a0a0a', border: '1px solid #1f1f1f', borderRadius: 12 }} styles={{ body: { padding: 18 } }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
+          <Space>
+            <Search
+              placeholder="Search datasets..."
+              onChange={(e) => setSearch(e.target.value)}
+              style={{ width: 260 }}
+              allowClear
+            />
+            <Select
+              placeholder="Filter by status"
+              onChange={(value) => setStatusFilter(value)}
+              style={{ width: 150 }}
+              allowClear
+              options={[
+                { value: 'ready', label: 'Ready' },
+                { value: 'processing', label: 'Processing' },
+                { value: 'error', label: 'Error' },
+              ]}
+            />
+          </Space>
+          <Button onClick={fetchDatasets} type="default" style={{ fontWeight: 600, borderRadius: 8 }}>Refresh</Button>
+        </div>
         <Table
-          dataSource={datasets}
           columns={columns}
+          dataSource={filteredDatasets}
           rowKey="id"
           loading={loading}
-          pagination={false}
-          locale={{ emptyText: 'No datasets created yet.' }}
-          size="middle"
+          pagination={{
+            ...pagination,
+            showSizeChanger: true,
+            showTotal: (total) => <span style={{ color: '#6b6b6b' }}>Total {total} datasets</span>,
+          }}
+          onChange={(p) => setPagination({ current: p.current || 1, pageSize: p.pageSize || 10 })}
         />
       </Card>
-
-      <Modal
-        title="Build Dataset"
-        open={showForm}
-        onCancel={() => { setShowForm(false); form.resetFields() }}
-        footer={null}
-        styles={{ body: { background: '#141416' }, header: { background: '#141416', borderBottom: '1px solid #27272a' } }}
-      >
-        <Form form={form} layout="vertical" onFinish={handleBuild}>
-          <Form.Item name="name" label={<Text style={{ color: '#a1a1aa' }}>Dataset Name</Text>} rules={[{ required: true, message: 'Required' }]}>
-            <Input placeholder="e.g., polity-articles-v1" />
-          </Form.Item>
-          <Form.Item name="persona" label={<Text style={{ color: '#a1a1aa' }}>Persona</Text>} initialValue={PERSONAS[0]}>
-            <Select>
-              {PERSONAS.map((p) => (
-                <Select.Option key={p} value={p}>{p.replace(/_/g, ' ')}</Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Button type="primary" htmlType="submit" loading={building} block style={{ borderRadius: 8, background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', border: 'none' }}>
-            {building ? 'Building...' : 'Build Dataset'}
-          </Button>
-        </Form>
-      </Modal>
     </div>
   )
 }

@@ -19,9 +19,9 @@ const SECTION_ALIASES: [string[], string][] = [
 ]
 
 const SECTION_DISPLAY: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
-  summary: { label: 'Summary', icon: <BulbOutlined />, color: '#818cf8' },
-  pointers: { label: 'Key Facts', icon: <BranchesOutlined />, color: '#10b981' },
-  law: { label: 'Law/Rule', icon: <ExperimentOutlined />, color: '#f59e0b' },
+  summary: { label: 'Summary', icon: <BulbOutlined />, color: '#6366f1' },
+  pointers: { label: 'Key Facts', icon: <BranchesOutlined />, color: '#22c55e' },
+  law: { label: 'Law/Rule', icon: <ExperimentOutlined />, color: '#eab308' },
   syllabus: { label: 'Syllabus', icon: <BookOutlined />, color: '#a855f7' },
   terms: { label: 'Key Terms', icon: <TagsOutlined />, color: '#ef4444' },
 }
@@ -111,10 +111,10 @@ function InlineMarkdown({ text }: { text: string }) {
     <span>
       {parts.map((part, i) => {
         if (part.startsWith('**') && part.endsWith('**')) {
-          return <strong key={i} style={{ fontWeight: 800, color: '#fafafa' }}>{part.slice(2, -2)}</strong>
+          return <strong key={i} style={{ fontWeight: 700, color: '#ffffff' }}>{part.slice(2, -2)}</strong>
         }
         const hasColon = part.includes(':')
-        return <span key={i} style={{ fontWeight: hasColon ? 700 : 600, color: '#d4d4d8' }}>{part}</span>
+        return <span key={i} style={{ fontWeight: hasColon ? 600 : 500, color: '#a1a1a1' }}>{part}</span>
       })}
     </span>
   )
@@ -130,12 +130,12 @@ function stripMarkdown(text: string): string {
 
 const LIST_ITEM_STYLE: React.CSSProperties = {
   marginBottom: 8,
-  padding: '6px 14px 6px 16px',
-  borderLeft: '4px solid #6366f1',
+  padding: '8px 14px 8px 16px',
+  borderLeft: '2px solid #6366f1',
   lineHeight: 1.7,
   fontSize: 14,
   borderRadius: '0 6px 6px 0',
-  background: '#1c1c1f',
+  background: '#0f0f0f',
 }
 
 
@@ -179,7 +179,7 @@ function renderNestedBullets(lines: string[], defaultExpanded?: string) {
     const items = groups.map((g) => ({
       key: g.main.slice(0, 30),
       label: (
-        <span style={{ fontSize: 14, fontWeight: 700, color: '#fafafa' }}>
+        <span style={{ fontSize: 14, fontWeight: 600, color: '#ffffff' }}>
           <InlineMarkdown text={g.main} />
         </span>
       ),
@@ -189,11 +189,11 @@ function renderNestedBullets(lines: string[], defaultExpanded?: string) {
             <li key={j} style={{
               marginBottom: 6,
               padding: '4px 10px 4px 12px',
-              borderLeft: '4px solid #6366f1',
+              borderLeft: '2px solid #6366f1',
               lineHeight: 1.6,
               fontSize: 13,
-              color: '#d4d4d8',
-              background: '#141416',
+              color: '#a1a1a1',
+              background: '#0a0a0a',
             }}>
               <InlineMarkdown text={sub} />
             </li>
@@ -225,7 +225,7 @@ function renderSingleBullet(lines: string[], indent: number): React.ReactNode {
     return (
     <li key={mainText.slice(0, 20)} style={{
       ...LIST_ITEM_STYLE,
-      background: '#1c1c1f',
+      background: '#0f0f0f',
       marginBottom: 10,
     }}>
       <InlineMarkdown text={mainText} />
@@ -235,11 +235,11 @@ function renderSingleBullet(lines: string[], indent: number): React.ReactNode {
             <li key={j} style={{
               marginBottom: 8,
               padding: '5px 12px 5px 14px',
-              borderLeft: '4px solid #6366f1',
+              borderLeft: '2px solid #6366f1',
               lineHeight: 1.7,
               fontSize: 14,
-              color: '#d4d4d8',
-              background: '#141416',
+              color: '#a1a1a1',
+              background: '#0a0a0a',
             }}>
               <InlineMarkdown text={sub} />
             </li>
@@ -259,7 +259,7 @@ function renderBoldLines(lines: string[]) {
         return (
           <li key={i} style={{
             ...LIST_ITEM_STYLE,
-            background: i % 2 === 0 ? '#1c1c1f' : '#141416',
+            background: i % 2 === 0 ? '#0f0f0f' : '#0a0a0a',
           }}>
             <InlineMarkdown text={text} />
           </li>
@@ -289,9 +289,9 @@ function renderMarkdown(text: string, defaultExpanded?: string) {
           const txt = stripMarkdown(String(children))
           const hasBold = /\*\*/.test(String(children))
           if (txt.length > 60) {
-            return <p style={{ margin: '4px 0', lineHeight: 1.6, fontSize: 13, color: '#a1a1aa', fontWeight: hasBold ? 500 : 400 }}>{txt}</p>
+            return <p style={{ margin: '4px 0', lineHeight: 1.6, fontSize: 13, color: '#6b6b6b', fontWeight: hasBold ? 500 : 400 }}>{txt}</p>
           }
-          return <p style={{ margin: '4px 0', lineHeight: 1.6, fontSize: 13, color: '#d4d4d8', fontWeight: txt.includes(':') ? 600 : 500 }}>{txt}</p>
+          return <p style={{ margin: '4px 0', lineHeight: 1.6, fontSize: 13, color: '#a1a1a1', fontWeight: txt.includes(':') ? 600 : 500 }}>{txt}</p>
         },
         h3: ({ children }) => {
           const txt = stripMarkdown(String(children)).toLowerCase()
@@ -299,14 +299,14 @@ function renderMarkdown(text: string, defaultExpanded?: string) {
             ['what & why', 'key data & facts', 'people & institutions', 'why this matters', 'upsc syllabus connect',
               'gk summary', 'gk pointers', 'law/rule change', 'syllabus tag', 'key terms'].some((k) => txt.startsWith(k))
           if (isSectionHeader) return null
-          return <p style={{ margin: '6px 0 2px', fontWeight: 600, fontSize: 13, color: '#d4d4d8' }}>{stripMarkdown(String(children))}</p>
+          return <p style={{ margin: '6px 0 2px', fontWeight: 600, fontSize: 13, color: '#a1a1a1' }}>{stripMarkdown(String(children))}</p>
         },
-        strong: ({ children }) => <strong style={{ fontWeight: 600, color: '#fafafa' }}>{children}</strong>,
+        strong: ({ children }) => <strong style={{ fontWeight: 600, color: '#ffffff' }}>{children}</strong>,
         ul: ({ children }) => <ul style={{ paddingLeft: 16, margin: '4px 0', listStyle: 'none' }}>{children}</ul>,
         li: ({ children }) => (
           <li style={{
             ...LIST_ITEM_STYLE,
-            background: '#1c1c1f',
+            background: '#0f0f0f',
           }}>
             {children}
           </li>
@@ -314,19 +314,19 @@ function renderMarkdown(text: string, defaultExpanded?: string) {
         p: ({ children }) => {
           const txt = stripMarkdown(String(children))
           if (!txt) return null
-          return <p style={{ margin: '4px 0', lineHeight: 1.6, fontSize: 13, color: '#a1a1aa' }}>{txt}</p>
+          return <p style={{ margin: '4px 0', lineHeight: 1.6, fontSize: 13, color: '#6b6b6b' }}>{txt}</p>
         },
         h4: ({ children }) => {
           const txt = stripMarkdown(String(children))
-          return <p style={{ fontSize: 12, fontWeight: 600, margin: '6px 0 2px', color: '#a1a1aa' }}>{txt}</p>
+          return <p style={{ fontSize: 12, fontWeight: 600, margin: '6px 0 2px', color: '#6b6b6b' }}>{txt}</p>
         },
         table: ({ children }) => (
-          <div style={{ overflowX: 'auto', margin: '6px 0', border: '1px solid #27272a', borderRadius: 4 }}>
+          <div style={{ overflowX: 'auto', margin: '6px 0', border: '1px solid #1f1f1f', borderRadius: 4 }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>{children}</table>
           </div>
         ),
-        th: ({ children }) => <th style={{ background: '#1c1c1f', padding: '4px 8px', borderBottom: '2px solid #27272a', fontWeight: 600, textAlign: 'left', fontSize: 12, color: '#fafafa' }}>{children}</th>,
-        td: ({ children }) => <td style={{ padding: '4px 8px', borderBottom: '1px solid #27272a', fontSize: 12, color: '#d4d4d8' }}>{children}</td>,
+        th: ({ children }) => <th style={{ background: '#0f0f0f', padding: '4px 8px', borderBottom: '2px solid #1f1f1f', fontWeight: 600, textAlign: 'left', fontSize: 12, color: '#ffffff' }}>{children}</th>,
+        td: ({ children }) => <td style={{ padding: '4px 8px', borderBottom: '1px solid #1f1f1f', fontSize: 12, color: '#a1a1a1' }}>{children}</td>,
       }}
     >
       {text}
@@ -341,7 +341,7 @@ function renderContent(text: string, sectionKey: string, defaultExpanded?: strin
     return (
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
         {terms.map((t) => (
-          <Tag key={t} style={{ fontSize: 11, borderRadius: 4, margin: 0, background: '#27272a', color: '#a1a1aa', border: '1px solid #3f3f46' }}>{t}</Tag>
+          <Tag key={t} style={{ fontSize: 11, borderRadius: 4, margin: 0, background: '#141414', color: '#a1a1a1', border: '1px solid #1f1f1f' }}>{t}</Tag>
         ))}
       </div>
     )
@@ -368,7 +368,7 @@ export default function FormattedSummary({ summary, compact, defaultExpanded }: 
         </span>
       ),
       children: (
-        <div style={{ fontSize: 13, lineHeight: 1.6, color: '#a1a1aa', paddingTop: 2 }}>
+        <div style={{ fontSize: 13, lineHeight: 1.6, color: '#a1a1a1', paddingTop: 2 }}>
           {renderContent(s.content, s.key)}
         </div>
       ),
@@ -377,7 +377,7 @@ export default function FormattedSummary({ summary, compact, defaultExpanded }: 
 
   return (
     <div>
-      <div style={{ fontSize: 13, lineHeight: 1.6, color: '#d4d4d8' }}>
+      <div style={{ fontSize: 13, lineHeight: 1.6, color: '#a1a1a1' }}>
         {renderContent(firstSection.content, firstSection.key, defaultExpanded)}
       </div>
       {!compact && collapseItems.length > 0 && (

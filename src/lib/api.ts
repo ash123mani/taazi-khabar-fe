@@ -68,6 +68,12 @@ export const api = {
   getDatasets: (params?: Record<string, string>) =>
     fetchApi(`/admin/datasets${params ? `?${new URLSearchParams(params)}` : ''}`),
 
+  getTrainingDatasets: (params?: Record<string, string>) =>
+    fetchApi(`/admin/training-datasets${params ? `?${new URLSearchParams(params)}` : ''}`),
+
+  deleteTrainingDataset: (id: string) =>
+    fetchApi(`/admin/training-datasets/${id}`, { method: 'DELETE' }),
+
   buildDataset: (data: any) =>
     fetchApi('/admin/datasets', { method: 'POST', body: JSON.stringify(data) }),
 
@@ -89,6 +95,9 @@ export const api = {
   },
 
   getModels: () => fetchApi('/admin/models'),
+
+  deleteModel: (id: string) =>
+    fetchApi(`/admin/models/${id}`, { method: 'DELETE' }),
 
   updateModels: (data: any) =>
     fetchApi('/admin/models', { method: 'PUT', body: JSON.stringify(data) }),
@@ -120,6 +129,9 @@ export const api = {
   adminDeleteArticle: (id: string) =>
     fetchApi(`/admin/articles/${id}`, { method: 'DELETE' }),
 
+  deleteArticle: (id: string) =>
+    fetchApi(`/articles/${id}`, { method: 'DELETE' }),
+
   adminGetCategories: (params?: Record<string, string>) =>
     fetchApi(`/admin/categories${params ? `?${new URLSearchParams(params)}` : ''}`),
 
@@ -138,6 +150,12 @@ export const api = {
   adminDeleteCategory: (id: string) =>
     fetchApi(`/admin/categories/${id}`, { method: 'DELETE' }),
 
+  deleteCategory: (id: string) =>
+    fetchApi(`/categories/${id}`, { method: 'DELETE' }),
+
+  getCategories: (params?: Record<string, string>) =>
+    fetchApi(`/categories${params ? `?${new URLSearchParams(params)}` : ''}`),
+
   adminGetUsers: (params?: Record<string, string>) =>
     fetchApi(`/admin/users${params ? `?${new URLSearchParams(params)}` : ''}`),
 
@@ -155,4 +173,6 @@ export const api = {
     fetchApi(`/bookmarks/${articleId}`, { method: 'POST' }),
 
   getPerformance: () => fetchApi('/analytics/performance'),
+
+  getAnalytics: () => fetchApi('/analytics'),
 };
