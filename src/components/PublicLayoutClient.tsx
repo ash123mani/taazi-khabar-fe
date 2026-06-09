@@ -40,6 +40,7 @@ export default function PublicLayoutClient({ children }: { children: React.React
   const { data: session } = useSession()
 
   const isAdmin = (session?.user as any)?.is_admin
+  const isQuizPage = pathname === '/quiz' || pathname.startsWith('/quiz/')
 
   const nav = [
     ...publicMenuItems,
@@ -47,7 +48,7 @@ export default function PublicLayoutClient({ children }: { children: React.React
   ]
 
   return (
-    <Layout style={{ minHeight: '100vh', background: '#000000' }}>
+    <Layout style={{ minHeight: '100vh', background: '#0a0a0a' }}>
       <Header
         style={{
           display: 'flex',
@@ -129,9 +130,9 @@ export default function PublicLayoutClient({ children }: { children: React.React
         style={{
           flex: 1,
           width: '100%',
-          maxWidth: 860,
+          maxWidth: isQuizPage ? 'none' : 860,
           margin: '0 auto',
-          padding: '32px 24px',
+          padding: isQuizPage ? '32px 48px' : '32px 24px',
           boxSizing: 'border-box',
         }}
       >

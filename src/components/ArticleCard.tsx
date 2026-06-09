@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Card, Tag, Typography, Space, Button, message } from 'antd'
-import { HeartOutlined, HeartFilled, LinkOutlined } from '@ant-design/icons'
+import { Collapse, Tag, Typography, Button, message, Tooltip } from 'antd'
+import { HeartOutlined, HeartFilled, LinkOutlined, DownOutlined } from '@ant-design/icons'
 import { api } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
 import SyllabusTag from './SyllabusTag'
@@ -11,13 +11,12 @@ import type { Article } from '@/lib/types'
 
 const { Text } = Typography
 
-export default function ArticleCard({ article, defaultExpanded }: { article: Article; defaultExpanded?: string }) {
+export default function ArticleCard({ article }: { article: Article }) {
   const [bookmarked, setBookmarked] = useState(article.is_bookmarked ?? false)
   const [toggling, setToggling] = useState(false)
   const isLoggedIn = useAuthStore((s) => !!s.accessToken)
 
   const handleBookmark = async (e: React.MouseEvent) => {
-    e.preventDefault()
     e.stopPropagation()
     if (!isLoggedIn) {
       message.info('Login to bookmark articles')
@@ -35,67 +34,84 @@ export default function ArticleCard({ article, defaultExpanded }: { article: Art
   }
 
   return (
-    <Card
+    <Collapse
+      ghost
+      expandIconPosition="end"
+      expandIcon={({ isActive }) => (
+        <DownOutlined style={{ fontSize: 12, color: '#4a4a4a', transition: 'transform 0.2s', transform: isActive ? 'rotate(180deg)' : 'rotate(0deg)', marginRight: 4 }} />
+      )}
+      items={[
+        {
+          key: article.id,
+          label: (
+            <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+              {article.image_url && (
+                <div style={{ flexShrink: 0, width: 90, height: 68, borderRadius: 8, overflow: 'hidden', marginTop: 2, background: '#0f0f0f' }}>
+                  <img
+                    src={article.image_url}
+                    alt=""
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                  />
+                </div>
+              )}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <Text strong style={{ fontSize: 15, color: '#ffffff', lineHeight: 1.4, display: 'block' }}>
+                  <a
+                    href={article.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: '#ffffff', textDecoration: 'none' }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {article.headline}
+                  </a>
+                </Text>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6, color: '#6b6b6b', fontSize: 12 }}>
+                  <LinkOutlined style={{ fontSize: 11 }} />
+                  <span>{new URL(article.url).hostname}</span>
+                </div>
+                <div style={{ display: 'flex', gap: 6, marginTop: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                  {article.syllabus_tag && <SyllabusTag tag={article.syllabus_tag} />}
+                  {article.key_terms?.slice(0, 2).map((term) => (
+                    <Tooltip key={term} title={term}>
+                      <Tag style={{ fontSize: 10, borderRadius: 4, margin: 0, padding: '0 6px', background: '#141414', color: '#a1a1a1', border: '1px solid #1f1f1f', maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{term}</Tag>
+                    </Tooltip>
+                  ))}
+                  <Text style={{ color: '#6b6b6b', fontSize: 11 }}>
+                    {article.source === 'thehindu' ? 'The Hindu' : 'Indian Express'} · {new Date(article.published_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </Text>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 4, flexShrink: 0, marginTop: 2 }}>
+                <Button
+                  type="text"
+                  size="small"
+                  loading={toggling}
+                  onClick={handleBookmark}
+                  icon={bookmarked ? (
+                    <HeartFilled style={{ color: '#ef4444' }} />
+                  ) : (
+                    <HeartOutlined style={{ color: '#6b6b6b' }} />
+                  )}
+                  style={{ color: bookmarked ? '#ef4444' : '#6b6b6b' }}
+                />
+              </div>
+            </div>
+          ),
+          children: article.gk_summary ? (
+            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: 16 }}>
+              <FormattedSummary summary={article.gk_summary} />
+            </div>
+          ) : null,
+        },
+      ]}
       style={{
+        marginBottom: 12,
         borderRadius: 12,
-        marginBottom: 16,
-        transition: 'all 0.2s ease',
-        background: '#0a0a0a',
+        background: '#111111',
         border: '1px solid #1f1f1f',
       }}
-      styles={{ body: { padding: 0 } }}
-      hoverable
-    >
-      <div style={{ padding: '20px 24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <Text strong style={{ fontSize: 15, color: '#ffffff', lineHeight: 1.4, display: 'block' }}>
-              <a
-                href={article.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: '#ffffff', textDecoration: 'none', transition: 'color 0.2s' }}
-                onMouseEnter={(e) => e.currentTarget.style.color = '#6366f1'}
-                onMouseLeave={(e) => e.currentTarget.style.color = '#ffffff'}
-              >
-                {article.headline}
-              </a>
-            </Text>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6, color: '#6b6b6b', fontSize: 12 }}>
-              <LinkOutlined style={{ fontSize: 11 }} />
-              <span>{new URL(article.url).hostname}</span>
-            </div>
-          </div>
-          <Button
-            type="text"
-            size="small"
-            loading={toggling}
-            onClick={handleBookmark}
-            icon={bookmarked ? (
-              <HeartFilled style={{ color: '#ef4444' }} />
-            ) : (
-              <HeartOutlined style={{ color: '#6b6b6b' }} />
-            )}
-            style={{ color: bookmarked ? '#ef4444' : '#6b6b6b', flexShrink: 0 }}
-          />
-        </div>
-
-        {article.gk_summary && (
-          <div style={{ marginTop: 12 }}>
-            <FormattedSummary summary={article.gk_summary} compact={false} defaultExpanded={defaultExpanded} />
-          </div>
-        )}
-
-        <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-          {article.syllabus_tag && <SyllabusTag tag={article.syllabus_tag} />}
-          {article.key_terms?.slice(0, 3).map((term) => (
-            <Tag key={term} style={{ fontSize: 11, borderRadius: 4, margin: 0, background: '#141414', color: '#a1a1a1', border: '1px solid #1f1f1f' }}>{term}</Tag>
-          ))}
-          <Text style={{ color: '#6b6b6b', fontSize: 12, marginLeft: 'auto' }}>
-            {article.source === 'thehindu' ? 'The Hindu' : 'Indian Express'} · {new Date(article.published_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-          </Text>
-        </div>
-      </div>
-    </Card>
+    />
   )
 }

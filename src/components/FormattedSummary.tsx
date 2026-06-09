@@ -1,4 +1,4 @@
-import { Collapse, Tag } from 'antd'
+import { Tag } from 'antd'
 import { BulbOutlined, BranchesOutlined, BookOutlined, ExperimentOutlined, TagsOutlined } from '@ant-design/icons'
 import ReactMarkdown from 'react-markdown'
 
@@ -7,25 +7,23 @@ interface Section {
   label?: string
   icon?: React.ReactNode
   content: string
-  color?: string
 }
 
 const SECTION_ALIASES: [string[], string][] = [
-  [['gk summary', 'what & why', 'gk gist', 'summary'], 'summary'],
-  [['gk pointers', 'key data & facts', 'people & institutions', 'why this matters'], 'pointers'],
-  [['law/rule change', 'law & rule change'], 'law'],
-  [['syllabus tag', 'upsc syllabus connect', 'syllabus topic', 'syllabus'], 'syllabus'],
+  [['event', 'gk summary', 'what & why', 'gk gist', 'summary'], 'summary'],
+  [['key actors', 'gk pointers', 'key data & facts', 'people & institutions', 'why this matters'], 'pointers'],
+  [['significance', 'law/rule change', 'law & rule change'], 'law'],
+  [['why it matters', 'syllabus tag', 'upsc syllabus connect', 'syllabus topic', 'syllabus'], 'syllabus'],
   [['key terms'], 'terms'],
 ]
 
-const SECTION_DISPLAY: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
-  summary: { label: 'Summary', icon: <BulbOutlined />, color: '#6366f1' },
-  pointers: { label: 'Key Facts', icon: <BranchesOutlined />, color: '#22c55e' },
-  law: { label: 'Law/Rule', icon: <ExperimentOutlined />, color: '#eab308' },
-  syllabus: { label: 'Syllabus', icon: <BookOutlined />, color: '#a855f7' },
-  terms: { label: 'Key Terms', icon: <TagsOutlined />, color: '#ef4444' },
+const SECTION_DISPLAY: Record<string, { label: string; icon: React.ReactNode }> = {
+  summary: { label: 'Summary', icon: <BulbOutlined /> },
+  pointers: { label: 'Key Facts', icon: <BranchesOutlined /> },
+  law: { label: 'Analysis', icon: <ExperimentOutlined /> },
+  syllabus: { label: 'Syllabus', icon: <BookOutlined /> },
+  terms: { label: 'Key Terms', icon: <TagsOutlined /> },
 }
-
 
 function normalizeHeader(text: string): string {
   return text
@@ -46,7 +44,6 @@ function detectSection(line: string): string | null {
   }
   return null
 }
-
 
 const FOOTER_MARKERS = ['syllabus topic', 'key terms', 'gk gist']
 
@@ -104,291 +101,102 @@ function parseSections(md: string): Section[] {
   return merged
 }
 
-
-function InlineMarkdown({ text }: { text: string }) {
-  const parts = text.split(/(\*\*[^*]+\*\*)/g)
+function renderTerms(text: string) {
+  const terms = text
+    .split('\n')
+    .map((l) => l.trim().replace(/^[-•*]\s*/, '').replace(/\*+/g, ''))
+    .join(',')
+    .split(',')
+    .map((t) => t.trim())
+    .filter(Boolean)
+  if (terms.length === 0) return null
   return (
-    <span>
-      {parts.map((part, i) => {
-        if (part.startsWith('**') && part.endsWith('**')) {
-          return <strong key={i} style={{ fontWeight: 700, color: '#ffffff' }}>{part.slice(2, -2)}</strong>
-        }
-        const hasColon = part.includes(':')
-        return <span key={i} style={{ fontWeight: hasColon ? 600 : 500, color: '#a1a1a1' }}>{part}</span>
-      })}
-    </span>
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+      {terms.map((t) => (
+        <Tag key={t} style={{ fontSize: 12, borderRadius: 4, margin: 0, padding: '2px 10px', background: '#0f0f0f', color: '#a1a1a1', border: '1px solid #1f1f1f' }}>{t}</Tag>
+      ))}
+    </div>
   )
 }
 
-function stripMarkdown(text: string): string {
-  return text
-    .replace(/^#+\s*/, '')
-    .replace(/\*+/g, '')
-    .replace(/<[^>]+>/g, '')
-    .trim()
-}
+function SectionBlock({ section }: { section: Section }) {
+  const display = SECTION_DISPLAY[section.key]
 
-const LIST_ITEM_STYLE: React.CSSProperties = {
-  marginBottom: 8,
-  padding: '8px 14px 8px 16px',
-  borderLeft: '2px solid #6366f1',
-  lineHeight: 1.7,
-  fontSize: 14,
-  borderRadius: '0 6px 6px 0',
-  background: '#0f0f0f',
-}
-
-
-function getIndentLevel(line: string): number {
-  const match = line.match(/^(\s*)/)
-  return match ? Math.floor(match[1].length / 2) : 0
-}
-
-function renderNestedBullets(lines: string[], defaultExpanded?: string) {
-  const groups: { main: string; subs: string[] }[] = []
-  let currentGroup: string[] = []
-  let currentIndent = 0
-
-  for (let i = 0; i < lines.length; i++) {
-    const raw = lines[i]
-    const trimmed = raw.trim()
-    if (!trimmed || trimmed === '---') continue
-
-    const indent = getIndentLevel(raw)
-    const text = trimmed.replace(/^[-•*]\s*/, '').trim()
-    if (!text) continue
-
-    if (indent === 0) {
-      if (currentGroup.length > 0) {
-        groups.push({ main: currentGroup[0], subs: currentGroup.slice(1) })
-        currentGroup = []
-      }
-      currentGroup = [text]
-      currentIndent = 0
-    } else {
-      currentGroup.push(text)
-      currentIndent = indent
-    }
-  }
-  if (currentGroup.length > 0) {
-    groups.push({ main: currentGroup[0], subs: currentGroup.slice(1) })
-  }
-
-  if (defaultExpanded) {
-    const defaultKey = defaultExpanded.toLowerCase().replace(/[*:]/g, '').trim()
-    const items = groups.map((g) => ({
-      key: g.main.slice(0, 30),
-      label: (
-        <span style={{ fontSize: 14, fontWeight: 600, color: '#ffffff' }}>
-          <InlineMarkdown text={g.main} />
-        </span>
-      ),
-      children: g.subs.length > 0 ? (
-        <ul style={{ padding: 0, margin: 0, listStyle: 'none' }}>
-          {g.subs.map((sub, j) => (
-            <li key={j} style={{
-              marginBottom: 6,
-              padding: '4px 10px 4px 12px',
-              borderLeft: '2px solid #6366f1',
-              lineHeight: 1.6,
-              fontSize: 13,
-              color: '#a1a1a1',
-              background: '#0a0a0a',
-            }}>
-              <InlineMarkdown text={sub} />
-            </li>
-          ))}
-        </ul>
-      ) : null,
-    }))
-    const activeKey = items.find((item) => {
-      const label = item.key.replace(/[*:]/g, '').trim().toLowerCase()
-      return label.startsWith(defaultKey) || defaultKey.startsWith(label) || label.includes(defaultKey)
-    })?.key
+  if (section.key === 'terms') {
     return (
-      <Collapse ghost size="small" items={items} defaultActiveKey={activeKey ? [activeKey] : []} expandIconPosition="end" style={{ marginTop: 4 }} />
-    )
-  }
-
-  const rootItems = groups.map((g) => renderSingleBullet([g.main, ...g.subs], 0))
-  return (
-    <ul style={{ padding: 0, margin: '6px 0', listStyle: 'none' }}>
-      {rootItems}
-    </ul>
-  )
-}
-
-function renderSingleBullet(lines: string[], indent: number): React.ReactNode {
-  const mainText = lines[0]
-  const subItems = lines.slice(1)
-
-    return (
-    <li key={mainText.slice(0, 20)} style={{
-      ...LIST_ITEM_STYLE,
-      background: '#0f0f0f',
-      marginBottom: 10,
-    }}>
-      <InlineMarkdown text={mainText} />
-      {subItems.length > 0 && (
-        <ul style={{ padding: '6px 0 0 14px', margin: 0, listStyle: 'none' }}>
-          {subItems.map((sub, j) => (
-            <li key={j} style={{
-              marginBottom: 8,
-              padding: '5px 12px 5px 14px',
-              borderLeft: '2px solid #6366f1',
-              lineHeight: 1.7,
-              fontSize: 14,
-              color: '#a1a1a1',
-              background: '#0a0a0a',
-            }}>
-              <InlineMarkdown text={sub} />
-            </li>
-          ))}
-        </ul>
-      )}
-    </li>
-  )
-}
-
-function renderBoldLines(lines: string[]) {
-  return (
-    <ul style={{ padding: 0, margin: '6px 0', listStyle: 'none' }}>
-      {lines.map((line, i) => {
-        const text = line.trim()
-        if (!text) return null
-        return (
-          <li key={i} style={{
-            ...LIST_ITEM_STYLE,
-            background: i % 2 === 0 ? '#0f0f0f' : '#0a0a0a',
-          }}>
-            <InlineMarkdown text={text} />
-          </li>
-        )
-      })}
-    </ul>
-  )
-}
-
-function renderMarkdown(text: string, defaultExpanded?: string) {
-  const lines = text.split('\n')
-
-  const bulletLines = lines.filter((l) => /^[-•*]\s/.test(l.trim()))
-  if (bulletLines.length >= 2) {
-    return renderNestedBullets(lines, defaultExpanded)
-  }
-
-  const boldStartLines = lines.filter((l) => /^\*\*[^*]+\*\*/.test(l.trim()))
-  if (boldStartLines.length >= 2) {
-    return renderBoldLines(lines)
-  }
-
-  return (
-    <ReactMarkdown
-      components={{
-        h2: ({ children }) => {
-          const txt = stripMarkdown(String(children))
-          const hasBold = /\*\*/.test(String(children))
-          if (txt.length > 60) {
-            return <p style={{ margin: '4px 0', lineHeight: 1.6, fontSize: 13, color: '#6b6b6b', fontWeight: hasBold ? 500 : 400 }}>{txt}</p>
-          }
-          return <p style={{ margin: '4px 0', lineHeight: 1.6, fontSize: 13, color: '#a1a1a1', fontWeight: txt.includes(':') ? 600 : 500 }}>{txt}</p>
-        },
-        h3: ({ children }) => {
-          const txt = stripMarkdown(String(children)).toLowerCase()
-          const isSectionHeader = Object.values(SECTION_DISPLAY).some((d) => d.label.toLowerCase() === txt) ||
-            ['what & why', 'key data & facts', 'people & institutions', 'why this matters', 'upsc syllabus connect',
-              'gk summary', 'gk pointers', 'law/rule change', 'syllabus tag', 'key terms'].some((k) => txt.startsWith(k))
-          if (isSectionHeader) return null
-          return <p style={{ margin: '6px 0 2px', fontWeight: 600, fontSize: 13, color: '#a1a1a1' }}>{stripMarkdown(String(children))}</p>
-        },
-        strong: ({ children }) => <strong style={{ fontWeight: 600, color: '#ffffff' }}>{children}</strong>,
-        ul: ({ children }) => <ul style={{ paddingLeft: 16, margin: '4px 0', listStyle: 'none' }}>{children}</ul>,
-        li: ({ children }) => (
-          <li style={{
-            ...LIST_ITEM_STYLE,
-            background: '#0f0f0f',
-          }}>
-            {children}
-          </li>
-        ),
-        p: ({ children }) => {
-          const txt = stripMarkdown(String(children))
-          if (!txt) return null
-          return <p style={{ margin: '4px 0', lineHeight: 1.6, fontSize: 13, color: '#6b6b6b' }}>{txt}</p>
-        },
-        h4: ({ children }) => {
-          const txt = stripMarkdown(String(children))
-          return <p style={{ fontSize: 12, fontWeight: 600, margin: '6px 0 2px', color: '#6b6b6b' }}>{txt}</p>
-        },
-        table: ({ children }) => (
-          <div style={{ overflowX: 'auto', margin: '6px 0', border: '1px solid #1f1f1f', borderRadius: 4 }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>{children}</table>
+      <div style={{ borderLeft: '2px solid #1f1f1f', paddingLeft: 14, marginTop: 16 }}>
+        {display && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 6 }}>
+            <span style={{ color: '#6366f1', fontSize: 12 }}>{display.icon}</span>
+            <span style={{ fontSize: 11, fontWeight: 600, color: '#6366f1', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
+              {display.label}
+            </span>
           </div>
-        ),
-        th: ({ children }) => <th style={{ background: '#0f0f0f', padding: '4px 8px', borderBottom: '2px solid #1f1f1f', fontWeight: 600, textAlign: 'left', fontSize: 12, color: '#ffffff' }}>{children}</th>,
-        td: ({ children }) => <td style={{ padding: '4px 8px', borderBottom: '1px solid #1f1f1f', fontSize: 12, color: '#a1a1a1' }}>{children}</td>,
-      }}
-    >
-      {text}
-    </ReactMarkdown>
-  )
-}
-
-function renderContent(text: string, sectionKey: string, defaultExpanded?: string) {
-  if (sectionKey === 'terms') {
-    const terms = text.split('\n').map((l) => l.trim().replace(/^[-•*]\s*/, '').replace(/\*+/g, '')).join(',').split(',').map((t) => t.trim()).filter(Boolean)
-    if (terms.length === 0) return null
-    return (
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-        {terms.map((t) => (
-          <Tag key={t} style={{ fontSize: 11, borderRadius: 4, margin: 0, background: '#141414', color: '#a1a1a1', border: '1px solid #1f1f1f' }}>{t}</Tag>
-        ))}
+        )}
+        {renderTerms(section.content)}
       </div>
     )
   }
-  return renderMarkdown(text, defaultExpanded)
+
+  return (
+    <div style={{ borderLeft: '2px solid #1f1f1f', paddingLeft: 14, marginTop: 16 }}>
+      {display && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 8 }}>
+          <span style={{ color: '#6366f1', fontSize: 12 }}>{display.icon}</span>
+          <span style={{ fontSize: 11, fontWeight: 600, color: '#6366f1', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
+            {display.label}
+          </span>
+        </div>
+      )}
+      <div style={{ fontSize: 14, lineHeight: 1.7, color: '#a1a1a1' }}>
+        <ReactMarkdown
+          components={{
+            p: ({ children }) => {
+              const txt = String(children)
+              if (!txt.trim()) return null
+              return <p style={{ margin: '4px 0' }}>{children}</p>
+            },
+            strong: ({ children }) => <strong style={{ fontWeight: 600, color: '#e5e5e5' }}>{children}</strong>,
+            ul: ({ children }) => <ul style={{ paddingLeft: 16, margin: '4px 0', listStyle: 'none' }}>{children}</ul>,
+            li: ({ children }) => (
+              <li style={{
+                marginBottom: 6,
+                padding: '8px 12px',
+                background: '#0f0f0f',
+                borderRadius: 6,
+                lineHeight: 1.6,
+                fontSize: 14,
+              }}>
+                {children}
+              </li>
+            ),
+            h3: ({ children }) => {
+              const txt = String(children).replace(/\*+/g, '').trim().toLowerCase()
+              const isSectionHeader = Object.values(SECTION_DISPLAY).some((d) => d.label.toLowerCase() === txt) ||
+                ['what & why', 'key data & facts', 'people & institutions', 'why this matters',
+                  'upsc syllabus connect', 'gk summary', 'gk pointers', 'law/rule change', 'syllabus tag'].some((k) => txt.startsWith(k))
+              if (isSectionHeader) return null
+              return <p style={{ margin: '8px 0 4px', fontWeight: 600, fontSize: 14, color: '#c5c5c5' }}>{String(children).replace(/\*+/g, '')}</p>
+            },
+            h4: ({ children }) => <p style={{ fontSize: 13, fontWeight: 600, margin: '8px 0 4px', color: '#b0b0b0' }}>{String(children).replace(/\*+/g, '')}</p>,
+          }}
+        >
+          {section.content}
+        </ReactMarkdown>
+      </div>
+    </div>
+  )
 }
 
-
-export default function FormattedSummary({ summary, compact, defaultExpanded }: { summary: string; compact?: boolean; defaultExpanded?: string }) {
+export default function FormattedSummary({ summary }: { summary: string; compact?: boolean; defaultExpanded?: string }) {
   const sections = parseSections(summary)
   if (sections.length === 0) return null
 
-  const firstSection = sections[0]
-  const restSections = sections.slice(1)
-
-  const collapseItems = restSections.map((s) => {
-    const display = SECTION_DISPLAY[s.key] || SECTION_DISPLAY.summary
-    return {
-      key: s.key,
-      label: (
-        <span style={{ fontSize: 12, fontWeight: 600, color: display.color, display: 'flex', alignItems: 'center', gap: 5 }}>
-          {display.icon}
-          {display.label}
-        </span>
-      ),
-      children: (
-        <div style={{ fontSize: 13, lineHeight: 1.6, color: '#a1a1a1', paddingTop: 2 }}>
-          {renderContent(s.content, s.key)}
-        </div>
-      ),
-    }
-  })
-
   return (
     <div>
-      <div style={{ fontSize: 13, lineHeight: 1.6, color: '#a1a1a1' }}>
-        {renderContent(firstSection.content, firstSection.key, defaultExpanded)}
-      </div>
-      {!compact && collapseItems.length > 0 && (
-        <Collapse
-          ghost
-          size="small"
-          items={collapseItems}
-          style={{ marginTop: 8 }}
-          expandIconPosition="end"
-        />
-      )}
+      {sections.map((s) => (
+        <SectionBlock key={s.key} section={s} />
+      ))}
     </div>
   )
 }

@@ -153,7 +153,7 @@ export default function QuizContent() {
                 </Row>
               }
             >
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 500, overflowY: 'auto' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 500, overflowY: 'auto' }}>
                 {availableArticles.map((article) => (
                   <Tooltip title="Click or drag to select" key={article.id}>
                     <Card
@@ -162,28 +162,42 @@ export default function QuizContent() {
                       draggable
                       onDragStart={(e) => handleDragStart(e, article.id)}
                       onClick={() => setSelected(new Set([...Array.from(selected), article.id]))}
-                      style={{ borderRadius: 12, cursor: 'grab', border: '1px solid #1f1f1f', background: '#141414', transition: 'all 0.2s' }}
-                      styles={{ body: { padding: '12px 14px' } }}
+                      style={{ borderRadius: 10, cursor: 'grab', border: '1px solid #1f1f1f', background: '#141414', transition: 'all 0.2s' }}
+                      styles={{ body: { padding: '10px 12px' } }}
                     >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10 }}>
-                        <Text style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.5, flex: 1, color: '#ffffff' }}>
-                          {article.headline}
-                        </Text>
-                        {article.has_quiz && (
-                          <Tag icon={<CheckCircleFilled />} color="success" style={{ fontSize: 10, margin: 0, whiteSpace: 'nowrap', borderRadius: 4, flexShrink: 0 }}>
-                            Quizzed
-                          </Tag>
+                      <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                        {article.image_url && (
+                          <div style={{ flexShrink: 0, width: 64, height: 48, borderRadius: 6, overflow: 'hidden', background: '#0f0f0f' }}>
+                            <img
+                              src={article.image_url}
+                              alt=""
+                              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                            />
+                          </div>
                         )}
-                      </div>
-                      <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-                        {article.syllabus_tag && (
-                          <Tag style={{ fontSize: 10, borderRadius: 4, margin: 0, background: '#141414', color: '#a1a1a1', border: '1px solid #1f1f1f', padding: '0 6px', lineHeight: 18 }}>
-                            {article.syllabus_tag}
-                          </Tag>
-                        )}
-                        <Text style={{ color: '#6b6b6b', fontSize: 10 }}>
-                          {article.source === 'thehindu' ? 'The Hindu' : 'Indian Express'}
-                        </Text>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                            <Text style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.4, flex: 1, color: '#ffffff', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                              {article.headline}
+                            </Text>
+                            {article.has_quiz && (
+                              <Tag icon={<CheckCircleFilled />} color="success" style={{ fontSize: 10, margin: 0, whiteSpace: 'nowrap', borderRadius: 4, flexShrink: 0, lineHeight: '18px', padding: '0 6px' }}>
+                                Quizzed
+                              </Tag>
+                            )}
+                          </div>
+                          <div style={{ display: 'flex', gap: 4, marginTop: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                            {article.syllabus_tag && (
+                              <Tag style={{ fontSize: 10, borderRadius: 4, margin: 0, background: '#0f0f0f', color: '#a1a1a1', border: '1px solid #2a2a2a', padding: '0 6px', lineHeight: '18px', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {article.syllabus_tag}
+                              </Tag>
+                            )}
+                            <Text style={{ color: '#6b6b6b', fontSize: 10, whiteSpace: 'nowrap' }}>
+                              {article.source === 'thehindu' ? 'The Hindu' : 'Indian Express'}
+                            </Text>
+                          </div>
+                        </div>
                       </div>
                     </Card>
                   </Tooltip>
@@ -240,24 +254,43 @@ export default function QuizContent() {
                       style={{ borderRadius: 10, background: '#141414', border: '1px solid #22c55e' }}
                       styles={{ body: { padding: '10px 12px' } }}
                     >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
-                        <Text style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.4, flex: 1, color: '#ffffff' }}>
-                          {article.headline}
-                        </Text>
-                        <Tooltip title="Remove">
-                          <Button
-                            type="text"
-                            size="small"
-                            icon={<DeleteOutlined style={{ color: '#6b6b6b', fontSize: 12 }} />}
-                            onClick={() => removeSelected(article.id)}
-                            style={{ padding: 0, height: 'auto', marginTop: -2 }}
-                          />
-                        </Tooltip>
-                      </div>
-                      <div style={{ display: 'flex', gap: 6, marginTop: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-                        <Text style={{ color: '#6b6b6b', fontSize: 10 }}>
-                          {article.source === 'thehindu' ? 'The Hindu' : 'Indian Express'}
-                        </Text>
+                      <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                        {article.image_url && (
+                          <div style={{ flexShrink: 0, width: 56, height: 42, borderRadius: 6, overflow: 'hidden', background: '#0f0f0f' }}>
+                            <img
+                              src={article.image_url}
+                              alt=""
+                              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                            />
+                          </div>
+                        )}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                            <Text style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.4, flex: 1, color: '#ffffff' }}>
+                              {article.headline}
+                            </Text>
+                            <Tooltip title="Remove">
+                              <Button
+                                type="text"
+                                size="small"
+                                icon={<DeleteOutlined style={{ color: '#6b6b6b', fontSize: 12 }} />}
+                                onClick={() => removeSelected(article.id)}
+                                style={{ padding: 0, height: 'auto', marginTop: -2, flexShrink: 0 }}
+                              />
+                            </Tooltip>
+                          </div>
+                          <div style={{ display: 'flex', gap: 6, marginTop: 4, flexWrap: 'wrap', alignItems: 'center' }}>
+                            {article.syllabus_tag && (
+                              <Tag style={{ fontSize: 10, borderRadius: 4, margin: 0, background: '#0f0f0f', color: '#a1a1a1', border: '1px solid #2a2a2a', padding: '0 6px', lineHeight: '18px', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {article.syllabus_tag}
+                              </Tag>
+                            )}
+                            <Text style={{ color: '#6b6b6b', fontSize: 10, whiteSpace: 'nowrap' }}>
+                              {article.source === 'thehindu' ? 'The Hindu' : 'Indian Express'}
+                            </Text>
+                          </div>
+                        </div>
                       </div>
                     </Card>
                   ))

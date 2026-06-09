@@ -26,13 +26,23 @@ export default function NewsFeedPage() {
   const [total, setTotal] = useState(0)
   const [loadingMore, setLoadingMore] = useState(false)
   const [sources, setSources] = useState<string[]>(['all'])
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([])
+  const [categoryFilter, setCategoryFilter] = useState('all')
 
-  const fetchArticles = useCallback(async (d: string, source: string, s: string, skipVal: number, append = false) => {
+  useEffect(() => {
+    api.getCategories().then((data: any) => {
+      const list = data.categories || data || []
+      setCategories(list)
+    }).catch(() => {})
+  }, [])
+
+  const fetchArticles = useCallback(async (d: string, source: string, cat: string, s: string, skipVal: number, append = false) => {
     if (!append) setLoading(true)
     setError('')
     try {
       const params: Record<string, string> = { date: d, skip: String(skipVal), limit: String(PAGE_SIZE) }
       if (source && source !== 'all') params.source = source
+      if (cat && cat !== 'all') params.category_id = cat
       if (s) params.search = s
       const data = await api.getArticles(params)
       const list = Array.isArray(data) ? data : data.articles || []
@@ -57,8 +67,8 @@ export default function NewsFeedPage() {
 
   useEffect(() => {
     setSkip(0)
-    fetchArticles(date, sourceFilter, search, 0)
-  }, [date, sourceFilter, search, fetchArticles])
+    fetchArticles(date, sourceFilter, categoryFilter, search, 0)
+  }, [date, sourceFilter, categoryFilter, search, fetchArticles])
 
   const handleSearch = () => {
     setSearch(searchInput)
@@ -69,7 +79,7 @@ export default function NewsFeedPage() {
     const newSkip = skip + PAGE_SIZE
     setSkip(newSkip)
     setLoadingMore(true)
-    fetchArticles(date, sourceFilter, search, newSkip, true)
+    fetchArticles(date, sourceFilter, categoryFilter, search, newSkip, true)
   }
 
   return (
@@ -77,29 +87,35 @@ export default function NewsFeedPage() {
       <Card
         style={{
           marginBottom: 28,
-          background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 30%, #3730a3 70%, #312e81 100%)',
-          border: '1px solid rgba(99, 102, 241, 0.3)',
+          background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 35%, #312e81 80%, rgba(5,5,5,0.95) 100%)',
+          border: '1px solid rgba(99, 102, 241, 0.25)',
           borderRadius: 16,
           overflow: 'hidden',
-          boxShadow: '0 8px 32px rgba(99, 102, 241, 0.15)',
+          boxShadow: '0 8px 40px rgba(99, 102, 241, 0.12)',
         }}
         styles={{ body: { padding: '32px 28px' } }}
       >
         <Row gutter={[16, 16]} align="middle">
           <Col xs={24} md={14}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
               <div style={{
-                width: 44, height: 44, borderRadius: 10,
-                background: 'rgba(255,255,255,0.15)',
+                width: 40, height: 40, borderRadius: 10,
+                background: 'rgba(99,102,241,0.25)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
+                backdropFilter: 'blur(4px)',
               }}>
-                <BookOutlined style={{ fontSize: 22, color: '#fff' }} />
+                <BookOutlined style={{ fontSize: 20, color: '#a5b4fc' }} />
               </div>
-              <Title level={3} style={{ margin: 0, fontWeight: 700, color: '#fff', letterSpacing: '-0.5px' }}>
-                GK Gist
-              </Title>
+              <div>
+                <Text style={{ color: 'rgba(165,180,252,0.7)', fontSize: 11, fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase' }}>
+                  News Digest
+                </Text>
+                <Title level={4} style={{ margin: 0, fontWeight: 700, color: '#fff', letterSpacing: '-0.3px' }}>
+                  GK Gist
+                </Title>
+              </div>
             </div>
-            <Text style={{ color: 'rgba(255,255,255,0.8)', fontSize: 15, display: 'block', lineHeight: 1.6 }}>
+            <Text style={{ color: 'rgba(255,255,255,0.65)', fontSize: 14, display: 'block', lineHeight: 1.6 }}>
               AI-curated current affairs summaries for UPSC preparation. Stay ahead with daily updates from trusted sources.
             </Text>
           </Col>
@@ -108,22 +124,23 @@ export default function NewsFeedPage() {
               value={dayjs(date)}
               onChange={(d) => { if (d) setDate(d.format('YYYY-MM-DD')) }}
               allowClear={false}
-              suffixIcon={<CalendarOutlined style={{ color: 'rgba(255,255,255,0.8)' }} />}
+              suffixIcon={<CalendarOutlined style={{ color: 'rgba(255,255,255,0.6)' }} />}
               size="large"
               style={{
-                background: 'rgba(255,255,255,0.1)',
-                border: '1px solid rgba(255,255,255,0.2)',
-                borderRadius: 12,
+                background: 'rgba(255,255,255,0.08)',
+                border: '1px solid rgba(255,255,255,0.15)',
+                borderRadius: 10,
+                backdropFilter: 'blur(4px)',
               }}
             />
           </Col>
         </Row>
       </Card>
 
-      <Card style={{ marginBottom: 24, borderRadius: 12, background: '#0a0a0a', border: '1px solid #1f1f1f' }} styles={{ body: { padding: '16px 20px' } }}>
+      <Card style={{ marginBottom: 24, borderRadius: 12, background: '#111111', border: '1px solid #1f1f1f' }} styles={{ body: { padding: '14px 18px' } }}>
         <Row gutter={[12, 12]} align="middle">
           <Col xs={24} md={14}>
-            <Space size={10} wrap>
+            <Space size={8} wrap>
               <Segmented
                 options={[
                   { label: 'All', value: 'all', icon: <BookOutlined /> },
@@ -151,8 +168,41 @@ export default function NewsFeedPage() {
             />
           </Col>
         </Row>
+        {categories.length > 0 && (
+          <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid #1f1f1f' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+              {[
+                { label: 'All Topics', value: 'all' },
+                ...categories.map((c) => ({ label: c.name, value: c.id })),
+              ].map((opt) => {
+                const active = categoryFilter === opt.value
+                return (
+                  <button
+                    key={opt.value}
+                    onClick={() => setCategoryFilter(opt.value)}
+                    style={{
+                      padding: '2px 10px',
+                      fontSize: 12,
+                      fontWeight: active ? 600 : 400,
+                      borderRadius: 6,
+                      border: 'none',
+                      cursor: 'pointer',
+                      background: active ? '#6366f1' : '#141414',
+                      color: active ? '#ffffff' : '#a1a1a1',
+                      transition: 'all 0.15s',
+                      lineHeight: '24px',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )}
         {!loading && (
-          <div style={{ marginTop: 8, textAlign: 'right' }}>
+          <div style={{ marginTop: 6, textAlign: 'right' }}>
             <Text style={{ color: '#6b6b6b', fontSize: 12 }}>
               {total} article{total !== 1 ? 's' : ''}
             </Text>
@@ -165,11 +215,11 @@ export default function NewsFeedPage() {
           {[1, 2, 3].map((i) => <ArticleSkeleton key={i} />)}
         </div>
       ) : error ? (
-        <Card style={{ borderRadius: 12, background: '#0a0a0a', border: '1px solid #ef4444' }} styles={{ body: { padding: '16px 20px' } }}>
+        <Card style={{ borderRadius: 12, background: '#111111', border: '1px solid #ef4444' }} styles={{ body: { padding: '16px 20px' } }}>
           <Text style={{ color: '#fca5a5' }}>{error}</Text>
         </Card>
       ) : articles.length === 0 ? (
-        <Card style={{ borderRadius: 12, textAlign: 'center', padding: '60px 24px', background: '#0a0a0a', border: '1px solid #1f1f1f' }} styles={{ body: { padding: '60px 24px' } }}>
+        <Card style={{ borderRadius: 12, textAlign: 'center', padding: '60px 24px', background: '#111111', border: '1px solid #1f1f1f' }} styles={{ body: { padding: '60px 24px' } }}>
           <div style={{ width: 64, height: 64, borderRadius: 16, background: '#141414', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
             <BookOutlined style={{ fontSize: 28, color: '#4a4a4a' }} />
           </div>

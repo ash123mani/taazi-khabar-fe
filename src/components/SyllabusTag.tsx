@@ -1,6 +1,6 @@
 'use client'
 
-import { Tag } from 'antd'
+import { Tag, Tooltip } from 'antd'
 
 const SUBJECT_LABELS: Record<string, string> = {
   Polity: 'P',
@@ -21,8 +21,10 @@ export default function SyllabusTag({ tag }: { tag: string | null }) {
   const label = SUBJECT_LABELS[subject] || subject
 
   return (
-    <Tag style={{ fontSize: 11, borderRadius: 4, margin: 0, background: '#141414', color: '#a1a1a1', border: '1px solid #1f1f1f' }}>
-      {label}
-    </Tag>
+    <Tooltip title={tag}>
+      <Tag style={{ fontSize: 11, borderRadius: 4, margin: 0, background: '#141414', color: '#a1a1a1', border: '1px solid #1f1f1f', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        {label}
+      </Tag>
+    </Tooltip>
   )
 }
