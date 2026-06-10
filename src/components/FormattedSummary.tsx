@@ -11,18 +11,20 @@ interface Section {
 
 const SECTION_ALIASES: [string[], string][] = [
   [['event', 'gk summary', 'what & why', 'gk gist', 'summary'], 'summary'],
-  [['key actors', 'gk pointers', 'key data & facts', 'people & institutions', 'why this matters'], 'pointers'],
-  [['significance', 'law/rule change', 'law & rule change'], 'law'],
+  [['key actors', 'gk pointers', 'key data & facts', 'people & institutions', 'why this matters', 'prelims focus'], 'pointers'],
+  [['significance', 'analysis', 'law/rule change', 'law & rule change', 'mains dimensions'], 'law'],
   [['why it matters', 'syllabus tag', 'upsc syllabus connect', 'syllabus topic', 'syllabus'], 'syllabus'],
+  [['interview angle'], 'interview'],
   [['key terms'], 'terms'],
 ]
 
-const SECTION_DISPLAY: Record<string, { label: string; icon: React.ReactNode }> = {
-  summary: { label: 'Summary', icon: <BulbOutlined /> },
-  pointers: { label: 'Key Facts', icon: <BranchesOutlined /> },
-  law: { label: 'Analysis', icon: <ExperimentOutlined /> },
-  syllabus: { label: 'Syllabus', icon: <BookOutlined /> },
-  terms: { label: 'Key Terms', icon: <TagsOutlined /> },
+const SECTION_DISPLAY: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
+  summary: { label: 'Summary', icon: <BulbOutlined />, color: '#6366f1' },
+  pointers: { label: 'Key Facts', icon: <BranchesOutlined />, color: '#22c55e' },
+  law: { label: 'Analysis', icon: <ExperimentOutlined />, color: '#eab308' },
+  syllabus: { label: 'Syllabus', icon: <BookOutlined />, color: '#a855f7' },
+  interview: { label: 'Interview Angle', icon: <BulbOutlined />, color: '#06b6d4' },
+  terms: { label: 'Key Terms', icon: <TagsOutlined />, color: '#ef4444' },
 }
 
 function normalizeHeader(text: string): string {
@@ -172,9 +174,9 @@ function SectionBlock({ section }: { section: Section }) {
             ),
             h3: ({ children }) => {
               const txt = String(children).replace(/\*+/g, '').trim().toLowerCase()
-              const isSectionHeader = Object.values(SECTION_DISPLAY).some((d) => d.label.toLowerCase() === txt) ||
-                ['what & why', 'key data & facts', 'people & institutions', 'why this matters',
-                  'upsc syllabus connect', 'gk summary', 'gk pointers', 'law/rule change', 'syllabus tag'].some((k) => txt.startsWith(k))
+              const isSectionHeader = ['what & why', 'key data & facts', 'people & institutions', 'why this matters',
+                'upsc syllabus connect', 'gk summary', 'gk pointers', 'prelims focus', 'mains dimensions',
+                'interview angle', 'law/rule change', 'syllabus tag', 'gk gist'].some((k) => txt.startsWith(k))
               if (isSectionHeader) return null
               return <p style={{ margin: '8px 0 4px', fontWeight: 600, fontSize: 14, color: '#c5c5c5' }}>{String(children).replace(/\*+/g, '')}</p>
             },
