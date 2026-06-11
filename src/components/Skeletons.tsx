@@ -2,7 +2,7 @@ import { Card, Skeleton as AntSkeleton, Space } from 'antd'
 
 export function ArticleSkeleton() {
   return (
-    <Card style={{ borderRadius: 12, marginBottom: 16, background: '#0a0a0a', border: '1px solid #1f1f1f' }} styles={{ body: { padding: 0 } }}>
+    <Card style={{ borderRadius: 12, marginBottom: 16, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: 0 } }}>
       <div style={{ padding: '20px 24px' }}>
         <AntSkeleton active paragraph={{ rows: 2 }} title={{ width: '70%' }} />
         <div style={{ marginTop: 12 }}>
@@ -19,11 +19,11 @@ export function ArticleSkeleton() {
 export function QuizSkeleton() {
   return (
     <Space direction="vertical" size={14} style={{ width: '100%' }}>
-      <Card style={{ borderRadius: 12, background: '#0a0a0a', border: '1px solid #1f1f1f' }} styles={{ body: { padding: 18 } }}>
+      <Card style={{ borderRadius: 12, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: 18 } }}>
         <AntSkeleton active paragraph={{ rows: 1 }} title={{ width: '40%' }} />
       </Card>
       {[1, 2, 3].map((i) => (
-        <Card key={i} style={{ borderRadius: 12, background: '#0a0a0a', border: '1px solid #1f1f1f' }} styles={{ body: { padding: 20 } }}>
+        <Card key={i} style={{ borderRadius: 12, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: 20 } }}>
           <AntSkeleton active paragraph={{ rows: 1 }} title={{ width: '30%' }} />
           <div style={{ marginTop: 16 }}>
             <AntSkeleton active paragraph={{ rows: 4 }} title={false} />

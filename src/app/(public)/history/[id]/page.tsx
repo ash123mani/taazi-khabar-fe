@@ -77,13 +77,13 @@ export default function HistoryDetailPage() {
 
   return (
     <div>
-      <Card style={{ padding: 22, marginBottom: 28, background: '#0a0a0a', border: '1px solid #1f1f1f', borderRadius: 12 }}>
-        <Title level={4} style={{ margin: 0, marginBottom: 18, fontSize: 16, color: '#ffffff' }}>
+      <Card style={{ padding: 22, marginBottom: 28, background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 12 }}>
+        <Title level={4} style={{ margin: 0, marginBottom: 18, fontSize: 16, color: 'var(--color-text)' }}>
           {quiz.title || 'Quiz Details'}
         </Title>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 14 }}>
           <div>
-            <Text style={{ fontSize: 11, display: 'block', marginBottom: 4, color: '#6b6b6b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Score</Text>
+            <Text style={{ fontSize: 11, display: 'block', marginBottom: 4, color: 'var(--color-text-tertiary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Score</Text>
             <div style={{
               display: 'inline-block',
               padding: '4px 12px',
@@ -99,27 +99,27 @@ export default function HistoryDetailPage() {
             </div>
           </div>
           <div>
-            <Text style={{ fontSize: 11, display: 'block', marginBottom: 4, color: '#6b6b6b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Date</Text>
-            <Text style={{ fontSize: 14, color: '#a1a1a1' }}>
+            <Text style={{ fontSize: 11, display: 'block', marginBottom: 4, color: 'var(--color-text-tertiary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Date</Text>
+            <Text style={{ fontSize: 14, color: 'var(--color-text-secondary)' }}>
               {new Date(quiz.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
             </Text>
           </div>
           <div>
-            <Text style={{ fontSize: 11, display: 'block', marginBottom: 4, color: '#6b6b6b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Time</Text>
-            <Text style={{ fontSize: 14, color: '#a1a1a1' }}>
+            <Text style={{ fontSize: 11, display: 'block', marginBottom: 4, color: 'var(--color-text-tertiary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Time</Text>
+            <Text style={{ fontSize: 14, color: 'var(--color-text-secondary)' }}>
               {quiz.time_taken_sec ? `${Math.floor(quiz.time_taken_sec / 60)}m ${quiz.time_taken_sec % 60}s` : 'N/A'}
             </Text>
           </div>
           <div>
-            <Text style={{ fontSize: 11, display: 'block', marginBottom: 4, color: '#6b6b6b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Articles</Text>
-            <Text style={{ fontSize: 14, color: '#a1a1a1' }}>{quiz.articles?.length || 0}</Text>
+            <Text style={{ fontSize: 11, display: 'block', marginBottom: 4, color: 'var(--color-text-tertiary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Articles</Text>
+            <Text style={{ fontSize: 14, color: 'var(--color-text-secondary)' }}>{quiz.articles?.length || 0}</Text>
           </div>
         </div>
       </Card>
 
       {quiz.articles && quiz.articles.length > 0 && (
         <div style={{ marginBottom: 28 }}>
-          <Text strong style={{ fontSize: 15, display: 'block', marginBottom: 12, color: '#ffffff' }}>Linked Articles</Text>
+          <Text strong style={{ fontSize: 15, display: 'block', marginBottom: 12, color: 'var(--color-text)' }}>Linked Articles</Text>
           <Space direction="vertical" size={12} style={{ width: '100%' }}>
             {quiz.articles.map((article) => (
               <ArticleCard key={article.id} article={article} />
@@ -129,7 +129,7 @@ export default function HistoryDetailPage() {
       )}
 
       <div>
-        <Text strong style={{ fontSize: 15, display: 'block', marginBottom: 14, color: '#ffffff' }}>Questions & Answers</Text>
+        <Text strong style={{ fontSize: 15, display: 'block', marginBottom: 14, color: 'var(--color-text)' }}>Questions & Answers</Text>
         {quiz.questions?.map((question, i) => (
           <QuizQuestionComponent
             key={question.id}

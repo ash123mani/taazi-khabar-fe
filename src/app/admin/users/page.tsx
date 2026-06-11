@@ -58,36 +58,36 @@ export default function AdminUsersPage() {
 
   return (
     <div>
-      <Card style={{ marginBottom: 24, borderRadius: 16, background: '#0a0a0a', border: '1px solid #1f1f1f' }} styles={{ body: { padding: '24px 28px' } }}>
+      <Card style={{ marginBottom: 24, borderRadius: 16, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: '24px 28px' } }}>
         <Row justify="space-between" align="middle">
           <Col>
-            <Title level={3} style={{ margin: 0, letterSpacing: '-0.5px', fontWeight: 700, color: '#ffffff' }}>
+            <Title level={3} style={{ margin: 0, letterSpacing: '-0.5px', fontWeight: 700, color: 'var(--color-text)' }}>
               User Management
             </Title>
-            <Text style={{ color: '#a1a1aa', fontSize: 14, display: 'block', marginTop: 4 }}>
+            <Text style={{ color: 'var(--color-text-secondary)', fontSize: 14, display: 'block', marginTop: 4 }}>
               Manage user roles and permissions
             </Text>
           </Col>
           <Col>
             <Space size={24}>
               <Statistic
-                title={<Text style={{ color: '#a1a1aa', fontSize: 12 }}>Total Users</Text>}
+                title={<Text style={{ color: 'var(--color-text-secondary)', fontSize: 12 }}>Total Users</Text>}
                 value={total}
                 prefix={<UsergroupAddOutlined style={{ color: '#6366f1' }} />}
-                valueStyle={{ fontWeight: 700, color: '#ffffff' }}
+                valueStyle={{ fontWeight: 700, color: 'var(--color-text)' }}
               />
               <Statistic
-                title={<Text style={{ color: '#a1a1aa', fontSize: 12 }}>Admins</Text>}
+                title={<Text style={{ color: 'var(--color-text-secondary)', fontSize: 12 }}>Admins</Text>}
                 value={adminCount}
                 prefix={<SafetyOutlined style={{ color: '#f59e0b' }} />}
-                valueStyle={{ fontWeight: 700, color: '#ffffff' }}
+                valueStyle={{ fontWeight: 700, color: 'var(--color-text)' }}
               />
             </Space>
           </Col>
         </Row>
       </Card>
 
-      <Card style={{ marginBottom: 16, borderRadius: 12, background: '#0a0a0a', border: '1px solid #1f1f1f' }} styles={{ body: { padding: '16px 20px' } }}>
+      <Card style={{ marginBottom: 16, borderRadius: 12, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: '16px 20px' } }}>
         <Row gutter={12} align="middle">
           <Col flex="auto">
             <Input.Search
@@ -108,12 +108,12 @@ export default function AdminUsersPage() {
       </Card>
 
       {error && (
-        <Card style={{ marginBottom: 16, borderRadius: 12, background: '#141414', border: '1px solid #ef4444' }} styles={{ body: { padding: '12px 16px' } }}>
+        <Card style={{ marginBottom: 16, borderRadius: 12, background: 'var(--color-surface)', border: '1px solid #ef4444' }} styles={{ body: { padding: '12px 16px' } }}>
           <Text style={{ color: '#fca5a5' }}>{error}</Text>
         </Card>
       )}
 
-      <Card style={{ borderRadius: 12, background: '#0a0a0a', border: '1px solid #1f1f1f' }} styles={{ body: { padding: 0 } }}>
+      <Card style={{ borderRadius: 12, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: 0 } }}>
         <Table
           dataSource={users}
           columns={[
@@ -122,7 +122,7 @@ export default function AdminUsersPage() {
               dataIndex: 'name',
               key: 'name',
               width: 160,
-              render: (text: string | null) => text ? <Text style={{ color: '#ffffff' }}>{text}</Text> : <Text style={{ color: '#71717a', fontStyle: 'italic' }}>No name</Text>,
+              render: (text: string | null) => text ? <Text style={{ color: 'var(--color-text)' }}>{text}</Text> : <Text style={{ color: 'var(--color-text-tertiary)', fontStyle: 'italic' }}>No name</Text>,
             },
             {
               title: 'Email',
@@ -153,7 +153,7 @@ export default function AdminUsersPage() {
               key: 'created_at',
               width: 150,
               render: (d: string) => (
-                <span style={{ fontSize: 12, color: '#a1a1a1' }}>
+                <span style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>
                   {new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </span>
               ),

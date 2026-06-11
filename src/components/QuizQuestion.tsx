@@ -24,13 +24,13 @@ export default function QuizQuestion({
 }: QuizQuestionProps) {
   return (
     <Card
-      style={{ borderRadius: 12, marginBottom: 14, background: '#0a0a0a', border: '1px solid #1f1f1f' }}
+      style={{ borderRadius: 12, marginBottom: 14, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}
       styles={{ body: { padding: 20 } }}
     >
-      <Text style={{ fontSize: 11, display: 'block', marginBottom: 8, color: '#6b6b6b', fontWeight: 600, letterSpacing: '0.5px', textTransform: 'uppercase' }}>
+      <Text style={{ fontSize: 11, display: 'block', marginBottom: 8, color: 'var(--color-text-tertiary)', fontWeight: 600, letterSpacing: '0.5px', textTransform: 'uppercase' }}>
         Question {index + 1}
       </Text>
-      <Text strong style={{ display: 'block', marginBottom: 18, fontSize: 15, lineHeight: 1.5, color: '#ffffff' }}>
+      <Text strong style={{ display: 'block', marginBottom: 18, fontSize: 15, lineHeight: 1.5, color: 'var(--color-text)' }}>
         {question.question_text}
       </Text>
 
@@ -52,8 +52,8 @@ export default function QuizQuestion({
                 border: '1px solid',
                 cursor: showResults ? 'default' : 'pointer',
                 transition: 'all 0.15s ease',
-                background: isCorrectAnswer ? 'rgba(34, 197, 94, 0.08)' : isWrongAnswer ? 'rgba(239, 68, 68, 0.08)' : isSelected ? '#141414' : '#000000',
-                borderColor: isCorrectAnswer ? '#22c55e' : isWrongAnswer ? '#ef4444' : isSelected ? '#6366f1' : '#1f1f1f',
+                background: isCorrectAnswer ? 'rgba(34, 197, 94, 0.08)' : isWrongAnswer ? 'rgba(239, 68, 68, 0.08)' : isSelected ? 'var(--color-surface)' : '#000000',
+                borderColor: isCorrectAnswer ? '#22c55e' : isWrongAnswer ? '#ef4444' : isSelected ? '#6366f1' : 'var(--color-border)',
               }}
               onClick={() => !showResults && onSelect(key)}
             >
@@ -69,14 +69,14 @@ export default function QuizQuestion({
                   fontWeight: 700,
                   fontSize: 11,
                   flexShrink: 0,
-                  background: isCorrectAnswer ? 'rgba(34, 197, 94, 0.15)' : isWrongAnswer ? 'rgba(239, 68, 68, 0.15)' : isSelected ? 'rgba(99, 102, 241, 0.15)' : '#141414',
+                  background: isCorrectAnswer ? 'rgba(34, 197, 94, 0.15)' : isWrongAnswer ? 'rgba(239, 68, 68, 0.15)' : isSelected ? 'rgba(99, 102, 241, 0.15)' : 'var(--color-surface)',
                   borderColor: isCorrectAnswer ? '#22c55e' : isWrongAnswer ? '#ef4444' : isSelected ? '#6366f1' : '#2a2a2a',
-                  color: isCorrectAnswer ? '#22c55e' : isWrongAnswer ? '#ef4444' : isSelected ? '#818cf8' : '#6b6b6b',
+                  color: isCorrectAnswer ? '#22c55e' : isWrongAnswer ? '#ef4444' : isSelected ? '#818cf8' : 'var(--color-text-tertiary)',
                 }}
               >
                 {OPTION_LABELS[i]}
               </div>
-              <span style={{ fontSize: 14, flex: 1, color: '#a1a1a1', lineHeight: 1.4 }}>{value}</span>
+              <span style={{ fontSize: 14, flex: 1, color: 'var(--color-text-secondary)', lineHeight: 1.4 }}>{value}</span>
               {isCorrectAnswer && <span style={{ fontWeight: 700, fontSize: 14, color: '#22c55e' }}>✓</span>}
               {isWrongAnswer && <span style={{ fontWeight: 700, fontSize: 14, color: '#ef4444' }}>✗</span>}
             </div>
@@ -96,11 +96,11 @@ export default function QuizQuestion({
             borderColor: selected === question.correct_answer ? '#22c55e' : '#eab308',
           }}
         >
-          <Text strong style={{ display: 'block', marginBottom: 4, color: '#ffffff', fontSize: 13 }}>
+          <Text strong style={{ display: 'block', marginBottom: 4, color: 'var(--color-text)', fontSize: 13 }}>
             {selected === question.correct_answer ? '✓ Correct' : '✗ Incorrect'}
           </Text>
           {question.explanation && (
-            <Text style={{ color: '#6b6b6b' }}>{question.explanation}</Text>
+            <Text style={{ color: 'var(--color-text-tertiary)' }}>{question.explanation}</Text>
           )}
         </div>
       )}

@@ -22,7 +22,7 @@ export default function QuizResult({ quiz }: { quiz: Quiz }) {
   }
 
   return (
-    <Card style={{ borderRadius: 12, marginBottom: 28, textAlign: 'center', background: '#0a0a0a', border: '1px solid #1f1f1f' }} styles={{ body: { padding: 32 } }}>
+    <Card style={{ borderRadius: 12, marginBottom: 28, textAlign: 'center', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: 32 } }}>
       <div style={{
         fontSize: 64,
         fontWeight: 800,
@@ -36,7 +36,7 @@ export default function QuizResult({ quiz }: { quiz: Quiz }) {
       <Text style={{ fontSize: 18, fontWeight: 600, color: getColor(), display: 'block', marginBottom: 12 }}>
         {getLabel()}
       </Text>
-      <div style={{ fontSize: 14, marginBottom: 6, color: '#6b6b6b' }}>
+      <div style={{ fontSize: 14, marginBottom: 6, color: 'var(--color-text-tertiary)' }}>
         {quiz.score} / {quiz.total_questions} correct
       </div>
       {quiz.time_taken_sec && (

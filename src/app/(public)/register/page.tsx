@@ -37,7 +37,7 @@ export default function RegisterPage() {
     <Row justify="center" align="middle" style={{ minHeight: '100vh', padding: '24px' }}>
       <Col xs={24} sm={20} md={16} lg={12} xl={10}>
         <Card
-          style={{ borderRadius: 24, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.8)', border: '1px solid #1f1f1f', background: '#0a0a0a', overflow: 'hidden' }}
+          style={{ borderRadius: 24, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.8)', border: '1px solid var(--color-border)', background: 'var(--color-bg)', overflow: 'hidden' }}
           styles={{ body: { padding: '48px 40px' } }}
         >
           <div style={{ textAlign: 'center', marginBottom: 36 }}>
@@ -54,20 +54,20 @@ export default function RegisterPage() {
             }}>
               <BookOutlined style={{ fontSize: 32, color: '#ffffff' }} />
             </div>
-            <Title level={3} style={{ margin: 0, letterSpacing: '-0.5px', fontWeight: 700, color: '#ffffff', fontSize: 26 }}>
+            <Title level={3} style={{ margin: 0, letterSpacing: '-0.5px', fontWeight: 700, color: 'var(--color-text)', fontSize: 26 }}>
               Create account
             </Title>
-            <Paragraph style={{ color: '#6b6b6b', fontSize: 15, marginBottom: 0, marginTop: 8, lineHeight: 1.5 }}>
+            <Paragraph style={{ color: 'var(--color-text-tertiary)', fontSize: 15, marginBottom: 0, marginTop: 8, lineHeight: 1.5 }}>
               Get started with Taazi Khabar
             </Paragraph>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginBottom: 32 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#6b6b6b', fontSize: 13 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--color-text-tertiary)', fontSize: 13 }}>
               <SafetyCertificateOutlined style={{ color: '#22c55e' }} />
               <span>Free to use</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#6b6b6b', fontSize: 13 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--color-text-tertiary)', fontSize: 13 }}>
               <BookOutlined style={{ color: '#6366f1' }} />
               <span>UPSC Prep</span>
             </div>
@@ -95,35 +95,35 @@ export default function RegisterPage() {
 
           <Form layout="vertical" onFinish={handleSubmit} requiredMark={false} size="large">
             <Form.Item
-              label={<Text style={{ color: '#a1a1a1', fontWeight: 500, fontSize: 14 }}>Full Name</Text>}
+              label={<Text style={{ color: 'var(--color-text-secondary)', fontWeight: 500, fontSize: 14 }}>Full Name</Text>}
               name="name"
               rules={[{ required: true, message: 'Please enter your name' }]}
               style={{ marginBottom: 20 }}
             >
               <Input
-                prefix={<UserOutlined style={{ color: '#6b6b6b' }} />}
+                prefix={<UserOutlined style={{ color: 'var(--color-text-tertiary)' }} />}
                 placeholder="Your full name"
               />
             </Form.Item>
             <Form.Item
-              label={<Text style={{ color: '#a1a1a1', fontWeight: 500, fontSize: 14 }}>Email</Text>}
+              label={<Text style={{ color: 'var(--color-text-secondary)', fontWeight: 500, fontSize: 14 }}>Email</Text>}
               name="email"
               rules={[{ required: true, type: 'email', message: 'Please enter a valid email' }]}
               style={{ marginBottom: 20 }}
             >
               <Input
-                prefix={<MailOutlined style={{ color: '#6b6b6b' }} />}
+                prefix={<MailOutlined style={{ color: 'var(--color-text-tertiary)' }} />}
                 placeholder="you@example.com"
               />
             </Form.Item>
             <Form.Item
-              label={<Text style={{ color: '#a1a1a1', fontWeight: 500, fontSize: 14 }}>Password</Text>}
+              label={<Text style={{ color: 'var(--color-text-secondary)', fontWeight: 500, fontSize: 14 }}>Password</Text>}
               name="password"
               rules={[{ required: true, min: 6, message: 'Password must be at least 6 characters' }]}
               style={{ marginBottom: 24 }}
             >
               <Input.Password
-                prefix={<LockOutlined style={{ color: '#6b6b6b' }} />}
+                prefix={<LockOutlined style={{ color: 'var(--color-text-tertiary)' }} />}
                 placeholder="At least 6 characters"
               />
             </Form.Item>
@@ -147,19 +147,19 @@ export default function RegisterPage() {
             </Form.Item>
           </Form>
 
-          <Divider style={{ margin: '28px 0', borderColor: '#1f1f1f' }} />
+          <Divider style={{ margin: '28px 0', borderColor: 'var(--color-border)' }} />
 
           <div style={{ textAlign: 'center' }}>
-            <Text style={{ fontSize: 14, color: '#6b6b6b' }}>
+            <Text style={{ fontSize: 14, color: 'var(--color-text-tertiary)' }}>
               Already have an account?{' '}
               <Link
                 href="/login"
-                style={{
-                  fontWeight: 600,
-                  color: '#ffffff',
-                  textDecoration: 'none',
-                  transition: 'color 0.2s'
-                }}
+                  style={{
+                    fontWeight: 600,
+                    color: 'var(--color-text)',
+                    textDecoration: 'none',
+                    transition: 'color 0.2s'
+                  }}
                 onMouseEnter={(e) => e.currentTarget.style.color = '#6366f1'}
                 onMouseLeave={(e) => e.currentTarget.style.color = '#ffffff'}
               >

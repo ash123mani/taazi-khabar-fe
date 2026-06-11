@@ -1,5 +1,39 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
+:root {
+  --color-bg: #0a0a0a;
+  --color-surface: #111111;
+  --color-border: #1f1f1f;
+  --color-text: #ffffff;
+  --color-text-secondary: #a1a1a1;
+  --color-text-tertiary: #6b6b6b;
+  --color-accent: #6366f1;
+  --color-scrollbar-thumb: #2a2a2a;
+  --color-scrollbar-hover: #3a3a3a;
+  --color-glass-bg: rgba(0, 0, 0, 0.85);
+  --color-glass-border: rgba(255,255,255,0.06);
+  --color-footer-border: rgba(255,255,255,0.04);
+  --gradient-accent: linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, #6366f1 100%);
+  --gradient-footer: linear-gradient(180deg, #0a0a0a 0%, #000000 100%);
+}
+
+[data-theme="light"] {
+  --color-bg: #f5f5f5;
+  --color-surface: #ffffff;
+  --color-border: #e5e5e5;
+  --color-text: #171717;
+  --color-text-secondary: #525252;
+  --color-text-tertiary: #a3a3a3;
+  --color-accent: #6366f1;
+  --color-scrollbar-thumb: #d4d4d4;
+  --color-scrollbar-hover: #a3a3a3;
+  --color-glass-bg: rgba(255, 255, 255, 0.9);
+  --color-glass-border: rgba(0,0,0,0.06);
+  --color-footer-border: rgba(0,0,0,0.04);
+  --gradient-accent: linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, #6366f1 100%);
+  --gradient-footer: linear-gradient(180deg, #f5f5f5 0%, #ffffff 100%);
+}
+
 *,
 *::before,
 *::after {
@@ -17,11 +51,12 @@ html {
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #0a0a0a;
-  color: #ffffff;
+  background: var(--color-bg);
+  color: var(--color-text);
   line-height: 1.6;
   min-height: 100vh;
   overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
 }
 
 #__next {
@@ -35,7 +70,7 @@ a {
 }
 
 a:hover {
-  color: #6366f1;
+  color: var(--color-accent);
 }
 
 img {
@@ -82,12 +117,12 @@ p {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2a2a2a;
+  background: var(--color-scrollbar-thumb);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3a3a3a;
+  background: var(--color-scrollbar-hover);
 }
 
 ::selection {
@@ -96,13 +131,13 @@ p {
 }
 
 .card-dark {
-  background: #0a0a0a !important;
-  border: 1px solid #1f1f1f !important;
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
   border-radius: 12px !important;
 }
 
 .btn-primary-dark {
-  background: #6366f1 !important;
+  background: var(--color-accent) !important;
   border: none !important;
   color: #ffffff !important;
   font-weight: 600 !important;

@@ -36,7 +36,7 @@ export default function BookmarksPage() {
   if (!token) {
     return (
       <div style={{ textAlign: 'center', padding: 80 }}>
-        <Title level={3} style={{ color: '#ffffff' }}>Please login to view bookmarks</Title>
+        <Title level={3} style={{ color: 'var(--color-text)' }}>Please login to view bookmarks</Title>
         <Button type="primary" href="/login" style={{ fontWeight: 600, borderRadius: 8 }}>
           Login
         </Button>
@@ -47,19 +47,19 @@ export default function BookmarksPage() {
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: 80 }}>
-        <div style={{ color: '#6b6b6b' }}>Loading bookmarks...</div>
+        <div style={{ color: 'var(--color-text-tertiary)' }}>Loading bookmarks...</div>
       </div>
     )
   }
 
   return (
     <div>
-      <Title level={4} style={{ margin: 0, marginBottom: 20, fontSize: 16, color: '#ffffff' }}>Bookmarks</Title>
+      <Title level={4} style={{ margin: 0, marginBottom: 20, fontSize: 16, color: 'var(--color-text)' }}>Bookmarks</Title>
       {articles.length === 0 ? (
-        <Card style={{ borderRadius: 12, textAlign: 'center', padding: 60, background: '#0a0a0a', border: '1px solid #1f1f1f' }} styles={{ body: { padding: '60px 24px' } }}>
+        <Card style={{ borderRadius: 12, textAlign: 'center', padding: 60, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: '60px 24px' } }}>
           <Empty
             description={
-              <span style={{ color: '#6b6b6b' }}>
+              <span style={{ color: 'var(--color-text-tertiary)' }}>
                 No bookmarks yet. Start reading and bookmark articles!
               </span>
             }

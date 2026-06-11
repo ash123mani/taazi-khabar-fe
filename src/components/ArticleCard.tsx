@@ -46,7 +46,7 @@ export default function ArticleCard({ article }: { article: Article }) {
           label: (
             <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
               {article.image_url && (
-                <div style={{ flexShrink: 0, width: 90, height: 68, borderRadius: 8, overflow: 'hidden', marginTop: 2, background: '#0f0f0f' }}>
+                <div style={{ flexShrink: 0, width: 90, height: 68, borderRadius: 8, overflow: 'hidden', marginTop: 2, background: 'var(--color-surface)' }}>
                   <img
                     src={article.image_url}
                     alt=""
@@ -56,18 +56,18 @@ export default function ArticleCard({ article }: { article: Article }) {
                 </div>
               )}
               <div style={{ flex: 1, minWidth: 0 }}>
-                <Text strong style={{ fontSize: 15, color: '#ffffff', lineHeight: 1.4, display: 'block' }}>
+                <Text strong style={{ fontSize: 15, color: 'var(--color-text)', lineHeight: 1.4, display: 'block' }}>
                   <a
                     href={article.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ color: '#ffffff', textDecoration: 'none' }}
+                    style={{ color: 'var(--color-text)', textDecoration: 'none' }}
                     onClick={(e) => e.stopPropagation()}
                   >
                     {article.headline}
                   </a>
                 </Text>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6, color: '#6b6b6b', fontSize: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6, color: 'var(--color-text-tertiary)', fontSize: 12 }}>
                   <LinkOutlined style={{ fontSize: 11 }} />
                   <span>{new URL(article.url).hostname}</span>
                 </div>
@@ -75,10 +75,10 @@ export default function ArticleCard({ article }: { article: Article }) {
                   {article.syllabus_tag && <SyllabusTag tag={article.syllabus_tag} />}
                   {article.key_terms?.slice(0, 2).map((term) => (
                     <Tooltip key={term} title={term}>
-                      <Tag style={{ fontSize: 10, borderRadius: 4, margin: 0, padding: '0 6px', background: '#141414', color: '#a1a1a1', border: '1px solid #1f1f1f', maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{term}</Tag>
+                      <Tag style={{ fontSize: 10, borderRadius: 4, margin: 0, padding: '0 6px', maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{term}</Tag>
                     </Tooltip>
                   ))}
-                  <Text style={{ color: '#6b6b6b', fontSize: 11 }}>
+                  <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 11 }}>
                     {article.source === 'thehindu' ? 'The Hindu' : 'Indian Express'} · {new Date(article.published_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </Text>
                 </div>
@@ -92,15 +92,15 @@ export default function ArticleCard({ article }: { article: Article }) {
                   icon={bookmarked ? (
                     <HeartFilled style={{ color: '#ef4444' }} />
                   ) : (
-                    <HeartOutlined style={{ color: '#6b6b6b' }} />
+                    <HeartOutlined style={{ color: 'var(--color-text-tertiary)' }} />
                   )}
-                  style={{ color: bookmarked ? '#ef4444' : '#6b6b6b' }}
+                  style={{ color: bookmarked ? '#ef4444' : 'var(--color-text-tertiary)' }}
                 />
               </div>
             </div>
           ),
           children: article.gk_summary ? (
-            <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: 16 }}>
+            <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: 16 }}>
               <FormattedSummary summary={article.gk_summary} />
             </div>
           ) : null,
@@ -109,8 +109,8 @@ export default function ArticleCard({ article }: { article: Article }) {
       style={{
         marginBottom: 12,
         borderRadius: 12,
-        background: '#111111',
-        border: '1px solid #1f1f1f',
+        background: 'var(--color-surface)',
+        border: '1px solid var(--color-border)',
       }}
     />
   )

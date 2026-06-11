@@ -38,19 +38,19 @@ export default function AdminDashboard() {
       title: 'Title',
       dataIndex: 'headline',
       key: 'headline',
-      render: (text: string) => <span style={{ color: '#ffffff', fontWeight: 500 }}>{text}</span>,
+      render: (text: string) => <span style={{ color: 'var(--color-text)', fontWeight: 500 }}>{text}</span>,
     },
     {
       title: 'Source',
       dataIndex: 'source',
       key: 'source',
-      render: (source: string) => <Tag style={{ borderRadius: 6, fontWeight: 600, fontSize: 12, background: '#141414', color: '#a1a1a1', border: '1px solid #1f1f1f' }}>{source === 'thehindu' ? 'The Hindu' : source === 'indianexpress' ? 'Indian Express' : source}</Tag>,
+      render: (source: string) => <Tag style={{ borderRadius: 6, fontWeight: 600, fontSize: 12, background: 'var(--color-surface)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)' }}>{source === 'thehindu' ? 'The Hindu' : source === 'indianexpress' ? 'Indian Express' : source}</Tag>,
     },
     {
       title: 'Date',
       dataIndex: 'published_at',
       key: 'published_at',
-      render: (date: string) => <span style={{ color: '#6b6b6b' }}>{date ? new Date(date).toLocaleDateString('en-IN') : '-'}</span>,
+      render: (date: string) => <span style={{ color: 'var(--color-text-tertiary)' }}>{date ? new Date(date).toLocaleDateString('en-IN') : '-'}</span>,
     },
   ]
 
@@ -68,56 +68,56 @@ export default function AdminDashboard() {
       title: 'Date',
       dataIndex: 'created_at',
       key: 'created_at',
-      render: (date: string) => <span style={{ color: '#6b6b6b' }}>{date ? new Date(date).toLocaleDateString('en-IN') : '-'}</span>,
+      render: (date: string) => <span style={{ color: 'var(--color-text-tertiary)' }}>{date ? new Date(date).toLocaleDateString('en-IN') : '-'}</span>,
     },
   ]
 
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: 80 }}>
-        <div style={{ color: '#6b6b6b' }}>Loading dashboard...</div>
+        <div style={{ color: 'var(--color-text-tertiary)' }}>Loading dashboard...</div>
       </div>
     )
   }
 
   return (
     <div>
-      <Title level={4} style={{ margin: 0, marginBottom: 20, fontSize: 16, color: '#ffffff' }}>Dashboard</Title>
+      <Title level={4} style={{ margin: 0, marginBottom: 20, fontSize: 16, color: 'var(--color-text)' }}>Dashboard</Title>
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={12} lg={6}>
-          <Card style={{ background: '#0a0a0a', border: '1px solid #1f1f1f', borderRadius: 12 }} styles={{ body: { padding: 20 } }}>
+          <Card style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 12 }} styles={{ body: { padding: 20 } }}>
             <Statistic
-              title={<Text style={{ color: '#6b6b6b', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Articles</Text>}
+              title={<Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Articles</Text>}
               value={stats?.total_articles || 0}
-              valueStyle={{ color: '#ffffff', fontWeight: 700 }}
+              valueStyle={{ color: 'var(--color-text)', fontWeight: 700 }}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card style={{ background: '#0a0a0a', border: '1px solid #1f1f1f', borderRadius: 12 }} styles={{ body: { padding: 20 } }}>
+          <Card style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 12 }} styles={{ body: { padding: 20 } }}>
             <Statistic
-              title={<Text style={{ color: '#6b6b6b', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Quizzes</Text>}
+              title={<Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Quizzes</Text>}
               value={stats?.total_quizzes || 0}
-              valueStyle={{ color: '#ffffff', fontWeight: 700 }}
+              valueStyle={{ color: 'var(--color-text)', fontWeight: 700 }}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card style={{ background: '#0a0a0a', border: '1px solid #1f1f1f', borderRadius: 12 }} styles={{ body: { padding: 20 } }}>
+          <Card style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 12 }} styles={{ body: { padding: 20 } }}>
             <Statistic
-              title={<Text style={{ color: '#6b6b6b', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Avg Score</Text>}
+              title={<Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Avg Score</Text>}
               value={stats?.avg_score || 0}
               suffix="%"
-              valueStyle={{ color: '#ffffff', fontWeight: 700 }}
+              valueStyle={{ color: 'var(--color-text)', fontWeight: 700 }}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card style={{ background: '#0a0a0a', border: '1px solid #1f1f1f', borderRadius: 12 }} styles={{ body: { padding: 20 } }}>
+          <Card style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 12 }} styles={{ body: { padding: 20 } }}>
             <Statistic
-              title={<Text style={{ color: '#6b6b6b', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Active Users</Text>}
+              title={<Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Active Users</Text>}
               value={stats?.total_users || 0}
-              valueStyle={{ color: '#ffffff', fontWeight: 700 }}
+              valueStyle={{ color: 'var(--color-text)', fontWeight: 700 }}
             />
           </Card>
         </Col>
@@ -125,9 +125,9 @@ export default function AdminDashboard() {
 
       <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
         <Col xs={24} lg={12}>
-          <Card style={{ background: '#0a0a0a', border: '1px solid #1f1f1f', borderRadius: 12 }} styles={{ body: { padding: 22 } }}>
+          <Card style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 12 }} styles={{ body: { padding: 22 } }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <Title level={5} style={{ margin: 0, fontSize: 14, color: '#ffffff' }}>Recent Articles</Title>
+              <Title level={5} style={{ margin: 0, fontSize: 14, color: 'var(--color-text)' }}>Recent Articles</Title>
               <Button size="small" type="default" style={{ fontWeight: 600, borderRadius: 6 }}>
                 View All
               </Button>
@@ -142,9 +142,9 @@ export default function AdminDashboard() {
           </Card>
         </Col>
         <Col xs={24} lg={12}>
-          <Card style={{ background: '#0a0a0a', border: '1px solid #1f1f1f', borderRadius: 12 }} styles={{ body: { padding: 22 } }}>
+          <Card style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 12 }} styles={{ body: { padding: 22 } }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <Title level={5} style={{ margin: 0, fontSize: 14, color: '#ffffff' }}>Recent Quizzes</Title>
+              <Title level={5} style={{ margin: 0, fontSize: 14, color: 'var(--color-text)' }}>Recent Quizzes</Title>
               <Button size="small" type="default" style={{ fontWeight: 600, borderRadius: 6 }}>
                 View All
               </Button>

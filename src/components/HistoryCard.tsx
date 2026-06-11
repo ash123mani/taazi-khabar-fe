@@ -23,28 +23,28 @@ export default function HistoryCard({ quiz }: { quiz: Quiz }) {
           borderRadius: 12,
           marginBottom: 12,
           transition: 'all 0.2s ease',
-          background: '#0a0a0a',
-          border: '1px solid #1f1f1f',
+          background: 'var(--color-bg)',
+          border: '1px solid var(--color-border)',
         }}
         styles={{ body: { padding: '16px 20px' }}}
         hoverable
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <Text strong style={{ fontSize: 14, display: 'block', color: '#ffffff' }}>
+            <Text strong style={{ fontSize: 14, display: 'block', color: 'var(--color-text)' }}>
               {quiz.title || 'Quiz'}
             </Text>
             <Space size={12} style={{ marginTop: 6 }}>
-              <Text style={{ color: '#6b6b6b', fontSize: 12 }}>
+              <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }}>
                 {new Date(quiz.created_at).toLocaleDateString('en-IN', {
                   day: 'numeric', month: 'short', year: 'numeric',
                 })}
               </Text>
-              <Text style={{ color: '#6b6b6b', fontSize: 12 }}>
+              <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }}>
                 {quiz.total_questions} questions
               </Text>
               {quiz.articles?.length ? (
-                <Text style={{ color: '#6b6b6b', fontSize: 12 }}>
+                <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }}>
                   {quiz.articles.length} articles
                 </Text>
               ) : null}
@@ -66,7 +66,7 @@ export default function HistoryCard({ quiz }: { quiz: Quiz }) {
                 {percentage}%
               </Tag>
             )}
-            <RightOutlined style={{ color: '#6b6b6b', fontSize: 12 }} />
+            <RightOutlined style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }} />
           </div>
         </div>
       </Card>

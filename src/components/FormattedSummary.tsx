@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import { Tag } from 'antd'
-import { BulbOutlined, BranchesOutlined, BookOutlined, ExperimentOutlined, TagsOutlined } from '@ant-design/icons'
+import { BulbOutlined, BranchesOutlined, BookOutlined, ExperimentOutlined, TagsOutlined, DownOutlined } from '@ant-design/icons'
 import ReactMarkdown from 'react-markdown'
+import type { ReactNode } from 'react'
 
 interface Section {
   key: string
@@ -79,6 +81,11 @@ function parseSections(md: string): Section[] {
     if (sectionKey) {
       flush()
       currentKey = sectionKey
+      const colonIdx = stripped.indexOf(':')
+      if (colonIdx > -1) {
+        const after = stripped.slice(colonIdx + 1).trim()
+        if (after) currentLines.push(after)
+      }
       continue
     }
     if (currentKey && stripped.trim() !== '---') {
@@ -103,6 +110,25 @@ function parseSections(md: string): Section[] {
   return merged
 }
 
+const SECTION_CONFIG: Record<string, { collapsible: boolean; defaultExpanded: boolean }> = {
+  summary: { collapsible: true, defaultExpanded: false },
+  pointers: { collapsible: true, defaultExpanded: true },
+  law: { collapsible: true, defaultExpanded: false },
+  interview: { collapsible: true, defaultExpanded: false },
+  syllabus: { collapsible: true, defaultExpanded: false },
+  terms: { collapsible: false, defaultExpanded: true },
+}
+
+function extractText(children: ReactNode): string {
+  if (typeof children === 'string') return children
+  if (typeof children === 'number') return String(children)
+  if (Array.isArray(children)) return children.map(extractText).join('')
+  if (children && typeof children === 'object' && 'props' in children) {
+    return extractText((children as any).props.children)
+  }
+  return ''
+}
+
 function renderTerms(text: string) {
   const terms = text
     .split('\n')
@@ -115,7 +141,7 @@ function renderTerms(text: string) {
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
       {terms.map((t) => (
-        <Tag key={t} style={{ fontSize: 12, borderRadius: 4, margin: 0, padding: '2px 10px', background: '#0f0f0f', color: '#a1a1a1', border: '1px solid #1f1f1f' }}>{t}</Tag>
+        <Tag key={t} style={{ fontSize: 12, borderRadius: 4, margin: 0, padding: '2px 10px' }}>{t}</Tag>
       ))}
     </div>
   )
@@ -123,10 +149,12 @@ function renderTerms(text: string) {
 
 function SectionBlock({ section }: { section: Section }) {
   const display = SECTION_DISPLAY[section.key]
+  const cfg = SECTION_CONFIG[section.key] || { collapsible: false, defaultExpanded: true }
+  const [open, setOpen] = useState(cfg.defaultExpanded)
 
   if (section.key === 'terms') {
     return (
-      <div style={{ borderLeft: '2px solid #1f1f1f', paddingLeft: 14, marginTop: 16 }}>
+      <div style={{ borderLeft: '2px solid var(--color-border)', paddingLeft: 14, marginTop: 16 }}>
         {display && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 6 }}>
             <span style={{ color: '#6366f1', fontSize: 12 }}>{display.icon}</span>
@@ -140,63 +168,88 @@ function SectionBlock({ section }: { section: Section }) {
     )
   }
 
-  return (
-    <div style={{ borderLeft: '2px solid #1f1f1f', paddingLeft: 14, marginTop: 16 }}>
-      {display && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 8 }}>
-          <span style={{ color: '#6366f1', fontSize: 12 }}>{display.icon}</span>
-          <span style={{ fontSize: 11, fontWeight: 600, color: '#6366f1', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
-            {display.label}
-          </span>
-        </div>
-      )}
-      <div style={{ fontSize: 14, lineHeight: 1.7, color: '#a1a1a1' }}>
-        <ReactMarkdown
-          components={{
-            p: ({ children }) => {
-              const txt = String(children)
-              if (!txt.trim()) return null
-              return <p style={{ margin: '4px 0' }}>{children}</p>
-            },
-            strong: ({ children }) => <strong style={{ fontWeight: 600, color: '#e5e5e5' }}>{children}</strong>,
+  const collapsible = cfg.collapsible
+  const content = (
+    <div style={{ fontSize: 14, lineHeight: 1.7, color: 'var(--color-text-secondary)' }}>
+      <ReactMarkdown
+        components={{
+          p: ({ children }) => {
+            const txt = extractText(children)
+            if (!txt.trim()) return null
+            return <p style={{ margin: '4px 0' }}>{children}</p>
+          },
+            strong: ({ children }) => <strong style={{ fontWeight: 600, color: 'var(--color-text)' }}>{children}</strong>,
             ul: ({ children }) => <ul style={{ paddingLeft: 16, margin: '4px 0', listStyle: 'none' }}>{children}</ul>,
             li: ({ children }) => (
               <li style={{
                 marginBottom: 6,
                 padding: '8px 12px',
-                background: '#0f0f0f',
+                background: 'var(--color-surface)',
                 borderRadius: 6,
                 lineHeight: 1.6,
                 fontSize: 14,
+                border: '1px solid var(--color-border)',
               }}>
                 {children}
               </li>
             ),
-            h3: ({ children }) => {
-              const txt = String(children).replace(/\*+/g, '').trim().toLowerCase()
-              const isSectionHeader = ['what & why', 'key data & facts', 'people & institutions', 'why this matters',
-                'upsc syllabus connect', 'gk summary', 'gk pointers', 'prelims focus', 'mains dimensions',
-                'interview angle', 'law/rule change', 'syllabus tag', 'gk gist'].some((k) => txt.startsWith(k))
-              if (isSectionHeader) return null
-              return <p style={{ margin: '8px 0 4px', fontWeight: 600, fontSize: 14, color: '#c5c5c5' }}>{String(children).replace(/\*+/g, '')}</p>
-            },
-            h4: ({ children }) => <p style={{ fontSize: 13, fontWeight: 600, margin: '8px 0 4px', color: '#b0b0b0' }}>{String(children).replace(/\*+/g, '')}</p>,
+          h3: ({ children }) => {
+            const txt = extractText(children).trim().toLowerCase()
+            const isSectionHeader = ['what & why', 'key data & facts', 'people & institutions', 'why this matters',
+              'upsc syllabus connect', 'gk summary', 'gk pointers', 'prelims focus', 'mains dimensions',
+              'interview angle', 'law/rule change', 'syllabus tag', 'gk gist'].some((k) => txt.startsWith(k))
+            if (isSectionHeader) return null
+            return <p style={{ margin: '8px 0 4px', fontWeight: 600, fontSize: 14, color: 'var(--color-text)' }}>{children}</p>
+          },
+          h4: ({ children }) => <p style={{ fontSize: 13, fontWeight: 600, margin: '8px 0 4px', color: 'var(--color-text-secondary)' }}>{children}</p>,
+        }}
+      >
+        {section.content}
+      </ReactMarkdown>
+    </div>
+  )
+
+  return (
+    <div style={{ borderLeft: '2px solid var(--color-border)', paddingLeft: 14, marginTop: 16 }}>
+      {display && (
+        <div
+          onClick={collapsible ? () => setOpen(!open) : undefined}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 5, marginBottom: 8,
+            cursor: collapsible ? 'pointer' : undefined,
+            userSelect: 'none',
           }}
         >
-          {section.content}
-        </ReactMarkdown>
-      </div>
+          <span style={{ color: '#6366f1', fontSize: 12 }}>{display.icon}</span>
+          <span style={{ fontSize: 11, fontWeight: 600, color: '#6366f1', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
+            {display.label}
+          </span>
+          {collapsible && (
+            <DownOutlined style={{
+              fontSize: 10, color: 'var(--color-text-tertiary)', marginLeft: 'auto',
+              transition: 'transform 0.2s', transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+            }} />
+          )}
+        </div>
+      )}
+      {(!collapsible || open) && content}
     </div>
   )
 }
 
-export default function FormattedSummary({ summary }: { summary: string; compact?: boolean; defaultExpanded?: string }) {
+const SECTION_ORDER = ['pointers', 'summary', 'law', 'interview', 'syllabus', 'terms']
+
+export default function FormattedSummary({ summary }: { summary: string }) {
   const sections = parseSections(summary)
   if (sections.length === 0) return null
 
+  const sorted = [...sections].sort(
+    (a, b) => SECTION_ORDER.indexOf(a.key) - SECTION_ORDER.indexOf(b.key)
+  )
+
   return (
     <div>
-      {sections.map((s) => (
+      {sorted.map((s) => (
         <SectionBlock key={s.key} section={s} />
       ))}
     </div>

@@ -137,7 +137,7 @@ export default function NewsFeedPage() {
         </Row>
       </Card>
 
-      <Card style={{ marginBottom: 24, borderRadius: 12, background: '#111111', border: '1px solid #1f1f1f' }} styles={{ body: { padding: '14px 18px' } }}>
+      <Card style={{ marginBottom: 24, borderRadius: 12, background: 'var(--color-surface)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: '14px 18px' } }}>
         <Row gutter={[12, 12]} align="middle">
           <Col xs={24} md={14}>
             <Space size={8} wrap>
@@ -164,12 +164,12 @@ export default function NewsFeedPage() {
               allowClear
               size="small"
               style={{ width: '100%' }}
-              prefix={<SearchOutlined style={{ color: '#6b6b6b' }} />}
+              prefix={<SearchOutlined style={{ color: 'var(--color-text-tertiary)' }} />}
             />
           </Col>
         </Row>
         {categories.length > 0 && (
-          <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid #1f1f1f' }}>
+          <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--color-border)' }}>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
               {[
                 { label: 'All Topics', value: 'all' },
@@ -187,8 +187,8 @@ export default function NewsFeedPage() {
                       borderRadius: 6,
                       border: 'none',
                       cursor: 'pointer',
-                      background: active ? '#6366f1' : '#141414',
-                      color: active ? '#ffffff' : '#a1a1a1',
+                      background: active ? '#6366f1' : 'var(--color-surface)',
+                      color: active ? 'var(--color-text)' : 'var(--color-text-secondary)',
                       transition: 'all 0.15s',
                       lineHeight: '24px',
                       whiteSpace: 'nowrap',
@@ -203,7 +203,7 @@ export default function NewsFeedPage() {
         )}
         {!loading && (
           <div style={{ marginTop: 6, textAlign: 'right' }}>
-            <Text style={{ color: '#6b6b6b', fontSize: 12 }}>
+            <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }}>
               {total} article{total !== 1 ? 's' : ''}
             </Text>
           </div>
@@ -215,18 +215,18 @@ export default function NewsFeedPage() {
           {[1, 2, 3].map((i) => <ArticleSkeleton key={i} />)}
         </div>
       ) : error ? (
-        <Card style={{ borderRadius: 12, background: '#111111', border: '1px solid #ef4444' }} styles={{ body: { padding: '16px 20px' } }}>
+        <Card style={{ borderRadius: 12, background: 'var(--color-surface)', border: '1px solid #ef4444' }} styles={{ body: { padding: '16px 20px' } }}>
           <Text style={{ color: '#fca5a5' }}>{error}</Text>
         </Card>
       ) : articles.length === 0 ? (
-        <Card style={{ borderRadius: 12, textAlign: 'center', padding: '60px 24px', background: '#111111', border: '1px solid #1f1f1f' }} styles={{ body: { padding: '60px 24px' } }}>
-          <div style={{ width: 64, height: 64, borderRadius: 16, background: '#141414', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+        <Card style={{ borderRadius: 12, textAlign: 'center', padding: '60px 24px', background: 'var(--color-surface)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: '60px 24px' } }}>
+          <div style={{ width: 64, height: 64, borderRadius: 16, background: 'var(--color-surface)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
             <BookOutlined style={{ fontSize: 28, color: '#4a4a4a' }} />
           </div>
-          <Title level={4} style={{ margin: 0, marginBottom: 8, color: '#a1a1a1' }}>
+          <Title level={4} style={{ margin: 0, marginBottom: 8, color: 'var(--color-text-secondary)' }}>
             {search ? 'No articles match your search' : `No articles found for ${date}`}
           </Title>
-          <Text style={{ color: '#6b6b6b', fontSize: 14 }}>
+          <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 14 }}>
             {search ? 'Try adjusting your search terms' : 'Try selecting a different date or source'}
           </Text>
         </Card>

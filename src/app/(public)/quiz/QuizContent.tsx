@@ -89,18 +89,18 @@ export default function QuizContent() {
 
   return (
     <div>
-      <Card style={{ marginBottom: 28, borderRadius: 16, background: '#0a0a0a', border: '1px solid #1f1f1f' }} styles={{ body: { padding: '24px 28px' } }}>
+      <Card style={{ marginBottom: 28, borderRadius: 16, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: '24px 28px' } }}>
         <Row justify="space-between" align="middle">
           <Col>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
               <div style={{ width: 40, height: 40, borderRadius: 10, background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <ThunderboltOutlined style={{ fontSize: 20, color: '#ffffff' }} />
+                <ThunderboltOutlined style={{ fontSize: 20, color: 'var(--color-text)' }} />
               </div>
-              <Title level={3} style={{ margin: 0, letterSpacing: '-0.5px', fontWeight: 700, color: '#ffffff' }}>
+              <Title level={3} style={{ margin: 0, letterSpacing: '-0.5px', fontWeight: 700, color: 'var(--color-text)' }}>
                 Generate Quiz
               </Title>
             </div>
-            <Text style={{ color: '#6b6b6b', fontSize: 14, display: 'block', marginTop: 4, marginLeft: 52 }}>
+            <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 14, display: 'block', marginTop: 4, marginLeft: 52 }}>
               Drag articles to the right panel to select them for quiz generation
             </Text>
           </Col>
@@ -118,7 +118,7 @@ export default function QuizContent() {
       </Card>
 
       {error && (
-        <Card style={{ marginBottom: 20, borderRadius: 12, background: '#141414', border: '1px solid #ef4444' }} styles={{ body: { padding: '14px 20px' } }}>
+        <Card style={{ marginBottom: 20, borderRadius: 12, background: 'var(--color-surface)', border: '1px solid #ef4444' }} styles={{ body: { padding: '14px 20px' } }}>
           <Row justify="space-between" align="middle">
             <Col>
               <Text style={{ color: '#fca5a5' }}>{error}</Text>
@@ -133,22 +133,22 @@ export default function QuizContent() {
       )}
 
       {loading ? (
-        <Card style={{ borderRadius: 16, textAlign: 'center', padding: '80px 24px', background: '#0a0a0a', border: '1px solid #1f1f1f' }} styles={{ body: { padding: '80px 24px' } }}>
+        <Card style={{ borderRadius: 16, textAlign: 'center', padding: '80px 24px', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: '80px 24px' } }}>
           <Spin size="large" />
         </Card>
       ) : (
         <Row gutter={20} style={{ minHeight: 500 }}>
           <Col xs={24} lg={12}>
             <Card
-              style={{ borderRadius: 16, height: '100%', background: '#0a0a0a', border: '1px solid #1f1f1f' }}
+              style={{ borderRadius: 16, height: '100%', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}
               styles={{ body: { padding: '20px' } }}
               title={
                 <Row justify="space-between" align="middle">
                   <Col>
-                    <Text strong style={{ fontSize: 14, color: '#ffffff' }}>
+                    <Text strong style={{ fontSize: 14, color: 'var(--color-text)' }}>
                       Available Articles
                     </Text>
-                    <Tag style={{ marginLeft: 8, borderRadius: 6, background: '#141414', color: '#a1a1a1', border: '1px solid #1f1f1f' }}>{availableArticles.length}</Tag>
+                    <Tag style={{ marginLeft: 8, borderRadius: 6, background: 'var(--color-surface)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)' }}>{availableArticles.length}</Tag>
                   </Col>
                 </Row>
               }
@@ -162,12 +162,12 @@ export default function QuizContent() {
                       draggable
                       onDragStart={(e) => handleDragStart(e, article.id)}
                       onClick={() => setSelected(new Set([...Array.from(selected), article.id]))}
-                      style={{ borderRadius: 10, cursor: 'grab', border: '1px solid #1f1f1f', background: '#141414', transition: 'all 0.2s' }}
+                      style={{ borderRadius: 10, cursor: 'grab', border: '1px solid var(--color-border)', background: 'var(--color-surface)', transition: 'all 0.2s' }}
                       styles={{ body: { padding: '10px 12px' } }}
                     >
                       <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
                         {article.image_url && (
-                          <div style={{ flexShrink: 0, width: 64, height: 48, borderRadius: 6, overflow: 'hidden', background: '#0f0f0f' }}>
+                          <div style={{ flexShrink: 0, width: 64, height: 48, borderRadius: 6, overflow: 'hidden', background: 'var(--color-surface)' }}>
                             <img
                               src={article.image_url}
                               alt=""
@@ -178,7 +178,7 @@ export default function QuizContent() {
                         )}
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
-                            <Text style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.4, flex: 1, color: '#ffffff', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                            <Text style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.4, flex: 1, color: 'var(--color-text)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                               {article.headline}
                             </Text>
                             {article.has_quiz && (
@@ -189,11 +189,11 @@ export default function QuizContent() {
                           </div>
                           <div style={{ display: 'flex', gap: 4, marginTop: 6, flexWrap: 'wrap', alignItems: 'center' }}>
                             {article.syllabus_tag && (
-                              <Tag style={{ fontSize: 10, borderRadius: 4, margin: 0, background: '#0f0f0f', color: '#a1a1a1', border: '1px solid #2a2a2a', padding: '0 6px', lineHeight: '18px', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              <Tag style={{ fontSize: 10, borderRadius: 4, margin: 0, background: 'var(--color-surface)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)', padding: '0 6px', lineHeight: '18px', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                 {article.syllabus_tag}
                               </Tag>
                             )}
-                            <Text style={{ color: '#6b6b6b', fontSize: 10, whiteSpace: 'nowrap' }}>
+                            <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 10, whiteSpace: 'nowrap' }}>
                               {article.source === 'thehindu' ? 'The Hindu' : 'Indian Express'}
                             </Text>
                           </div>
@@ -214,18 +214,18 @@ export default function QuizContent() {
               style={{
                 borderRadius: 16,
                 height: '100%',
-                border: dragOver ? '2px dashed #6366f1' : selectedArticles.length > 0 ? '2px dashed #22c55e' : '2px dashed #2a2a2a',
-                background: dragOver ? '#141414' : selectedArticles.length > 0 ? '#141414' : '#0a0a0a',
+                border: dragOver ? '2px dashed #6366f1' : selectedArticles.length > 0 ? '2px dashed #22c55e' : '2px dashed var(--color-border)',
+                background: dragOver ? 'var(--color-surface)' : selectedArticles.length > 0 ? 'var(--color-surface)' : 'var(--color-bg)',
                 transition: 'all 0.3s',
               }}
               styles={{ body: { padding: '20px' } }}
               title={
                 <Row justify="space-between" align="middle">
                   <Col>
-                    <Text strong style={{ fontSize: 14, color: '#ffffff' }}>
+                    <Text strong style={{ fontSize: 14, color: 'var(--color-text)' }}>
                       Selected for Quiz
                     </Text>
-                    <Tag color={selectedArticles.length > 0 ? 'success' : 'default'} style={{ marginLeft: 8, borderRadius: 6, background: selectedArticles.length > 0 ? '#22c55e' : '#141414', color: selectedArticles.length > 0 ? '#000000' : '#a1a1a1', border: '1px solid #1f1f1f' }}>
+                    <Tag color={selectedArticles.length > 0 ? 'success' : 'default'} style={{ marginLeft: 8, borderRadius: 6, background: selectedArticles.length > 0 ? '#22c55e' : 'var(--color-surface)', color: selectedArticles.length > 0 ? '#000000' : 'var(--color-text-secondary)', border: '1px solid var(--color-border)' }}>
                       {selectedArticles.length}
                     </Tag>
                   </Col>
@@ -239,10 +239,10 @@ export default function QuizContent() {
                 {selectedArticles.length === 0 ? (
                   <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 0' }}>
                     <div style={{ textAlign: 'center' }}>
-                      <div style={{ width: 64, height: 64, borderRadius: 16, background: '#141414', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+                      <div style={{ width: 64, height: 64, borderRadius: 16, background: 'var(--color-surface)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
                         <ThunderboltOutlined style={{ fontSize: 28, color: '#4a4a4a' }} />
                       </div>
-                      <Text style={{ color: '#6b6b6b', fontSize: 14, display: 'block', marginBottom: 4 }}>Drag articles here</Text>
+                      <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 14, display: 'block', marginBottom: 4 }}>Drag articles here</Text>
                       <Text style={{ color: '#4a4a4a', fontSize: 12 }}>or click on articles to select</Text>
                     </div>
                   </div>
@@ -251,12 +251,12 @@ export default function QuizContent() {
                     <Card
                       key={article.id}
                       size="small"
-                      style={{ borderRadius: 10, background: '#141414', border: '1px solid #22c55e' }}
+                      style={{ borderRadius: 10, background: 'var(--color-surface)', border: '1px solid #22c55e' }}
                       styles={{ body: { padding: '10px 12px' } }}
                     >
                       <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
                         {article.image_url && (
-                          <div style={{ flexShrink: 0, width: 56, height: 42, borderRadius: 6, overflow: 'hidden', background: '#0f0f0f' }}>
+                          <div style={{ flexShrink: 0, width: 56, height: 42, borderRadius: 6, overflow: 'hidden', background: 'var(--color-surface)' }}>
                             <img
                               src={article.image_url}
                               alt=""
@@ -267,14 +267,14 @@ export default function QuizContent() {
                         )}
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
-                            <Text style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.4, flex: 1, color: '#ffffff' }}>
+                            <Text style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.4, flex: 1, color: 'var(--color-text)' }}>
                               {article.headline}
                             </Text>
                             <Tooltip title="Remove">
                               <Button
                                 type="text"
                                 size="small"
-                                icon={<DeleteOutlined style={{ color: '#6b6b6b', fontSize: 12 }} />}
+                                icon={<DeleteOutlined style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }} />}
                                 onClick={() => removeSelected(article.id)}
                                 style={{ padding: 0, height: 'auto', marginTop: -2, flexShrink: 0 }}
                               />
@@ -282,11 +282,11 @@ export default function QuizContent() {
                           </div>
                           <div style={{ display: 'flex', gap: 6, marginTop: 4, flexWrap: 'wrap', alignItems: 'center' }}>
                             {article.syllabus_tag && (
-                              <Tag style={{ fontSize: 10, borderRadius: 4, margin: 0, background: '#0f0f0f', color: '#a1a1a1', border: '1px solid #2a2a2a', padding: '0 6px', lineHeight: '18px', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              <Tag style={{ fontSize: 10, borderRadius: 4, margin: 0, background: 'var(--color-surface)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)', padding: '0 6px', lineHeight: '18px', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                 {article.syllabus_tag}
                               </Tag>
                             )}
-                            <Text style={{ color: '#6b6b6b', fontSize: 10, whiteSpace: 'nowrap' }}>
+                            <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 10, whiteSpace: 'nowrap' }}>
                               {article.source === 'thehindu' ? 'The Hindu' : 'Indian Express'}
                             </Text>
                           </div>

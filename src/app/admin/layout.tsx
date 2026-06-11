@@ -17,8 +17,11 @@ import {
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  SunOutlined,
+  MoonOutlined,
 } from '@ant-design/icons'
 import { useAuthStore } from '@/stores/authStore'
+import { useThemeStore } from '@/stores/themeStore'
 
 const { Header, Sider, Content } = Layout
 const { Text } = Typography
@@ -39,8 +42,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [collapsed, setCollapsed] = useState(false)
   const pathname = usePathname()
   const { user, logout } = useAuthStore()
+  const isDark = useThemeStore((s) => s.isDark)
+  const toggleTheme = useThemeStore((s) => s.toggle)
   const {
-    token: { colorBgContainer, colorBgElevated, colorText, colorTextSecondary },
+    token: { colorBgContainer, colorText },
   } = theme.useToken()
 
   const handleLogout = () => {
@@ -70,7 +75,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         collapsed={collapsed}
         style={{
           background: '#000000',
-          borderRight: '1px solid #1f1f1f',
+          borderRight: '1px solid var(--color-border)',
         }}
         width={240}
       >
@@ -79,7 +84,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          borderBottom: '1px solid #1f1f1f',
+          borderBottom: '1px solid var(--color-border)',
         }}>
           <Link href="/" style={{ textDecoration: 'none' }}>
             <Text strong style={{
@@ -126,6 +131,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             }}
           />
           <Space size={16}>
+            <Button
+              type="text"
+              icon={isDark ? <SunOutlined /> : <MoonOutlined />}
+              onClick={toggleTheme}
+              style={{ fontSize: 16, width: 48, height: 48, color: colorText }}
+            />
             <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
               <Space style={{ cursor: 'pointer' }}>
                 <Avatar style={{ backgroundColor: '#ffffff', color: '#000000' }} icon={<UserOutlined />} />

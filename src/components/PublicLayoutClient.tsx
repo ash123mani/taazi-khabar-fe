@@ -10,9 +10,12 @@ import {
   LogoutOutlined,
   LoginOutlined,
   ThunderboltOutlined,
+  SunOutlined,
+  MoonOutlined,
 } from '@ant-design/icons'
 import { useRouter, usePathname } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
+import { useThemeStore } from '@/stores/themeStore'
 
 const { Header, Content, Footer } = Layout
 const { Text } = Typography
@@ -38,6 +41,8 @@ export default function PublicLayoutClient({ children }: { children: React.React
   const router = useRouter()
   const pathname = usePathname()
   const { data: session } = useSession()
+  const isDark = useThemeStore((s) => s.isDark)
+  const toggle = useThemeStore((s) => s.toggle)
 
   const isAdmin = (session?.user as any)?.is_admin
   const isQuizPage = pathname === '/quiz' || pathname.startsWith('/quiz/')
@@ -48,7 +53,7 @@ export default function PublicLayoutClient({ children }: { children: React.React
   ]
 
   return (
-    <Layout style={{ minHeight: '100vh', background: '#0a0a0a' }}>
+    <Layout style={{ minHeight: '100vh', background: 'var(--color-bg)' }}>
       <Header
         style={{
           display: 'flex',
@@ -59,10 +64,10 @@ export default function PublicLayoutClient({ children }: { children: React.React
           position: 'sticky',
           top: 0,
           zIndex: 100,
-          background: 'rgba(0, 0, 0, 0.85)',
+          background: 'var(--color-glass-bg)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          borderBottom: '1px solid var(--color-glass-border)',
         }}
       >
         <Space
@@ -86,7 +91,7 @@ export default function PublicLayoutClient({ children }: { children: React.React
           }}>
             TK
           </div>
-          <Text strong style={{ fontSize: 17, letterSpacing: '-0.5px', color: '#ffffff', fontWeight: 700 }}>
+          <Text strong style={{ fontSize: 17, letterSpacing: '-0.5px', color: 'var(--color-text)', fontWeight: 700 }}>
             Taazi Khabar
           </Text>
         </Space>
@@ -108,8 +113,14 @@ export default function PublicLayoutClient({ children }: { children: React.React
         />
 
         <Space style={{ flexShrink: 0 }}>
+          <Button
+            type="text"
+            icon={isDark ? <SunOutlined /> : <MoonOutlined />}
+            onClick={toggle}
+            style={{ color: 'var(--color-text-secondary)' }}
+          />
           {session ? (
-            <Button type="text" icon={<LogoutOutlined />} onClick={() => signOut()} style={{ color: '#a1a1a1' }}>
+            <Button type="text" icon={<LogoutOutlined />} onClick={() => signOut()} style={{ color: 'var(--color-text-secondary)' }}>
               Logout
             </Button>
           ) : (
@@ -122,7 +133,7 @@ export default function PublicLayoutClient({ children }: { children: React.React
 
       <div style={{
         height: 3,
-        background: 'linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, #6366f1 100%)',
+        background: 'var(--gradient-accent)',
         opacity: 0.9,
       }} />
 
@@ -141,17 +152,17 @@ export default function PublicLayoutClient({ children }: { children: React.React
 
       <Footer
         style={{
-          background: 'linear-gradient(180deg, #0a0a0a 0%, #000000 100%)',
+          background: 'var(--gradient-footer)',
           padding: '24px',
           textAlign: 'center',
-          borderTop: '1px solid rgba(255,255,255,0.04)',
+          borderTop: '1px solid var(--color-footer-border)',
         }}
       >
-        <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13, fontWeight: 500 }}>
+        <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 13, fontWeight: 500 }}>
           &copy; {new Date().getFullYear()} Taazi Khabar &mdash; AI-Powered UPSC Current Affairs
         </Text>
         <div style={{ marginTop: 4 }}>
-          <Text style={{ color: 'rgba(255,255,255,0.2)', fontSize: 12 }}>
+          <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12, opacity: 0.6 }}>
             Built with Next.js, FastAPI &middot; NVIDIA NIM
           </Text>
         </div>

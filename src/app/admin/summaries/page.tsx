@@ -126,13 +126,13 @@ export default function SummariesPage() {
           <FormattedSummary summary={record.gk_summary} />
         </div>
       ) : (
-        <Text style={{ color: '#71717a' }}>No summary generated yet.</Text>
+        <Text style={{ color: 'var(--color-text-tertiary)' }}>No summary generated yet.</Text>
       )}
 
       {record.key_terms && record.key_terms.length > 0 && (
         <div style={{ marginTop: 8 }}>
           {record.key_terms.map((t: string) => (
-            <Tag key={t} style={{ fontSize: 11, marginBottom: 2, background: '#27272a', color: '#a1a1aa', border: '1px solid #3f3f46' }}>{t}</Tag>
+            <Tag key={t} style={{ fontSize: 11, marginBottom: 2, background: 'var(--color-border)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)' }}>{t}</Tag>
           ))}
         </div>
       )}
@@ -166,7 +166,7 @@ export default function SummariesPage() {
       ellipsis: true,
       render: (s: string | null) => {
         if (!s) return <Tag color="warning" style={{ fontSize: 11, background: '#f59e0b', color: '#fff', border: 'none' }}>Not generated</Tag>
-        return <Text style={{ fontSize: 12, color: '#a1a1aa' }}>{s.slice(0, 120)}{s.length > 120 ? '...' : ''}</Text>
+        return <Text style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>{s.slice(0, 120)}{s.length > 120 ? '...' : ''}</Text>
       },
     },
     {
@@ -175,8 +175,8 @@ export default function SummariesPage() {
       key: 'syllabus_tag',
       width: 130,
       render: (t: string | null) => t
-        ? <Tag style={{ fontSize: 10, whiteSpace: 'normal', lineHeight: 1.3, background: '#27272a', color: '#a1a1aa', border: '1px solid #3f3f46' }}>{t.split(':')[0]}</Tag>
-        : <Text style={{ color: '#71717a' }}>—</Text>,
+        ? <Tag style={{ fontSize: 10, whiteSpace: 'normal', lineHeight: 1.3, background: 'var(--color-border)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)' }}>{t.split(':')[0]}</Tag>
+        : <Text style={{ color: 'var(--color-text-tertiary)' }}>—</Text>,
     },
     {
       title: 'Action',
@@ -192,7 +192,7 @@ export default function SummariesPage() {
             loading={busy}
             disabled={processing.size > 0 && !busy}
             onClick={(e) => { e.stopPropagation(); handleGenerate(record.id) }}
-            style={hasSummary(record) ? { background: '#27272a', color: '#a1a1aa', border: '1px solid #3f3f46' } : { background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', border: 'none' }}
+            style={hasSummary(record) ? { background: 'var(--color-border)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)' } : { background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', border: 'none' }}
           >
             {hasSummary(record) ? 'Regen' : 'Generate'}
           </Button>
@@ -204,26 +204,26 @@ export default function SummariesPage() {
   return (
     <div>
       {/* Header */}
-      <Card style={{ marginBottom: 24, borderRadius: 16, background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: '24px 28px' } }}>
+      <Card style={{ marginBottom: 24, borderRadius: 16, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: '24px 28px' } }}>
         <Row justify="space-between" align="middle">
           <Col>
             <Title level={3} style={{ margin: 0, letterSpacing: '-0.5px', fontWeight: 700, color: '#fafafa' }}>
               Summaries
             </Title>
-            <Text style={{ color: '#a1a1aa', fontSize: 14, display: 'block', marginTop: 4 }}>
+            <Text style={{ color: 'var(--color-text-secondary)', fontSize: 14, display: 'block', marginTop: 4 }}>
               Review and manage AI-generated summaries
             </Text>
           </Col>
           <Col>
             <Space size={24}>
               <Statistic
-                title={<Text style={{ color: '#a1a1aa', fontSize: 12 }}>Total</Text>}
+                title={<Text style={{ color: 'var(--color-text-secondary)', fontSize: 12 }}>Total</Text>}
                 value={articles.length}
                 prefix={<FileTextOutlined style={{ color: '#6366f1' }} />}
                 valueStyle={{ fontWeight: 700, color: '#fafafa' }}
               />
               <Statistic
-                title={<Text style={{ color: '#a1a1aa', fontSize: 12 }}>With Summary</Text>}
+                title={<Text style={{ color: 'var(--color-text-secondary)', fontSize: 12 }}>With Summary</Text>}
                 value={withSummaryCount}
                 prefix={<CheckCircleOutlined style={{ color: '#10b981' }} />}
                 valueStyle={{ fontWeight: 700, color: '#fafafa' }}
@@ -234,7 +234,7 @@ export default function SummariesPage() {
       </Card>
 
       {/* Controls */}
-      <Card style={{ marginBottom: 16, borderRadius: 12, background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: '16px 20px' } }}>
+      <Card style={{ marginBottom: 16, borderRadius: 12, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: '16px 20px' } }}>
         <Row gutter={12} align="middle" style={{ marginBottom: 12 }}>
           <Col>
             <DatePicker
@@ -261,7 +261,7 @@ export default function SummariesPage() {
         <Row>
           <Col>
             <Space size={16}>
-              <Text style={{ fontSize: 12, color: '#a1a1aa' }}>
+              <Text style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>
                 Articles: {articles.length}
                 {withSummaryCount > 0 && <> · With summary: {withSummaryCount}</>}
                 {articlesWithoutSummary.length > 0 && <> · Without: {articlesWithoutSummary.length}</>}
@@ -271,7 +271,7 @@ export default function SummariesPage() {
         </Row>
       </Card>
 
-      <Card style={{ borderRadius: 12, background: '#141416', border: '1px solid #27272a' }} styles={{ body: { padding: 0 } }}>
+      <Card style={{ borderRadius: 12, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: 0 } }}>
         <Table
           dataSource={articles}
           columns={columns}

@@ -54,13 +54,13 @@ export default function TrainingDataPage() {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      render: (text: string) => <span style={{ color: '#ffffff', fontWeight: 500 }}>{text}</span>,
+      render: (text: string) => <span style={{ color: 'var(--color-text)', fontWeight: 500 }}>{text}</span>,
     },
     {
       title: 'Description',
       dataIndex: 'description',
       key: 'description',
-      render: (text: string) => <span style={{ color: '#a1a1a1' }}>{text || 'N/A'}</span>,
+      render: (text: string) => <span style={{ color: 'var(--color-text-secondary)' }}>{text || 'N/A'}</span>,
     },
     {
       title: 'Status',
@@ -75,13 +75,13 @@ export default function TrainingDataPage() {
       title: 'Records',
       dataIndex: 'record_count',
       key: 'record_count',
-      render: (count: number) => <span style={{ color: '#a1a1a1' }}>{count?.toLocaleString() || 0}</span>,
+      render: (count: number) => <span style={{ color: 'var(--color-text-secondary)' }}>{count?.toLocaleString() || 0}</span>,
     },
     {
       title: 'Created',
       dataIndex: 'created_at',
       key: 'created_at',
-      render: (date: string) => <span style={{ color: '#6b6b6b' }}>{new Date(date).toLocaleDateString('en-IN')}</span>,
+      render: (date: string) => <span style={{ color: 'var(--color-text-tertiary)' }}>{new Date(date).toLocaleDateString('en-IN')}</span>,
     },
     {
       title: 'Actions',
@@ -106,8 +106,8 @@ export default function TrainingDataPage() {
 
   return (
     <div>
-      <Title level={4} style={{ margin: 0, marginBottom: 20, fontSize: 16, color: '#ffffff' }}>Training Data</Title>
-      <Card style={{ background: '#0a0a0a', border: '1px solid #1f1f1f', borderRadius: 12 }} styles={{ body: { padding: 18 } }}>
+      <Title level={4} style={{ margin: 0, marginBottom: 20, fontSize: 16, color: 'var(--color-text)' }}>Training Data</Title>
+      <Card style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 12 }} styles={{ body: { padding: 18 } }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
           <Space>
             <Search
@@ -138,7 +138,7 @@ export default function TrainingDataPage() {
           pagination={{
             ...pagination,
             showSizeChanger: true,
-            showTotal: (total) => <span style={{ color: '#6b6b6b' }}>Total {total} records</span>,
+            showTotal: (total) => <span style={{ color: 'var(--color-text-tertiary)' }}>Total {total} records</span>,
           }}
           onChange={(p) => setPagination({ current: p.current || 1, pageSize: p.pageSize || 10 })}
         />

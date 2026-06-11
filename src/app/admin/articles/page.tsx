@@ -54,19 +54,19 @@ export default function ArticlesPage() {
       title: 'Title',
       dataIndex: 'headline',
       key: 'headline',
-      render: (text: string) => <span style={{ color: '#ffffff', fontWeight: 500 }}>{text}</span>,
+      render: (text: string) => <span style={{ color: 'var(--color-text)', fontWeight: 500 }}>{text}</span>,
     },
     {
       title: 'Source',
       dataIndex: 'source',
       key: 'source',
-      render: (text: string) => <span style={{ color: '#a1a1a1' }}>{text}</span>,
+      render: (text: string) => <span style={{ color: 'var(--color-text-secondary)' }}>{text}</span>,
     },
     {
       title: 'Date',
       dataIndex: 'published_at',
       key: 'published_at',
-      render: (date: string) => <span style={{ color: '#6b6b6b' }}>{new Date(date).toLocaleDateString('en-IN')}</span>,
+      render: (date: string) => <span style={{ color: 'var(--color-text-tertiary)' }}>{new Date(date).toLocaleDateString('en-IN')}</span>,
     },
     {
       title: 'Actions',
@@ -91,8 +91,8 @@ export default function ArticlesPage() {
 
   return (
     <div>
-      <Title level={4} style={{ margin: 0, marginBottom: 20, fontSize: 16, color: '#ffffff' }}>Article Management</Title>
-      <Card style={{ background: '#0a0a0a', border: '1px solid #1f1f1f', borderRadius: 12 }} styles={{ body: { padding: 18 } }}>
+      <Title level={4} style={{ margin: 0, marginBottom: 20, fontSize: 16, color: 'var(--color-text)' }}>Article Management</Title>
+      <Card style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 12 }} styles={{ body: { padding: 18 } }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
           <Space>
             <Search
@@ -112,7 +112,7 @@ export default function ArticlesPage() {
           pagination={{
             ...pagination,
             showSizeChanger: true,
-            showTotal: (total) => <span style={{ color: '#6b6b6b' }}>Total {total} articles</span>,
+            showTotal: (total) => <span style={{ color: 'var(--color-text-tertiary)' }}>Total {total} articles</span>,
           }}
           onChange={(p) => setPagination({ current: p.current || 1, pageSize: p.pageSize || 10 })}
         />

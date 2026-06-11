@@ -54,13 +54,13 @@ export default function ModelsPage() {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      render: (text: string) => <span style={{ color: '#ffffff', fontWeight: 500 }}>{text}</span>,
+      render: (text: string) => <span style={{ color: 'var(--color-text)', fontWeight: 500 }}>{text}</span>,
     },
     {
       title: 'Provider',
       dataIndex: 'provider',
       key: 'provider',
-      render: (text: string) => <span style={{ color: '#a1a1a1' }}>{text}</span>,
+      render: (text: string) => <span style={{ color: 'var(--color-text-secondary)' }}>{text}</span>,
     },
     {
       title: 'Status',
@@ -75,13 +75,13 @@ export default function ModelsPage() {
       title: 'Type',
       dataIndex: 'model_type',
       key: 'model_type',
-      render: (type: string) => <span style={{ color: '#6b6b6b' }}>{type || 'N/A'}</span>,
+      render: (type: string) => <span style={{ color: 'var(--color-text-tertiary)' }}>{type || 'N/A'}</span>,
     },
     {
       title: 'Created',
       dataIndex: 'created_at',
       key: 'created_at',
-      render: (date: string) => <span style={{ color: '#6b6b6b' }}>{new Date(date).toLocaleDateString('en-IN')}</span>,
+      render: (date: string) => <span style={{ color: 'var(--color-text-tertiary)' }}>{new Date(date).toLocaleDateString('en-IN')}</span>,
     },
     {
       title: 'Actions',
@@ -106,8 +106,8 @@ export default function ModelsPage() {
 
   return (
     <div>
-      <Title level={4} style={{ margin: 0, marginBottom: 20, fontSize: 16, color: '#ffffff' }}>Model Registry</Title>
-      <Card style={{ background: '#0a0a0a', border: '1px solid #1f1f1f', borderRadius: 12 }} styles={{ body: { padding: 18 } }}>
+      <Title level={4} style={{ margin: 0, marginBottom: 20, fontSize: 16, color: 'var(--color-text)' }}>Model Registry</Title>
+      <Card style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 12 }} styles={{ body: { padding: 18 } }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
           <Space>
             <Search
@@ -138,7 +138,7 @@ export default function ModelsPage() {
           pagination={{
             ...pagination,
             showSizeChanger: true,
-            showTotal: (total) => <span style={{ color: '#6b6b6b' }}>Total {total} models</span>,
+            showTotal: (total) => <span style={{ color: 'var(--color-text-tertiary)' }}>Total {total} models</span>,
           }}
           onChange={(p) => setPagination({ current: p.current || 1, pageSize: p.pageSize || 10 })}
         />
