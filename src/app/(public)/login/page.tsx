@@ -40,7 +40,7 @@ export default function LoginPage() {
   }
 
   return (
-    <Row justify="center" align="middle" style={{ height: '100vh', padding: '12px', overflow: 'hidden' }}>
+    <Row justify="center" align="middle" style={{ height: '100%', padding: '12px' }}>
       <Col xs={24} sm={22} md={20} lg={18} xl={18}>
         <Card
           style={{ borderRadius: 24, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.8)', border: '1px solid var(--color-border)', background: 'var(--color-bg)', overflow: 'hidden' }}

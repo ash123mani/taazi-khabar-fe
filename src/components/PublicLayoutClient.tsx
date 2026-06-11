@@ -131,12 +131,6 @@ export default function PublicLayoutClient({ children }: { children: React.React
         </Space>
       </Header>
 
-      <div style={{
-        height: 3,
-        background: 'var(--gradient-accent)',
-        opacity: 0.9,
-      }} />
-
       <Content
         style={{
           flex: 1,
@@ -145,6 +139,8 @@ export default function PublicLayoutClient({ children }: { children: React.React
           margin: '0 auto',
           padding: isQuizPage ? '32px 48px' : '32px 24px',
           boxSizing: 'border-box',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         {children}
