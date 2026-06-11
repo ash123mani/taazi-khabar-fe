@@ -35,6 +35,9 @@ export const api = {
   getArticles: (params?: Record<string, string>) =>
     fetchApi(`/articles${params ? `?${new URLSearchParams(params)}` : ''}`),
 
+  getArticleCounts: (params?: Record<string, string>) =>
+    fetchApi(`/articles/counts${params ? `?${new URLSearchParams(params)}` : ''}`),
+
   getArticle: (id: string) => fetchApi(`/articles/${id}`),
 
   generateQuiz: (article_ids: string[], num_questions: number) =>

@@ -25,9 +25,10 @@ export default function NewsFeedPage() {
   const [skip, setSkip] = useState(0)
   const [total, setTotal] = useState(0)
   const [loadingMore, setLoadingMore] = useState(false)
-  const SOURCE_OPTIONS = ['all', 'thehindu', 'indianexpress']
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([])
   const [categoryFilter, setCategoryFilter] = useState('all')
+  const [counts, setCounts] = useState<Record<string, any>>({})
+  const [filteredCounts, setFilteredCounts] = useState<Record<string, any>>({})
 
   useEffect(() => {
     api.getCategories().then((data: any) => {
@@ -35,6 +36,21 @@ export default function NewsFeedPage() {
       setCategories(list)
     }).catch(() => {})
   }, [])
+
+  const fetchCounts = useCallback(async (d: string, source: string) => {
+    try {
+      const [all, filtered] = await Promise.all([
+        api.getArticleCounts({ date: d }),
+        source !== 'all' ? api.getArticleCounts({ date: d, source }) : Promise.resolve(null),
+      ])
+      setCounts(all || {})
+      setFilteredCounts(filtered || all || {})
+    } catch {}
+  }, [])
+
+  useEffect(() => {
+    fetchCounts(date, sourceFilter)
+  }, [date, sourceFilter, fetchCounts])
 
   const fetchArticles = useCallback(async (d: string, source: string, cat: string, s: string, skipVal: number, append = false) => {
     if (!append) setLoading(true)
@@ -139,9 +155,9 @@ export default function NewsFeedPage() {
             <Space size={8} wrap>
               <Segmented
                 options={[
-                  { label: 'All', value: 'all', icon: <BookOutlined /> },
-                  { label: 'The Hindu', value: 'thehindu' },
-                  { label: 'Indian Express', value: 'indianexpress' },
+                  { label: `All (${counts.total || 0})`, value: 'all' },
+                  { label: `The Hindu (${counts.thehindu || 0})`, value: 'thehindu' },
+                  { label: `Indian Express (${counts.indianexpress || 0})`, value: 'indianexpress' },
                 ]}
                 value={sourceFilter}
                 onChange={(val) => setSourceFilter(val as string)}
@@ -165,11 +181,14 @@ export default function NewsFeedPage() {
         {categories.length > 0 && (
           <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--color-border)' }}>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-              {[
+                  {[
                 { label: 'All Topics', value: 'all' },
                 ...categories.map((c) => ({ label: c.name, value: c.id })),
               ].map((opt) => {
                 const active = categoryFilter === opt.value
+                const catCount = opt.value === 'all'
+                  ? (filteredCounts?.categories ? Object.values(filteredCounts.categories).reduce((a: number, b: any) => a + (b as number), 0) : 0)
+                  : (filteredCounts?.categories?.[opt.value] || 0)
                 return (
                   <button
                     key={opt.value}
@@ -188,7 +207,7 @@ export default function NewsFeedPage() {
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    {opt.label}
+                    {opt.label} ({catCount})
                   </button>
                 )
               })}
