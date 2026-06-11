@@ -2,14 +2,11 @@ import { Card, Skeleton as AntSkeleton, Space } from 'antd'
 
 export function ArticleSkeleton() {
   return (
-    <Card style={{ borderRadius: 12, marginBottom: 16, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: 0 } }}>
-      <div style={{ padding: '20px 24px' }}>
-        <AntSkeleton active paragraph={{ rows: 2 }} title={{ width: '70%' }} />
-        <div style={{ marginTop: 12 }}>
-          <AntSkeleton active paragraph={{ rows: 3 }} title={false} />
-        </div>
-        <div style={{ marginTop: 14 }}>
-          <AntSkeleton active paragraph={{ rows: 1 }} title={false} />
+    <Card style={{ borderRadius: 12, marginBottom: 12, background: 'var(--color-surface)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: '14px 18px' } }}>
+      <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+        <AntSkeleton.Image active style={{ width: 90, height: 68, borderRadius: 8 }} />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <AntSkeleton active title={false} paragraph={{ rows: 2, width: ['75%', '45%'] }} />
         </div>
       </div>
     </Card>
