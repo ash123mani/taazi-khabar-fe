@@ -35,7 +35,7 @@ export default function RegisterPage() {
 
   return (
     <Row justify="center" align="middle" style={{ minHeight: '100vh', padding: '24px' }}>
-      <Col xs={24} sm={20} md={16} lg={12} xl={10}>
+      <Col xs={24} sm={18} md={14} lg={10} xl={8}>
         <Card
           style={{ borderRadius: 24, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.8)', border: '1px solid var(--color-border)', background: 'var(--color-bg)', overflow: 'hidden' }}
           styles={{ body: { padding: '48px 40px' } }}
