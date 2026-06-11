@@ -101,10 +101,10 @@ export default function PublicLayoutClient({ children }: { children: React.React
           selectedKeys={[selectedKey(pathname)]}
           items={nav}
           onClick={({ key }) => router.push(key)}
+          overflowedIndicator={null}
           style={{
             flex: 1,
             minWidth: 0,
-            maxWidth: 480,
             borderBottom: 'none',
             background: 'transparent',
             justifyContent: 'center',
