@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Collapse, Tag, Typography, Button, message, Tooltip } from 'antd'
 import { HeartOutlined, HeartFilled, LinkOutlined, DownOutlined } from '@ant-design/icons'
+import dayjs from 'dayjs'
 import { api } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
 import SyllabusTag from './SyllabusTag'
@@ -79,7 +80,7 @@ export default function ArticleCard({ article }: { article: Article }) {
                     </Tooltip>
                   ))}
                   <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 11 }}>
-                    {article.source === 'thehindu' ? 'The Hindu' : 'Indian Express'} · {new Date(article.published_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    {article.source === 'thehindu' ? 'The Hindu' : 'Indian Express'} · {dayjs(article.published_at).format('DD-MM-YYYY')}
                   </Text>
                 </div>
               </div>

@@ -45,7 +45,10 @@ export default function NewsFeedPage() {
       ])
       setCounts(all || {})
       setFilteredCounts(filtered || all || {})
-    } catch {}
+      if (all?._error) console.error('Counts error:', all._error)
+    } catch (err) {
+      console.error('Failed to fetch counts:', err)
+    }
   }, [])
 
   useEffect(() => {
@@ -237,7 +240,7 @@ export default function NewsFeedPage() {
             <BookOutlined style={{ fontSize: 28, color: '#4a4a4a' }} />
           </div>
           <Title level={4} style={{ margin: 0, marginBottom: 8, color: 'var(--color-text-secondary)' }}>
-            {search ? 'No articles match your search' : `No articles found for ${date}`}
+            {search ? 'No articles match your search' : `No articles found for ${dayjs(date).format('DD-MM-YYYY')}`}
           </Title>
           <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 14 }}>
             {search ? 'Try adjusting your search terms' : 'Try selecting a different date or source'}
