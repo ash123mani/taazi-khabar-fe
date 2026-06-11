@@ -139,6 +139,7 @@ export default function NewsFeedPage() {
               value={dayjs(date)}
               onChange={(d) => { if (d) setDate(d.format('YYYY-MM-DD')) }}
               allowClear={false}
+              format="DD-MM-YYYY"
               suffixIcon={<CalendarOutlined style={{ color: 'rgba(255,255,255,0.6)' }} />}
               size="large"
               style={{

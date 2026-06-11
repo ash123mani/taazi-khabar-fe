@@ -241,6 +241,7 @@ export default function SummariesPage() {
               value={dayjs(date)}
               onChange={(d) => { if (d) setDate(d.format('YYYY-MM-DD')) }}
               allowClear={false}
+              format="DD-MM-YYYY"
               size="middle"
               style={{ width: 140 }}
             />

@@ -109,6 +109,7 @@ export default function QuizContent() {
               value={dayjs(date)}
               onChange={(d) => { if (d) { setDate(d.format('YYYY-MM-DD')); setSelected(new Set()) } }}
               allowClear={false}
+              format="DD-MM-YYYY"
               suffixIcon={<CalendarOutlined />}
               style={{ width: 160 }}
               size="large"
