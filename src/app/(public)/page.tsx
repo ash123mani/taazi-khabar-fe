@@ -25,7 +25,7 @@ export default function NewsFeedPage() {
   const [skip, setSkip] = useState(0)
   const [total, setTotal] = useState(0)
   const [loadingMore, setLoadingMore] = useState(false)
-  const [sources, setSources] = useState<string[]>(['all'])
+  const SOURCE_OPTIONS = ['all', 'thehindu', 'indianexpress']
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([])
   const [categoryFilter, setCategoryFilter] = useState('all')
 
@@ -53,10 +53,6 @@ export default function NewsFeedPage() {
         setArticles(list)
       }
       setTotal(totalCount)
-      if (!append && list.length > 0) {
-        const allSources = Array.from(new Set(list.map((a: Article) => a.source))) as string[]
-        setSources(['all', ...allSources])
-      }
     } catch {
       setError('Failed to load articles')
     } finally {
@@ -144,10 +140,8 @@ export default function NewsFeedPage() {
               <Segmented
                 options={[
                   { label: 'All', value: 'all', icon: <BookOutlined /> },
-                  ...sources.filter(s => s !== 'all').map((s) => ({
-                    label: s === 'thehindu' ? 'The Hindu' : s === 'indianexpress' ? 'Indian Express' : s,
-                    value: s,
-                  })),
+                  { label: 'The Hindu', value: 'thehindu' },
+                  { label: 'Indian Express', value: 'indianexpress' },
                 ]}
                 value={sourceFilter}
                 onChange={(val) => setSourceFilter(val as string)}
