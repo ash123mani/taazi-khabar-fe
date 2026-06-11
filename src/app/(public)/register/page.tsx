@@ -34,40 +34,40 @@ export default function RegisterPage() {
   }
 
   return (
-    <Row justify="center" align="middle" style={{ height: '100vh', padding: '24px', overflow: 'hidden' }}>
+    <Row justify="center" align="middle" style={{ height: '100vh', padding: '12px', overflow: 'hidden' }}>
       <Col xs={24} sm={22} md={20} lg={18} xl={18}>
         <Card
           style={{ borderRadius: 24, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.8)', border: '1px solid var(--color-border)', background: 'var(--color-bg)', overflow: 'hidden' }}
-          styles={{ body: { padding: '48px 40px' } }}
+          styles={{ body: { padding: '24px 32px' } }}
         >
-          <div style={{ textAlign: 'center', marginBottom: 36 }}>
+          <div style={{ textAlign: 'center', marginBottom: 20 }}>
             <div style={{
-              width: 64,
-              height: 64,
-              borderRadius: 18,
+              width: 48,
+              height: 48,
+              borderRadius: 14,
               background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              marginBottom: 20,
+              marginBottom: 12,
               boxShadow: '0 10px 25px -5px rgba(99, 102, 241, 0.3)',
             }}>
-              <BookOutlined style={{ fontSize: 32, color: '#ffffff' }} />
+              <BookOutlined style={{ fontSize: 24, color: '#ffffff' }} />
             </div>
-            <Title level={3} style={{ margin: 0, letterSpacing: '-0.5px', fontWeight: 700, color: 'var(--color-text)', fontSize: 26 }}>
+            <Title level={3} style={{ margin: 0, letterSpacing: '-0.5px', fontWeight: 700, color: 'var(--color-text)', fontSize: 22 }}>
               Create account
             </Title>
-            <Paragraph style={{ color: 'var(--color-text-tertiary)', fontSize: 15, marginBottom: 0, marginTop: 8, lineHeight: 1.5 }}>
+            <Paragraph style={{ color: 'var(--color-text-tertiary)', fontSize: 14, marginBottom: 0, marginTop: 4, lineHeight: 1.4 }}>
               Get started with Taazi Khabar
             </Paragraph>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginBottom: 32 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--color-text-tertiary)', fontSize: 13 }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 20, marginBottom: 20 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--color-text-tertiary)', fontSize: 12 }}>
               <SafetyCertificateOutlined style={{ color: '#22c55e' }} />
               <span>Free to use</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--color-text-tertiary)', fontSize: 13 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--color-text-tertiary)', fontSize: 12 }}>
               <BookOutlined style={{ color: '#6366f1' }} />
               <span>UPSC Prep</span>
             </div>
@@ -93,12 +93,12 @@ export default function RegisterPage() {
             </div>
           )}
 
-          <Form layout="vertical" onFinish={handleSubmit} requiredMark={false} size="large">
+          <Form layout="vertical" onFinish={handleSubmit} requiredMark={false} size="middle">
             <Form.Item
               label={<Text style={{ color: 'var(--color-text-secondary)', fontWeight: 500, fontSize: 14 }}>Full Name</Text>}
               name="name"
               rules={[{ required: true, message: 'Please enter your name' }]}
-              style={{ marginBottom: 20 }}
+              style={{ marginBottom: 14 }}
             >
               <Input
                 prefix={<UserOutlined style={{ color: 'var(--color-text-tertiary)' }} />}
@@ -109,7 +109,7 @@ export default function RegisterPage() {
               label={<Text style={{ color: 'var(--color-text-secondary)', fontWeight: 500, fontSize: 14 }}>Email</Text>}
               name="email"
               rules={[{ required: true, type: 'email', message: 'Please enter a valid email' }]}
-              style={{ marginBottom: 20 }}
+              style={{ marginBottom: 14 }}
             >
               <Input
                 prefix={<MailOutlined style={{ color: 'var(--color-text-tertiary)' }} />}
@@ -120,7 +120,7 @@ export default function RegisterPage() {
               label={<Text style={{ color: 'var(--color-text-secondary)', fontWeight: 500, fontSize: 14 }}>Password</Text>}
               name="password"
               rules={[{ required: true, min: 6, message: 'Password must be at least 6 characters' }]}
-              style={{ marginBottom: 24 }}
+              style={{ marginBottom: 16 }}
             >
               <Input.Password
                 prefix={<LockOutlined style={{ color: 'var(--color-text-tertiary)' }} />}
@@ -136,10 +136,10 @@ export default function RegisterPage() {
                 block
                 size="large"
                 style={{
-                  height: 50,
-                  borderRadius: 12,
+                  height: 44,
+                  borderRadius: 10,
                   fontWeight: 600,
-                  fontSize: 16,
+                  fontSize: 15,
                 }}
               >
                 Create Account
@@ -147,7 +147,7 @@ export default function RegisterPage() {
             </Form.Item>
           </Form>
 
-          <Divider style={{ margin: '28px 0', borderColor: 'var(--color-border)' }} />
+          <Divider style={{ margin: '16px 0', borderColor: 'var(--color-border)' }} />
 
           <div style={{ textAlign: 'center' }}>
             <Text style={{ fontSize: 14, color: 'var(--color-text-tertiary)' }}>
