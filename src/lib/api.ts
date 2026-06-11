@@ -69,10 +69,10 @@ export const api = {
     fetchApi(`/admin/datasets${params ? `?${new URLSearchParams(params)}` : ''}`),
 
   getTrainingDatasets: (params?: Record<string, string>) =>
-    fetchApi(`/admin/training-datasets${params ? `?${new URLSearchParams(params)}` : ''}`),
+    fetchApi(`/admin/datasets${params ? `?${new URLSearchParams(params)}` : ''}`),
 
   deleteTrainingDataset: (id: string) =>
-    fetchApi(`/admin/training-datasets/${id}`, { method: 'DELETE' }),
+    fetchApi(`/admin/datasets/${id}`, { method: 'DELETE' }),
 
   buildDataset: (data: any) =>
     fetchApi('/admin/datasets', { method: 'POST', body: JSON.stringify(data) }),

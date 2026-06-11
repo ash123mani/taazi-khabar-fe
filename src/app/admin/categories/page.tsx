@@ -18,7 +18,7 @@ export default function CategoriesPage() {
     setLoading(true)
     try {
       const data = await api.getCategories()
-      setCategories(data)
+      setCategories(data?.categories || data || [])
     } catch (err: any) {
       message.error(err.message || 'Failed to load categories')
     } finally {

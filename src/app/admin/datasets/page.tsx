@@ -19,7 +19,7 @@ export default function DatasetsPage() {
     setLoading(true)
     try {
       const data = await api.getTrainingDatasets()
-      setDatasets(data)
+      setDatasets(data?.datasets || data || [])
     } catch (err: any) {
       message.error(err.message || 'Failed to load datasets')
     } finally {

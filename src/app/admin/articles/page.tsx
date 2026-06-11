@@ -20,7 +20,7 @@ export default function ArticlesPage() {
     setLoading(true)
     try {
       const data = await api.getArticles({ date })
-      setArticles(data)
+      setArticles(data?.articles || data || [])
     } catch (err: any) {
       message.error(err.message || 'Failed to load articles')
     } finally {

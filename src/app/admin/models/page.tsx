@@ -19,7 +19,24 @@ export default function ModelsPage() {
     setLoading(true)
     try {
       const data = await api.getModels()
-      setModels(data)
+      const flat: ModelRegistry[] = []
+      if (Array.isArray(data)) {
+        flat.push(...data)
+      } else if (data && typeof data === 'object') {
+        for (const [persona, models] of Object.entries(data)) {
+          for (const m of models as any[]) {
+            flat.push({
+              id: m.id,
+              name: m.name,
+              provider: m.provider,
+              status: (m.active ?? m.is_active) ? 'active' : 'inactive',
+              model_type: persona,
+              created_at: m.created_at || '',
+            })
+          }
+        }
+      }
+      setModels(flat)
     } catch (err: any) {
       message.error(err.message || 'Failed to load models')
     } finally {

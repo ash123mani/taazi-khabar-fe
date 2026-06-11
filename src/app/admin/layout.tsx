@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { Layout, Menu, Button, Typography, Dropdown, Avatar, Space, theme } from 'antd'
 import {
   DashboardOutlined,
@@ -41,6 +41,7 @@ const menuItems = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
   const { user, logout } = useAuthStore()
   const isDark = useThemeStore((s) => s.isDark)
   const toggleTheme = useThemeStore((s) => s.toggle)
@@ -101,6 +102,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           mode="inline"
           selectedKeys={[pathname]}
           items={menuItems}
+          onClick={({ key }) => router.push(key)}
           style={{
             background: '#000000',
             borderRight: 0,
