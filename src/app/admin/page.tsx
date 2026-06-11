@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Typography, Card, Row, Col, Statistic, Table, Tag, Button, message } from 'antd'
+import dayjs from 'dayjs'
 import { api } from '@/lib/api'
 
 const { Title, Text } = Typography
@@ -50,7 +51,7 @@ export default function AdminDashboard() {
       title: 'Date',
       dataIndex: 'published_at',
       key: 'published_at',
-      render: (date: string) => <span style={{ color: 'var(--color-text-tertiary)' }}>{date ? new Date(date).toLocaleDateString('en-IN') : '-'}</span>,
+      render: (date: string) => <span style={{ color: 'var(--color-text-tertiary)' }}>{date ? dayjs(date).format('DD-MM-YYYY') : '-'}</span>,
     },
   ]
 
@@ -68,7 +69,7 @@ export default function AdminDashboard() {
       title: 'Date',
       dataIndex: 'created_at',
       key: 'created_at',
-      render: (date: string) => <span style={{ color: 'var(--color-text-tertiary)' }}>{date ? new Date(date).toLocaleDateString('en-IN') : '-'}</span>,
+      render: (date: string) => <span style={{ color: 'var(--color-text-tertiary)' }}>{date ? dayjs(date).format('DD-MM-YYYY') : '-'}</span>,
     },
   ]
 

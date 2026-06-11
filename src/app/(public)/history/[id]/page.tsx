@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { Typography, Spin, Button, Space, Card } from 'antd'
+import dayjs from 'dayjs'
 import { api } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
 import type { Quiz } from '@/lib/types'
@@ -101,7 +102,7 @@ export default function HistoryDetailPage() {
           <div>
             <Text style={{ fontSize: 11, display: 'block', marginBottom: 4, color: 'var(--color-text-tertiary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Date</Text>
             <Text style={{ fontSize: 14, color: 'var(--color-text-secondary)' }}>
-              {new Date(quiz.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+              {dayjs(quiz.created_at).format('DD-MM-YYYY')}
             </Text>
           </div>
           <div>

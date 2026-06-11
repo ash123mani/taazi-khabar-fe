@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Typography, Table, Space, Button, message, Card, Input, Popconfirm } from 'antd'
+import dayjs from 'dayjs'
 import { api } from '@/lib/api'
 import type { Category } from '@/lib/types'
 
@@ -67,7 +68,7 @@ export default function CategoriesPage() {
       title: 'Created',
       dataIndex: 'created_at',
       key: 'created_at',
-      render: (date: string) => <span style={{ color: 'var(--color-text-tertiary)' }}>{new Date(date).toLocaleDateString('en-IN')}</span>,
+      render: (date: string) => <span style={{ color: 'var(--color-text-tertiary)' }}>{dayjs(date).format('DD-MM-YYYY')}</span>,
     },
     {
       title: 'Actions',

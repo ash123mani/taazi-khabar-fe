@@ -66,7 +66,7 @@ export default function ArticlesPage() {
       title: 'Date',
       dataIndex: 'published_at',
       key: 'published_at',
-      render: (date: string) => <span style={{ color: 'var(--color-text-tertiary)' }}>{new Date(date).toLocaleDateString('en-IN')}</span>,
+      render: (date: string) => <span style={{ color: 'var(--color-text-tertiary)' }}>{dayjs(date).format('DD-MM-YYYY')}</span>,
     },
     {
       title: 'Actions',

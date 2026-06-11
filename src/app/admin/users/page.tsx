@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { Typography, Table, Tag, Button, Input, Switch, Space, message, Card, Row, Col, Statistic } from 'antd'
 import { UserOutlined, UsergroupAddOutlined, SafetyOutlined } from '@ant-design/icons'
+import dayjs from 'dayjs'
 import { api } from '@/lib/api'
 
 const { Title, Text } = Typography
@@ -154,7 +155,7 @@ export default function AdminUsersPage() {
               width: 150,
               render: (d: string) => (
                 <span style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>
-                  {new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  {dayjs(d).format('DD-MM-YYYY')}
                 </span>
               ),
             },

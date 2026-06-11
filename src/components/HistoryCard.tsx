@@ -3,6 +3,7 @@
 import { Card, Typography, Tag, Space } from 'antd'
 import Link from 'next/link'
 import { RightOutlined } from '@ant-design/icons'
+import dayjs from 'dayjs'
 import type { Quiz } from '@/lib/types'
 
 const { Text } = Typography
@@ -36,9 +37,7 @@ export default function HistoryCard({ quiz }: { quiz: Quiz }) {
             </Text>
             <Space size={12} style={{ marginTop: 6 }}>
               <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }}>
-                {new Date(quiz.created_at).toLocaleDateString('en-IN', {
-                  day: 'numeric', month: 'short', year: 'numeric',
-                })}
+                {dayjs(quiz.created_at).format('DD-MM-YYYY')}
               </Text>
               <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }}>
                 {quiz.total_questions} questions

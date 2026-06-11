@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { Typography, Tabs, Table, Tag, Button, Spin, message, Tooltip, Space } from 'antd'
 import { ReloadOutlined, ThunderboltOutlined, LinkOutlined } from '@ant-design/icons'
+import dayjs from 'dayjs'
 import { api } from '@/lib/api'
 import FormattedSummary from '@/components/FormattedSummary'
 
@@ -109,7 +110,7 @@ export default function ScrapePage() {
                 <Text style={{ fontSize: 12, marginRight: 8, color: 'var(--color-text-secondary)' }}>Scraped at:</Text>
                 {record.scrape_times.map((t) => (
                   <Text key={t} style={{ fontSize: 12, marginRight: 12, color: 'var(--color-text-secondary)' }}>
-                    {new Date(t).toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' })}
+                    {dayjs(t).format('DD-MM-YYYY')}
                   </Text>
                 ))}
               </div>

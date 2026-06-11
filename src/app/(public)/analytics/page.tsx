@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Typography, Card, Row, Col, Statistic, Progress, Table, Button, message } from 'antd'
+import dayjs from 'dayjs'
 import { api } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
 
@@ -78,7 +79,7 @@ export default function AnalyticsPage() {
       title: 'Date',
       dataIndex: 'created_at',
       key: 'created_at',
-      render: (date: string) => <span style={{ color: 'var(--color-text-tertiary)' }}>{date ? new Date(date).toLocaleDateString('en-IN') : '-'}</span>,
+      render: (date: string) => <span style={{ color: 'var(--color-text-tertiary)' }}>{date ? dayjs(date).format('DD-MM-YYYY') : '-'}</span>,
     },
   ]
 
