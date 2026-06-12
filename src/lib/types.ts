@@ -68,6 +68,29 @@ export interface Category {
   created_at: string;
 }
 
+export interface DailyQuizArticleItem {
+  id: string;
+  headline: string;
+  source: string;
+  url: string;
+  image_url: string | null;
+}
+
+export interface DailyQuizCategory {
+  id: string;
+  name: string;
+  article_count: number;
+  question_count: number;
+  articles: DailyQuizArticleItem[];
+}
+
+export interface DailyQuizSummary {
+  date: string;
+  categories: DailyQuizCategory[];
+  total_articles: number;
+  total_questions: number;
+}
+
 export interface ModelRegistry {
   id: string;
   name: string;

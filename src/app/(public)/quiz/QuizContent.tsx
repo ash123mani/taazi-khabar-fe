@@ -1,91 +1,53 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { Typography, Button, Spin, DatePicker, Tag, Card, Empty, Row, Col, Tooltip } from 'antd'
-import { CalendarOutlined, ThunderboltOutlined, DeleteOutlined, CheckCircleFilled } from '@ant-design/icons'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { Typography, Button, Spin, DatePicker, Card, Row, Col, Tag, Empty, Modal, List, Avatar } from 'antd'
+import { CalendarOutlined, ThunderboltOutlined, BookOutlined, FileTextOutlined, EyeOutlined, LinkOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
-import { api } from '@/lib/api'
+import { useDailyQuizSummary, useStartDailyQuiz } from '@/hooks/useQuizzes'
 import { useAuthStore } from '@/stores/authStore'
-import type { Article } from '@/lib/types'
+import type { DailyQuizCategory } from '@/lib/types'
 
 const { Text, Title } = Typography
 
 export default function QuizContent() {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const preselected = searchParams.get('selected')?.split(',').filter(Boolean) || []
   const token = useAuthStore((s) => s.accessToken)
 
   const today = new Date().toISOString().slice(0, 10)
   const [date, setDate] = useState<string>(today)
-  const [articles, setArticles] = useState<Article[]>([])
-  const [selected, setSelected] = useState<Set<string>>(new Set(preselected))
-  const [loading, setLoading] = useState(true)
-  const [generating, setGenerating] = useState(false)
   const [error, setError] = useState('')
-  const [dragOver, setDragOver] = useState(false)
+  const [modalCat, setModalCat] = useState<DailyQuizCategory | null>(null)
 
-  const fetchArticles = useCallback(async (d: string) => {
-    setLoading(true)
-    setError('')
-    try {
-      const data = await api.getArticles({ date: d })
-      setArticles(Array.isArray(data) ? data : data.articles || [])
-    } catch {
-      setError('Failed to load articles')
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+  const { data: summary, isLoading } = useDailyQuizSummary(date)
+  const startQuiz = useStartDailyQuiz()
 
-  useEffect(() => {
-    fetchArticles(date)
-  }, [date, fetchArticles])
-
-  const handleDragStart = (e: React.DragEvent, articleId: string) => {
-    e.dataTransfer.setData('text/plain', articleId)
-    e.dataTransfer.effectAllowed = 'copy'
-  }
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    setDragOver(false)
-    const id = e.dataTransfer.getData('text/plain')
-    if (id && !selected.has(id)) {
-      setSelected(new Set([...Array.from(selected), id]))
-    }
-  }
-
-  const removeSelected = (id: string) => {
-    const next = new Set(selected)
-    next.delete(id)
-    setSelected(next)
-  }
-
-  const handleGenerate = async () => {
-    if (selected.size === 0) return
+  const handleStartQuiz = async (category_id?: string) => {
     if (!token) {
-      setError('Please login first to generate a quiz')
+      router.push('/login?callbackUrl=/quiz')
       return
     }
-    setGenerating(true)
     setError('')
     try {
-      const data = await api.generateQuiz(Array.from(selected), 10)
-      router.push(`/quiz/${data.quiz_id}`)
+      const result = await startQuiz.mutateAsync({ date, category_id })
+      router.push(`/quiz/${result.quiz_id}`)
     } catch (err: any) {
-      setError(err.message || 'Failed to generate quiz')
-      setGenerating(false)
+      setError(err.message || 'Failed to start quiz')
     }
   }
 
-  const handleLoginRedirect = () => {
-    router.push('/login?callbackUrl=/quiz')
+  const catColors: Record<string, string> = {
+    Polity: '#6366f1',
+    Economy: '#22c55e',
+    'International Relations': '#3b82f6',
+    'Science & Tech': '#a855f7',
+    Environment: '#14b8a6',
+    Geography: '#f59e0b',
+    History: '#ef4444',
+    Security: '#ec4899',
+    'Social Issues': '#f97316',
   }
-
-  const availableArticles = articles.filter((a) => !selected.has(a.id))
-  const selectedArticles = articles.filter((a) => selected.has(a.id))
 
   return (
     <div>
@@ -97,17 +59,17 @@ export default function QuizContent() {
                 <ThunderboltOutlined style={{ fontSize: 20, color: 'var(--color-text)' }} />
               </div>
               <Title level={3} style={{ margin: 0, letterSpacing: '-0.5px', fontWeight: 700, color: 'var(--color-text)' }}>
-                Generate Quiz
+                Daily Quiz
               </Title>
             </div>
             <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 14, display: 'block', marginTop: 4, marginLeft: 52 }}>
-              Drag articles to the right panel to select them for quiz generation
+              Select a date and category to start a quiz
             </Text>
           </Col>
           <Col>
             <DatePicker
               value={dayjs(date)}
-              onChange={(d) => { if (d) { setDate(d.format('YYYY-MM-DD')); setSelected(new Set()) } }}
+              onChange={(d) => { if (d) { setDate(d.format('YYYY-MM-DD')); setError('') } }}
               allowClear={false}
               format="DD-MM-YYYY"
               suffixIcon={<CalendarOutlined />}
@@ -120,201 +82,180 @@ export default function QuizContent() {
 
       {error && (
         <Card style={{ marginBottom: 20, borderRadius: 12, background: 'var(--color-surface)', border: '1px solid #ef4444' }} styles={{ body: { padding: '14px 20px' } }}>
-          <Row justify="space-between" align="middle">
-            <Col>
-              <Text style={{ color: '#fca5a5' }}>{error}</Text>
-            </Col>
-            {error.includes('login') && (
-              <Col>
-                <Button type="primary" size="small" onClick={handleLoginRedirect}>Login</Button>
-              </Col>
-            )}
-          </Row>
+          <Text style={{ color: '#fca5a5' }}>{error}</Text>
         </Card>
       )}
 
-      {loading ? (
+      {isLoading ? (
         <Card style={{ borderRadius: 16, textAlign: 'center', padding: '80px 24px', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: '80px 24px' } }}>
           <Spin size="large" />
         </Card>
-      ) : (
-        <Row gutter={20} style={{ minHeight: 500 }}>
-          <Col xs={24} lg={12}>
-            <Card
-              style={{ borderRadius: 16, height: '100%', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}
-              styles={{ body: { padding: '20px' } }}
-              title={
-                <Row justify="space-between" align="middle">
-                  <Col>
-                    <Text strong style={{ fontSize: 14, color: 'var(--color-text)' }}>
-                      Available Articles
-                    </Text>
-                    <Tag style={{ marginLeft: 8, borderRadius: 6, background: 'var(--color-surface)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)' }}>{availableArticles.length}</Tag>
-                  </Col>
-                </Row>
-              }
-            >
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 500, overflowY: 'auto' }}>
-                {availableArticles.map((article) => (
-                  <Tooltip title="Click or drag to select" key={article.id}>
-                    <Card
-                      size="small"
-                      hoverable
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, article.id)}
-                      onClick={() => setSelected(new Set([...Array.from(selected), article.id]))}
-                      style={{ borderRadius: 10, cursor: 'grab', border: '1px solid var(--color-border)', background: 'var(--color-surface)', transition: 'all 0.2s' }}
-                      styles={{ body: { padding: '10px 12px' } }}
-                    >
-                      <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                        {article.image_url && (
-                          <div style={{ flexShrink: 0, width: 64, height: 48, borderRadius: 6, overflow: 'hidden', background: 'var(--color-surface)' }}>
-                            <img
-                              src={article.image_url}
-                              alt=""
-                              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-                            />
-                          </div>
-                        )}
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
-                            <Text style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.4, flex: 1, color: 'var(--color-text)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                              {article.headline}
-                            </Text>
-                            {article.has_quiz && (
-                              <Tag icon={<CheckCircleFilled />} color="success" style={{ fontSize: 10, margin: 0, whiteSpace: 'nowrap', borderRadius: 4, flexShrink: 0, lineHeight: '18px', padding: '0 6px' }}>
-                                Quizzed
-                              </Tag>
-                            )}
-                          </div>
-                          <div style={{ display: 'flex', gap: 4, marginTop: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-                            {article.syllabus_tag && (
-                              <Tag style={{ fontSize: 10, borderRadius: 4, margin: 0, background: 'var(--color-surface)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)', padding: '0 6px', lineHeight: '18px', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                {article.syllabus_tag}
-                              </Tag>
-                            )}
-                            <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 10, whiteSpace: 'nowrap' }}>
-                              {article.source === 'thehindu' ? 'The Hindu' : 'Indian Express'}
-                            </Text>
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  </Tooltip>
-                ))}
-                {availableArticles.length === 0 && (
-                  <Empty description="No articles available" image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                )}
+      ) : !summary || summary.categories.length === 0 ? (
+        <Card style={{ borderRadius: 16, textAlign: 'center', padding: '60px 24px', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: '60px 24px' } }}>
+          <Empty
+            description={
+              <div>
+                <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 15, display: 'block', marginBottom: 4 }}>
+                  No quizzes available for {dayjs(date).format('DD-MM-YYYY')}
+                </Text>
+                <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 13 }}>
+                  Articles need to be scraped and summarized first
+                </Text>
               </div>
-            </Card>
-          </Col>
+            }
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+          />
+        </Card>
+      ) : (
+        <>
+          <Row gutter={[16, 16]} style={{ marginBottom: 28 }}>
+            <Col xs={12} sm={4}>
+              <Card style={{ borderRadius: 12, background: 'var(--color-surface)', border: '1px solid var(--color-border)', textAlign: 'center' }} styles={{ body: { padding: '18px 12px' } }}>
+                <Text style={{ color: 'var(--color-text)', fontSize: 28, fontWeight: 700, display: 'block' }}>{summary.total_articles}</Text>
+                <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }}>Articles</Text>
+              </Card>
+            </Col>
+            <Col xs={12} sm={4}>
+              <Card style={{ borderRadius: 12, background: 'var(--color-surface)', border: '1px solid var(--color-border)', textAlign: 'center' }} styles={{ body: { padding: '18px 12px' } }}>
+                <Text style={{ color: 'var(--color-text)', fontSize: 28, fontWeight: 700, display: 'block' }}>{summary.total_questions}</Text>
+                <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }}>Questions</Text>
+              </Card>
+            </Col>
+            <Col xs={12} sm={4}>
+              <Card style={{ borderRadius: 12, background: 'var(--color-surface)', border: '1px solid var(--color-border)', textAlign: 'center' }} styles={{ body: { padding: '18px 12px' } }}>
+                <Text style={{ color: 'var(--color-text)', fontSize: 28, fontWeight: 700, display: 'block' }}>{summary.categories.length}</Text>
+                <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }}>Categories</Text>
+              </Card>
+            </Col>
+            <Col xs={24} sm={12}>
+              <Card
+                hoverable
+                style={{ borderRadius: 12, background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', border: 'none', cursor: 'pointer', height: '100%' }}
+                styles={{ body: { padding: '18px 20px' } }}
+                onClick={() => handleStartQuiz()}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+                  <ThunderboltOutlined style={{ fontSize: 22, color: '#fff' }} />
+                  <div>
+                    <Text style={{ color: '#fff', fontSize: 18, fontWeight: 700, display: 'block' }}>Take All Quiz</Text>
+                    <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 12 }}>All categories combined</Text>
+                  </div>
+                </div>
+              </Card>
+            </Col>
+          </Row>
 
-          <Col xs={24} lg={12}>
-            <Card
-              style={{
-                borderRadius: 16,
-                height: '100%',
-                border: dragOver ? '2px dashed #6366f1' : selectedArticles.length > 0 ? '2px dashed #22c55e' : '2px dashed var(--color-border)',
-                background: dragOver ? 'var(--color-surface)' : selectedArticles.length > 0 ? 'var(--color-surface)' : 'var(--color-bg)',
-                transition: 'all 0.3s',
-              }}
-              styles={{ body: { padding: '20px' } }}
-              title={
-                <Row justify="space-between" align="middle">
-                  <Col>
-                    <Text strong style={{ fontSize: 14, color: 'var(--color-text)' }}>
-                      Selected for Quiz
-                    </Text>
-                    <Tag color={selectedArticles.length > 0 ? 'success' : 'default'} style={{ marginLeft: 8, borderRadius: 6, background: selectedArticles.length > 0 ? '#22c55e' : 'var(--color-surface)', color: selectedArticles.length > 0 ? '#000000' : 'var(--color-text-secondary)', border: '1px solid var(--color-border)' }}>
-                      {selectedArticles.length}
-                    </Tag>
-                  </Col>
-                </Row>
-              }
-              onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
-              onDragLeave={() => setDragOver(false)}
-              onDrop={handleDrop}
-            >
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 380, overflowY: 'auto', marginBottom: 16 }}>
-                {selectedArticles.length === 0 ? (
-                  <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 0' }}>
-                    <div style={{ textAlign: 'center' }}>
-                      <div style={{ width: 64, height: 64, borderRadius: 16, background: 'var(--color-surface)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
-                        <ThunderboltOutlined style={{ fontSize: 28, color: '#4a4a4a' }} />
+          <Row gutter={[20, 20]}>
+            {summary.categories.map((cat: DailyQuizCategory) => (
+              <Col xs={24} sm={12} lg={8} key={cat.id}>
+                <Card
+                  style={{
+                    borderRadius: 14,
+                    background: 'var(--color-surface)',
+                    border: '1px solid var(--color-border)',
+                    height: '100%',
+                    transition: 'all 0.2s',
+                  }}
+                  styles={{ body: { padding: '20px 20px 16px' } }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
+                    <div style={{
+                      width: 40, height: 40, borderRadius: 10,
+                      background: catColors[cat.name] || '#6366f1',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      flexShrink: 0,
+                    }}>
+                      <BookOutlined style={{ fontSize: 18, color: '#fff' }} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <Text strong style={{ color: 'var(--color-text)', fontSize: 16, display: 'block', lineHeight: 1.3 }}>
+                        {cat.name}
+                      </Text>
+                      <div style={{ display: 'flex', gap: 10, marginTop: 3, alignItems: 'center' }}>
+                        <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }}>
+                          {cat.article_count} article{cat.article_count !== 1 ? 's' : ''}
+                        </Text>
+                        <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--color-text-tertiary)', display: 'inline-block' }} />
+                        <Text style={{ color: '#6366f1', fontSize: 12, fontWeight: 600 }}>
+                          {cat.question_count} question{cat.question_count !== 1 ? 's' : ''}
+                        </Text>
                       </div>
-                      <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 14, display: 'block', marginBottom: 4 }}>Drag articles here</Text>
-                      <Text style={{ color: '#4a4a4a', fontSize: 12 }}>or click on articles to select</Text>
                     </div>
                   </div>
-                ) : (
-                  selectedArticles.map((article) => (
-                    <Card
-                      key={article.id}
-                      size="small"
-                      style={{ borderRadius: 10, background: 'var(--color-surface)', border: '1px solid #22c55e' }}
-                      styles={{ body: { padding: '10px 12px' } }}
-                    >
-                      <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                        {article.image_url && (
-                          <div style={{ flexShrink: 0, width: 56, height: 42, borderRadius: 6, overflow: 'hidden', background: 'var(--color-surface)' }}>
-                            <img
-                              src={article.image_url}
-                              alt=""
-                              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-                            />
-                          </div>
-                        )}
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
-                            <Text style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.4, flex: 1, color: 'var(--color-text)' }}>
-                              {article.headline}
-                            </Text>
-                            <Tooltip title="Remove">
-                              <Button
-                                type="text"
-                                size="small"
-                                icon={<DeleteOutlined style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }} />}
-                                onClick={() => removeSelected(article.id)}
-                                style={{ padding: 0, height: 'auto', marginTop: -2, flexShrink: 0 }}
-                              />
-                            </Tooltip>
-                          </div>
-                          <div style={{ display: 'flex', gap: 6, marginTop: 4, flexWrap: 'wrap', alignItems: 'center' }}>
-                            {article.syllabus_tag && (
-                              <Tag style={{ fontSize: 10, borderRadius: 4, margin: 0, background: 'var(--color-surface)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)', padding: '0 6px', lineHeight: '18px', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                {article.syllabus_tag}
-                              </Tag>
-                            )}
-                            <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 10, whiteSpace: 'nowrap' }}>
-                              {article.source === 'thehindu' ? 'The Hindu' : 'Indian Express'}
-                            </Text>
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  ))
-                )}
-              </div>
 
-              {selectedArticles.length > 0 && (
-                <Button
-                  type="primary"
-                  size="large"
-                  icon={<ThunderboltOutlined />}
-                  loading={generating}
-                  onClick={handleGenerate}
-                  block
-                  style={{ height: 48, fontWeight: 700, fontSize: 15, borderRadius: 12 }}
-                >
-                  Generate Quiz ({selectedArticles.length} article{selectedArticles.length !== 1 ? 's' : ''})
-                </Button>
-              )}
-            </Card>
-          </Col>
-        </Row>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8, borderTop: '1px solid var(--color-border)', paddingTop: 12 }}>
+                    <Button
+                      type="default"
+                      icon={<EyeOutlined />}
+                      onClick={() => setModalCat(cat)}
+                      style={{ borderRadius: 7, color: 'var(--color-text-secondary)', borderColor: 'var(--color-border)', fontSize: 12 }}
+                      size="small"
+                    >
+                      Articles
+                    </Button>
+                    <Button
+                      type="default"
+                      icon={<ThunderboltOutlined />}
+                      onClick={() => handleStartQuiz(cat.id)}
+                      style={{ borderRadius: 7, fontSize: 12, background: 'transparent', borderColor: '#6366f1', color: '#6366f1' }}
+                      size="small"
+                    >
+                      Start Quiz
+                    </Button>
+                  </div>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        </>
       )}
+
+      <Modal
+        title={
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <BookOutlined style={{ color: '#6366f1' }} />
+            <span>{modalCat?.name} — Articles</span>
+          </div>
+        }
+        open={!!modalCat}
+        onCancel={() => setModalCat(null)}
+        footer={null}
+        width={640}
+        styles={{ body: { padding: '8px 0', maxHeight: 480, overflowY: 'auto' } }}
+      >
+        {modalCat && (
+          <List
+            dataSource={modalCat.articles}
+            renderItem={(article) => (
+              <List.Item
+                style={{ padding: '12px 16px', cursor: 'pointer' }}
+                onClick={() => window.open(article.url, '_blank')}
+              >
+                <List.Item.Meta
+                  avatar={
+                    article.image_url ? (
+                      <Avatar shape="square" size={48} src={article.image_url} style={{ borderRadius: 8 }} />
+                    ) : (
+                      <Avatar shape="square" size={48} icon={<FileTextOutlined />} style={{ borderRadius: 8, background: 'var(--color-surface)', color: '#6366f1' }} />
+                    )
+                  }
+                  title={
+                    <Text style={{ fontSize: 14, fontWeight: 500, color: 'var(--color-text)' }}>
+                      {article.headline}
+                    </Text>
+                  }
+                  description={
+                    <Tag style={{ borderRadius: 4, margin: 0, fontSize: 11 }}>
+                      {article.source === 'thehindu' ? 'The Hindu' : 'Indian Express'}
+                    </Tag>
+                  }
+                />
+                <LinkOutlined style={{ color: 'var(--color-text-tertiary)', fontSize: 14 }} />
+              </List.Item>
+            )}
+          />
+        )}
+      </Modal>
     </div>
   )
 }

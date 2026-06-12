@@ -52,7 +52,7 @@ export default function QuizQuestion({
                 border: '1px solid',
                 cursor: showResults ? 'default' : 'pointer',
                 transition: 'all 0.15s ease',
-                background: isCorrectAnswer ? 'rgba(34, 197, 94, 0.08)' : isWrongAnswer ? 'rgba(239, 68, 68, 0.08)' : isSelected ? 'var(--color-surface)' : '#000000',
+                background: isCorrectAnswer ? 'rgba(34, 197, 94, 0.08)' : isWrongAnswer ? 'rgba(239, 68, 68, 0.08)' : isSelected ? 'var(--color-surface)' : 'transparent',
                 borderColor: isCorrectAnswer ? '#22c55e' : isWrongAnswer ? '#ef4444' : isSelected ? '#6366f1' : 'var(--color-border)',
               }}
               onClick={() => !showResults && onSelect(key)}

@@ -175,6 +175,15 @@ export const api = {
   toggleBookmark: (articleId: string) =>
     fetchApi(`/bookmarks/${articleId}`, { method: 'POST' }),
 
+  getDailyQuizSummary: (date?: string) =>
+    fetchApi(`/quizzes/by-date${date ? `?date_str=${date}` : ''}`),
+
+  startDailyQuiz: (date: string, category_id?: string) =>
+    fetchApi('/quizzes/daily-start', {
+      method: 'POST',
+      body: JSON.stringify({ date, category_id: category_id || null }),
+    }),
+
   getPerformance: () => fetchApi('/analytics/performance'),
 
   getAnalytics: () => fetchApi('/analytics'),

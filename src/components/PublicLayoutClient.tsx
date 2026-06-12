@@ -45,7 +45,6 @@ export default function PublicLayoutClient({ children }: { children: React.React
   const toggle = useThemeStore((s) => s.toggle)
 
   const isAdmin = (session?.user as any)?.is_admin
-  const isQuizPage = pathname === '/quiz' || pathname.startsWith('/quiz/')
 
   const nav = [
     ...publicMenuItems,
@@ -134,9 +133,9 @@ export default function PublicLayoutClient({ children }: { children: React.React
         style={{
           flex: 1,
           width: '100%',
-          maxWidth: isQuizPage ? 'none' : 860,
+          maxWidth: 860,
           margin: '0 auto',
-          padding: isQuizPage ? '32px 48px' : '32px 24px',
+          padding: '32px 24px',
           boxSizing: 'border-box',
           display: 'flex',
           flexDirection: 'column',

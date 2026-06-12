@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api'
-import type { Quiz } from '@/lib/types'
+import type { DailyQuizSummary, Quiz } from '@/lib/types'
 
 export function useGenerateQuiz() {
   const queryClient = useQueryClient()
@@ -20,6 +20,24 @@ export function useQuiz(id: string) {
     queryKey: ['quiz', id],
     queryFn: () => api.getQuiz(id),
     enabled: !!id,
+  })
+}
+
+export function useDailyQuizSummary(date?: string) {
+  return useQuery<DailyQuizSummary>({
+    queryKey: ['dailyQuizSummary', date || 'today'],
+    queryFn: () => api.getDailyQuizSummary(date),
+  })
+}
+
+export function useStartDailyQuiz() {
+  const queryClient = useQueryClient()
+  return useMutation<{ quiz_id: string }, Error, { date: string; category_id?: string }>({
+    mutationFn: (data) => api.startDailyQuiz(data.date, data.category_id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['quizzes'] })
+      queryClient.invalidateQueries({ queryKey: ['history'] })
+    },
   })
 }
 
