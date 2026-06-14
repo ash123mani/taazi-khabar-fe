@@ -30,9 +30,9 @@ export default function QuizQuestion({
       <Text style={{ fontSize: 11, display: 'block', marginBottom: 8, color: 'var(--color-text-tertiary)', fontWeight: 600, letterSpacing: '0.5px', textTransform: 'uppercase' }}>
         Question {index + 1}
       </Text>
-      <Text strong style={{ display: 'block', marginBottom: 18, fontSize: 15, lineHeight: 1.5, color: 'var(--color-text)' }}>
+      <div style={{ display: 'block', marginBottom: 18, fontSize: 15, lineHeight: 1.5, color: 'var(--color-text)', whiteSpace: 'pre-line', fontWeight: 600 }}>
         {question.question_text}
-      </Text>
+      </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         {Object.entries(question.options).map(([key, value], i) => {

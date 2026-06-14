@@ -7,6 +7,7 @@ import { CalendarOutlined, ThunderboltOutlined, BookOutlined, FileTextOutlined, 
 import dayjs from 'dayjs'
 import { useDailyQuizSummary, useStartDailyQuiz } from '@/hooks/useQuizzes'
 import { useAuthStore } from '@/stores/authStore'
+import { useIsMobile } from '@/hooks/useIsMobile'
 import type { DailyQuizCategory } from '@/lib/types'
 
 const { Text, Title } = Typography
@@ -14,6 +15,7 @@ const { Text, Title } = Typography
 export default function QuizContent() {
   const router = useRouter()
   const token = useAuthStore((s) => s.accessToken)
+  const isMobile = useIsMobile()
 
   const today = new Date().toISOString().slice(0, 10)
   const [date, setDate] = useState<string>(today)
@@ -51,20 +53,17 @@ export default function QuizContent() {
 
   return (
     <div>
-      <Card style={{ marginBottom: 28, borderRadius: 16, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: '24px 28px' } }}>
-        <Row justify="space-between" align="middle">
+      <Card style={{ marginBottom: isMobile ? 12 : 24, borderRadius: 16, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: isMobile ? '12px 14px' : '24px 28px' } }}>
+        <Row justify="space-between" align="middle" gutter={[0, 0]}>
           <Col>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
-              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <ThunderboltOutlined style={{ fontSize: 20, color: 'var(--color-text)' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ width: isMobile ? 28 : 40, height: isMobile ? 28 : 40, borderRadius: 8, background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <ThunderboltOutlined style={{ fontSize: isMobile ? 14 : 20, color: '#fff' }} />
               </div>
-              <Title level={3} style={{ margin: 0, letterSpacing: '-0.5px', fontWeight: 700, color: 'var(--color-text)' }}>
+              <Title level={4} style={{ margin: 0, letterSpacing: '-0.5px', fontWeight: 700, color: 'var(--color-text)', fontSize: isMobile ? 16 : 20 }}>
                 Daily Quiz
               </Title>
             </div>
-            <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 14, display: 'block', marginTop: 4, marginLeft: 52 }}>
-              Select a date and category to start a quiz
-            </Text>
           </Col>
           <Col>
             <DatePicker
@@ -72,9 +71,9 @@ export default function QuizContent() {
               onChange={(d) => { if (d) { setDate(d.format('YYYY-MM-DD')); setError('') } }}
               allowClear={false}
               format="DD-MM-YYYY"
-              suffixIcon={<CalendarOutlined />}
-              style={{ width: 160 }}
-              size="large"
+              suffixIcon={<CalendarOutlined style={{ fontSize: 12 }} />}
+              style={{ width: isMobile ? 130 : 160 }}
+              size={isMobile ? 'small' : 'middle'}
             />
           </Col>
         </Row>
@@ -108,82 +107,82 @@ export default function QuizContent() {
         </Card>
       ) : (
         <>
-          <Row gutter={[16, 16]} style={{ marginBottom: 28 }}>
-            <Col xs={12} sm={4}>
-              <Card style={{ borderRadius: 12, background: 'var(--color-surface)', border: '1px solid var(--color-border)', textAlign: 'center' }} styles={{ body: { padding: '18px 12px' } }}>
-                <Text style={{ color: 'var(--color-text)', fontSize: 28, fontWeight: 700, display: 'block' }}>{summary.total_articles}</Text>
-                <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }}>Articles</Text>
+          <Row gutter={[6, 6]} style={{ marginBottom: isMobile ? 12 : 24 }}>
+            <Col xs={8} sm={4}>
+              <Card style={{ borderRadius: 10, background: 'var(--color-surface)', border: '1px solid var(--color-border)', textAlign: 'center' }} styles={{ body: { padding: isMobile ? '8px 4px' : '14px 10px' } }}>
+                <Text style={{ color: 'var(--color-text)', fontSize: isMobile ? 20 : 26, fontWeight: 700, display: 'block' }}>{summary.total_articles}</Text>
+                <Text style={{ color: 'var(--color-text-tertiary)', fontSize: isMobile ? 9 : 11 }}>Articles</Text>
               </Card>
             </Col>
-            <Col xs={12} sm={4}>
-              <Card style={{ borderRadius: 12, background: 'var(--color-surface)', border: '1px solid var(--color-border)', textAlign: 'center' }} styles={{ body: { padding: '18px 12px' } }}>
-                <Text style={{ color: 'var(--color-text)', fontSize: 28, fontWeight: 700, display: 'block' }}>{summary.total_questions}</Text>
-                <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }}>Questions</Text>
+            <Col xs={8} sm={4}>
+              <Card style={{ borderRadius: 10, background: 'var(--color-surface)', border: '1px solid var(--color-border)', textAlign: 'center' }} styles={{ body: { padding: isMobile ? '8px 4px' : '14px 10px' } }}>
+                <Text style={{ color: 'var(--color-text)', fontSize: isMobile ? 20 : 26, fontWeight: 700, display: 'block' }}>{summary.total_questions}</Text>
+                <Text style={{ color: 'var(--color-text-tertiary)', fontSize: isMobile ? 9 : 11 }}>Questions</Text>
               </Card>
             </Col>
-            <Col xs={12} sm={4}>
-              <Card style={{ borderRadius: 12, background: 'var(--color-surface)', border: '1px solid var(--color-border)', textAlign: 'center' }} styles={{ body: { padding: '18px 12px' } }}>
-                <Text style={{ color: 'var(--color-text)', fontSize: 28, fontWeight: 700, display: 'block' }}>{summary.categories.length}</Text>
-                <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }}>Categories</Text>
+            <Col xs={8} sm={4}>
+              <Card style={{ borderRadius: 10, background: 'var(--color-surface)', border: '1px solid var(--color-border)', textAlign: 'center' }} styles={{ body: { padding: isMobile ? '8px 4px' : '14px 10px' } }}>
+                <Text style={{ color: 'var(--color-text)', fontSize: isMobile ? 20 : 26, fontWeight: 700, display: 'block' }}>{summary.categories.length}</Text>
+                <Text style={{ color: 'var(--color-text-tertiary)', fontSize: isMobile ? 9 : 11 }}>Categories</Text>
               </Card>
             </Col>
             <Col xs={24} sm={12}>
               <Card
                 hoverable
-                style={{ borderRadius: 12, background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', border: 'none', cursor: 'pointer', height: '100%' }}
-                styles={{ body: { padding: '18px 20px' } }}
+                style={{ borderRadius: 10, background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', border: 'none', cursor: 'pointer', height: '100%' }}
+                styles={{ body: { padding: isMobile ? '10px 14px' : '16px 20px' } }}
                 onClick={() => handleStartQuiz()}
               >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
-                  <ThunderboltOutlined style={{ fontSize: 22, color: '#fff' }} />
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                  <ThunderboltOutlined style={{ fontSize: isMobile ? 16 : 20, color: '#fff' }} />
                   <div>
-                    <Text style={{ color: '#fff', fontSize: 18, fontWeight: 700, display: 'block' }}>Take All Quiz</Text>
-                    <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 12 }}>All categories combined</Text>
+                    <Text style={{ color: '#fff', fontSize: isMobile ? 14 : 16, fontWeight: 700, display: 'block' }}>Take All Quiz</Text>
+                    <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: isMobile ? 10 : 12 }}>All categories combined</Text>
                   </div>
                 </div>
               </Card>
             </Col>
           </Row>
 
-          <Row gutter={[20, 20]}>
+          <Row gutter={[8, 8]}>
             {summary.categories.map((cat: DailyQuizCategory) => (
               <Col xs={24} sm={12} lg={8} key={cat.id}>
                 <Card
                   style={{
-                    borderRadius: 14,
+                    borderRadius: 10,
                     background: 'var(--color-surface)',
                     border: '1px solid var(--color-border)',
                     height: '100%',
                     transition: 'all 0.2s',
                   }}
-                  styles={{ body: { padding: '20px 20px 16px' } }}
+                  styles={{ body: { padding: isMobile ? '10px 12px 8px' : '16px 18px 12px' } }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                     <div style={{
-                      width: 40, height: 40, borderRadius: 10,
+                      width: isMobile ? 28 : 36, height: isMobile ? 28 : 36, borderRadius: 8,
                       background: catColors[cat.name] || '#6366f1',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       flexShrink: 0,
                     }}>
-                      <BookOutlined style={{ fontSize: 18, color: '#fff' }} />
+                      <BookOutlined style={{ fontSize: isMobile ? 13 : 16, color: '#fff' }} />
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <Text strong style={{ color: 'var(--color-text)', fontSize: 16, display: 'block', lineHeight: 1.3 }}>
+                      <Text strong style={{ color: 'var(--color-text)', fontSize: isMobile ? 13 : 15, display: 'block', lineHeight: 1.3 }}>
                         {cat.name}
                       </Text>
-                      <div style={{ display: 'flex', gap: 10, marginTop: 3, alignItems: 'center' }}>
-                        <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }}>
+                      <div style={{ display: 'flex', gap: 6, marginTop: 1, alignItems: 'center', flexWrap: 'wrap' }}>
+                        <Text style={{ color: 'var(--color-text-tertiary)', fontSize: isMobile ? 10 : 11 }}>
                           {cat.article_count} article{cat.article_count !== 1 ? 's' : ''}
                         </Text>
                         <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--color-text-tertiary)', display: 'inline-block' }} />
-                        <Text style={{ color: '#6366f1', fontSize: 12, fontWeight: 600 }}>
+                        <Text style={{ color: '#6366f1', fontSize: isMobile ? 10 : 11, fontWeight: 600 }}>
                           {cat.question_count} question{cat.question_count !== 1 ? 's' : ''}
                         </Text>
                       </div>
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8, borderTop: '1px solid var(--color-border)', paddingTop: 12 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 4, borderTop: '1px solid var(--color-border)', paddingTop: 8 }}>
                     <Button
                       type="default"
                       icon={<EyeOutlined />}

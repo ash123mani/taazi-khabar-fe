@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import { Button, Typography, Spin, Card, Progress, Modal } from 'antd'
 import { api } from '@/lib/api'
+import { useIsMobile } from '@/hooks/useIsMobile'
 import type { Quiz } from '@/lib/types'
 import QuizQuestionComponent from '@/components/QuizQuestion'
 import QuizResult from '@/components/QuizResult'
@@ -14,6 +15,7 @@ const { Title, Text } = Typography
 const QUIZ_TIME_LIMIT_SEC = 600
 
 export default function TakeQuizPage() {
+  const isMobile = useIsMobile()
   const params = useParams()
   const id = params.id as string
 
@@ -140,30 +142,30 @@ export default function TakeQuizPage() {
   return (
     <div>
       <Card
-        style={{ marginBottom: 20, background: '#0a0a0a', border: '1px solid #1f1f1f', borderRadius: 12 }}
-        styles={{ body: { padding: 18 } }}
+        style={{ marginBottom: isMobile ? 12 : 20, background: '#0a0a0a', border: '1px solid #1f1f1f', borderRadius: 10 }}
+        styles={{ body: { padding: isMobile ? 12 : 18 } }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
           <div>
-            <Title level={4} style={{ margin: 0, fontSize: 16, color: '#ffffff' }}>{quiz.title || 'Quiz'}</Title>
-            {quiz.articles?.length ? (
+            <Title level={5} style={{ margin: 0, fontSize: isMobile ? 14 : 16, color: '#ffffff' }}>{quiz.title || 'Quiz'}</Title>
+            {quiz.articles?.length && !isMobile ? (
               <Text style={{ fontSize: 12, color: '#6b6b6b' }}>
                 Based on {quiz.articles.length} article{quiz.articles.length > 1 ? 's' : ''}
               </Text>
             ) : null}
           </div>
-          <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: isMobile ? 12 : 20, alignItems: 'center' }}>
             <div style={{ textAlign: 'center' }}>
-              <Text strong style={{ fontSize: 15, color: timeLeft < 60 ? '#ef4444' : timeLeft < 180 ? '#eab308' : '#a1a1a1' }}>
+              <Text strong style={{ fontSize: isMobile ? 13 : 15, color: timeLeft < 60 ? '#ef4444' : timeLeft < 180 ? '#eab308' : '#a1a1a1' }}>
                 {formatTime(timeLeft)}
               </Text>
-              <Text style={{ fontSize: 12, color: '#6b6b6b', display: 'block' }}>remaining</Text>
+              <Text style={{ fontSize: 10, color: '#6b6b6b', display: 'block' }}>left</Text>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <Text strong style={{ fontSize: 15, color: answered === total ? '#22c55e' : '#a1a1a1' }}>
+              <Text strong style={{ fontSize: isMobile ? 13 : 15, color: answered === total ? '#22c55e' : '#a1a1a1' }}>
                 {answered}/{total}
               </Text>
-              <Text style={{ fontSize: 12, color: '#6b6b6b', display: 'block' }}>answered</Text>
+              <Text style={{ fontSize: 10, color: '#6b6b6b', display: 'block' }}>done</Text>
             </div>
           </div>
         </div>
@@ -173,7 +175,7 @@ export default function TakeQuizPage() {
           strokeColor={answered === total ? '#22c55e' : '#6366f1'}
           trailColor="#1f1f1f"
           size="small"
-          style={{ marginTop: 12, marginBottom: 0 }}
+          style={{ marginTop: 8, marginBottom: 0 }}
         />
       </Card>
 
@@ -191,18 +193,18 @@ export default function TakeQuizPage() {
         />
       ))}
 
-      <div style={{ textAlign: 'center', marginTop: 28, marginBottom: 32 }}>
+      <div style={{ textAlign: 'center', marginTop: isMobile ? 20 : 28, marginBottom: isMobile ? 20 : 32 }}>
         <Button
           type="primary"
-          size="large"
+          size={isMobile ? 'middle' : 'large'}
           loading={submitting}
           onClick={handleSubmit}
           style={{
-            height: 46,
-            padding: '0 40px',
+            height: isMobile ? 40 : 46,
+            padding: isMobile ? '0 24px' : '0 40px',
             fontWeight: 700,
-            fontSize: 15,
-            borderRadius: 12,
+            fontSize: isMobile ? 13 : 15,
+            borderRadius: 10,
           }}
         >
           Submit Answers ({answered}/{total})

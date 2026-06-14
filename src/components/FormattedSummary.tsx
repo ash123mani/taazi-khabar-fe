@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Tag } from 'antd'
 import { BulbOutlined, BranchesOutlined, BookOutlined, ExperimentOutlined, TagsOutlined, DownOutlined } from '@ant-design/icons'
 import ReactMarkdown from 'react-markdown'
+import { useIsMobile } from '@/hooks/useIsMobile'
 import type { ReactNode } from 'react'
 
 interface Section {
@@ -151,14 +152,15 @@ function SectionBlock({ section }: { section: Section }) {
   const display = SECTION_DISPLAY[section.key]
   const cfg = SECTION_CONFIG[section.key] || { collapsible: false, defaultExpanded: true }
   const [open, setOpen] = useState(cfg.defaultExpanded)
+  const isMobile = useIsMobile()
 
   if (section.key === 'terms') {
     return (
-      <div style={{ borderLeft: '2px solid var(--color-border)', paddingLeft: 14, marginTop: 16 }}>
+      <div style={{ borderLeft: '1px solid var(--color-border)', paddingLeft: isMobile ? 8 : 12, marginTop: 8 }}>
         {display && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 6 }}>
-            <span style={{ color: '#6366f1', fontSize: 12 }}>{display.icon}</span>
-            <span style={{ fontSize: 11, fontWeight: 600, color: '#6366f1', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
+            <span style={{ color: '#6366f1', fontSize: isMobile ? 10 : 12 }}>{display.icon}</span>
+            <span style={{ fontSize: isMobile ? 10 : 11, fontWeight: 600, color: '#6366f1', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
               {display.label}
             </span>
           </div>
@@ -169,8 +171,9 @@ function SectionBlock({ section }: { section: Section }) {
   }
 
   const collapsible = cfg.collapsible
+  const bodySize = isMobile ? 13 : 14
   const content = (
-    <div style={{ fontSize: 14, lineHeight: 1.7, color: 'var(--color-text-secondary)' }}>
+    <div style={{ fontSize: bodySize, lineHeight: 1.7, color: 'var(--color-text-secondary)' }}>
       <ReactMarkdown
         components={{
           p: ({ children }) => {
@@ -179,16 +182,13 @@ function SectionBlock({ section }: { section: Section }) {
             return <p style={{ margin: '4px 0' }}>{children}</p>
           },
             strong: ({ children }) => <strong style={{ fontWeight: 600, color: 'var(--color-text)' }}>{children}</strong>,
-            ul: ({ children }) => <ul style={{ paddingLeft: 16, margin: '4px 0', listStyle: 'none' }}>{children}</ul>,
+            ul: ({ children }) => <ul style={{ paddingLeft: isMobile ? 12 : 16, margin: '2px 0', listStyle: 'none' }}>{children}</ul>,
             li: ({ children }) => (
               <li style={{
-                marginBottom: 6,
-                padding: '8px 12px',
-                background: 'var(--color-surface)',
-                borderRadius: 6,
-                lineHeight: 1.6,
-                fontSize: 14,
-                border: '1px solid var(--color-border)',
+                marginBottom: 3,
+                lineHeight: 1.7,
+                fontSize: bodySize,
+                padding: '2px 0',
               }}>
                 {children}
               </li>
@@ -210,23 +210,23 @@ function SectionBlock({ section }: { section: Section }) {
   )
 
   return (
-    <div style={{ borderLeft: '2px solid var(--color-border)', paddingLeft: 14, marginTop: 16 }}>
+    <div style={{ borderLeft: '1px solid var(--color-border)', paddingLeft: isMobile ? 8 : 12, marginTop: isMobile ? 8 : 12 }}>
       {display && (
         <div
           onClick={collapsible ? () => setOpen(!open) : undefined}
           style={{
-            display: 'flex', alignItems: 'center', gap: 5, marginBottom: 8,
+            display: 'flex', alignItems: 'center', gap: 4, marginBottom: 4,
             cursor: collapsible ? 'pointer' : undefined,
             userSelect: 'none',
           }}
         >
-          <span style={{ color: '#6366f1', fontSize: 12 }}>{display.icon}</span>
-          <span style={{ fontSize: 11, fontWeight: 600, color: '#6366f1', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
+          <span style={{ color: '#6366f1', fontSize: isMobile ? 10 : 11, lineHeight: 1 }}>{display.icon}</span>
+          <span style={{ fontSize: isMobile ? 9 : 10, fontWeight: 600, color: '#6366f1', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
             {display.label}
           </span>
           {collapsible && (
             <DownOutlined style={{
-              fontSize: 10, color: 'var(--color-text-tertiary)', marginLeft: 'auto',
+              fontSize: 9, color: 'var(--color-text-tertiary)', marginLeft: 'auto',
               transition: 'transform 0.2s', transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
             }} />
           )}
