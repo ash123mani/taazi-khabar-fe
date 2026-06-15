@@ -158,7 +158,3 @@ p {
   animation: fadeIn 0.3s ease-out;
 }
 
-/* Summary label headers (bold first-child in list items) */
-.markdown-content li > strong:first-child {
-  color: var(--color-accent) !important;
-}

@@ -173,7 +173,7 @@ function SectionBlock({ section }: { section: Section }) {
   const collapsible = cfg.collapsible
   const bodySize = isMobile ? 13 : 14
   const content = (
-    <div className="markdown-content" style={{ fontSize: bodySize, lineHeight: 1.7, color: 'var(--color-text-secondary)' }}>
+    <div style={{ fontSize: bodySize, lineHeight: 1.7, color: 'var(--color-text-secondary)' }}>
       <ReactMarkdown
         components={{
           p: ({ children }) => {
