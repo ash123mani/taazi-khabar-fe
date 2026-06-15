@@ -13,12 +13,12 @@ interface Section {
 }
 
 const SECTION_ALIASES: [string[], string][] = [
-  [['event', 'gk summary', 'what & why', 'gk gist', 'summary'], 'summary'],
-  [['key actors', 'gk pointers', 'key data & facts', 'people & institutions', 'why this matters', 'prelims focus'], 'pointers'],
-  [['significance', 'analysis', 'law/rule change', 'law & rule change', 'mains dimensions'], 'law'],
-  [['why it matters', 'syllabus tag', 'upsc syllabus connect', 'syllabus topic', 'syllabus'], 'syllabus'],
-  [['interview angle'], 'interview'],
-  [['key terms'], 'terms'],
+  [['gk summary', 'summary', 'event', 'what & why', 'gk gist'], 'summary'],
+  [['key facts', 'pointers', 'prelims focus', 'gk pointers', 'key data & facts', 'people & institutions', 'why this matters'], 'pointers'],
+  [['analysis', 'mains dimensions', 'law/rule change', 'law & rule change', 'significance'], 'law'],
+  [['syllabus tag', 'syllabus topic', 'syllabus', 'why it matters', 'upsc syllabus connect'], 'syllabus'],
+  [['interview angle', 'interview'], 'interview'],
+  [['key terms', 'terms'], 'terms'],
 ]
 
 const SECTION_DISPLAY: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
