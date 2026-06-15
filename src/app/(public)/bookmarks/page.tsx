@@ -71,7 +71,7 @@ export default function BookmarksPage() {
           </Link>
         </Card>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 16 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {articles.map((article) => (
             <ArticleCard key={article.id} article={article} />
           ))}
