@@ -173,7 +173,7 @@ function SectionBlock({ section }: { section: Section }) {
   const collapsible = cfg.collapsible
   const bodySize = isMobile ? 13 : 14
   const content = (
-    <div style={{ fontSize: bodySize, lineHeight: 1.7, color: 'var(--color-text-secondary)' }}>
+    <div className="markdown-content" style={{ fontSize: bodySize, lineHeight: 1.7, color: 'var(--color-text-secondary)' }}>
       <ReactMarkdown
         components={{
           p: ({ children }) => {
@@ -181,7 +181,7 @@ function SectionBlock({ section }: { section: Section }) {
             if (!txt.trim()) return null
             return <p style={{ margin: '4px 0' }}>{children}</p>
           },
-            strong: ({ children }) => <strong style={{ fontWeight: 600, color: 'var(--color-accent)' }}>{children}</strong>,
+            strong: ({ children }) => <strong style={{ fontWeight: 600, color: 'var(--color-text)' }}>{children}</strong>,
             ul: ({ children }) => <ul style={{ paddingLeft: isMobile ? 12 : 16, margin: '2px 0', listStyle: 'none' }}>{children}</ul>,
             li: ({ children }) => (
               <li style={{
