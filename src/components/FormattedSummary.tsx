@@ -181,7 +181,7 @@ function SectionBlock({ section }: { section: Section }) {
             if (!txt.trim()) return null
             return <p style={{ margin: '4px 0' }}>{children}</p>
           },
-            strong: ({ children }) => <strong style={{ fontWeight: 600, color: 'var(--color-text-secondary)' }}>{children}</strong>,
+            strong: ({ children }) => <strong style={{ fontWeight: 600, color: '#e0e0e0' }}>{children}</strong>,
             ul: ({ children }) => <ul style={{ paddingLeft: isMobile ? 12 : 16, margin: '2px 0', listStyle: 'none' }}>{children}</ul>,
             li: ({ children }) => (
               <li style={{
