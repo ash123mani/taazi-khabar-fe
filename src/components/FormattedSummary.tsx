@@ -60,7 +60,6 @@ function isFooterLine(line: string): boolean {
 }
 
 function parseSections(md: string): Section[] {
-  md = md.replace(/^\|.*\|\s*$/gm, '').replace(/^[-| ]+$/gm, '').replace(/\n{3,}/g, '\n\n').trim()
   const lines = md.split('\n')
   const sections: Section[] = []
   let currentKey = ''
@@ -210,6 +209,14 @@ function SectionBlock({ section }: { section: Section }) {
             return <p style={{ margin: '8px 0 4px', fontWeight: 600, fontSize: 14, color: 'var(--color-text)' }}>{children}</p>
           },
           h4: ({ children }) => <p style={{ fontSize: 13, fontWeight: 600, margin: '8px 0 4px', color: 'var(--color-text-secondary)' }}>{children}</p>,
+          table: ({ children }) => (
+            <div style={{ overflowX: 'auto', margin: '8px 0' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, lineHeight: 1.5 }}>{children}</table>
+            </div>
+          ),
+          thead: ({ children }) => <thead style={{ background: 'var(--color-surface)' }}>{children}</thead>,
+          th: ({ children }) => <th style={{ border: '1px solid var(--color-border)', padding: '8px 10px', fontWeight: 600, color: 'var(--color-text)', textAlign: 'left', whiteSpace: 'nowrap' }}>{children}</th>,
+          td: ({ children }) => <td style={{ border: '1px solid var(--color-border)', padding: '8px 10px', color: 'var(--color-text-secondary)' }}>{children}</td>,
         }}
       >
         {section.content}
