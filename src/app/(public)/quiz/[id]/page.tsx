@@ -47,8 +47,9 @@ export default function TakeQuizPage() {
     if (submitted) return
     setSubmitting(true)
     try {
-      const data = await api.submitQuiz(id, answers)
-      setQuiz(data)
+      await api.submitQuiz(id, answers)
+      const refreshed = await api.getQuiz(id)
+      setQuiz(refreshed)
       setSubmitted(true)
     } catch (err: any) {
       setError(err.message || 'Failed to submit quiz')
