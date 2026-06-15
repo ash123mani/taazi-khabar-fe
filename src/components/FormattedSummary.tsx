@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Tag } from 'antd'
 import { BulbOutlined, BranchesOutlined, BookOutlined, ExperimentOutlined, TagsOutlined, DownOutlined } from '@ant-design/icons'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { useIsMobile } from '@/hooks/useIsMobile'
 import type { ReactNode } from 'react'
 
@@ -181,7 +182,7 @@ function SectionBlock({ section }: { section: Section }) {
   const bodySize = isMobile ? 13 : 14
   const content = (
     <div style={{ fontSize: bodySize, lineHeight: 1.7, color: 'var(--color-text-secondary)' }}>
-      <ReactMarkdown
+      <ReactMarkdown remarkPlugins={[remarkGfm]}
         components={{
           p: ({ children }) => {
             const txt = extractText(children)
