@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Typography, Empty, Button, message, Card } from 'antd'
+import { Typography, Empty, Button, message, Card, Spin } from 'antd'
 import Link from 'next/link'
 import { api } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
@@ -46,9 +46,9 @@ export default function BookmarksPage() {
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: 80 }}>
-        <div style={{ color: 'var(--color-text-tertiary)' }}>Loading bookmarks...</div>
-      </div>
+      <Card style={{ borderRadius: 16, textAlign: 'center', padding: '80px 24px', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: '80px 24px' } }}>
+        <Spin size="large" />
+      </Card>
     )
   }
 

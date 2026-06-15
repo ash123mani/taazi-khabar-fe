@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Typography, Card, Row, Col, Statistic, Progress, Table, Button, message } from 'antd'
+import { Typography, Card, Row, Col, Statistic, Progress, Table, Button, message, Spin } from 'antd'
 import dayjs from 'dayjs'
 import { api } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
@@ -51,9 +51,9 @@ export default function AnalyticsPage() {
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: 80 }}>
-        <div style={{ color: 'var(--color-text-tertiary)' }}>Loading analytics...</div>
-      </div>
+      <Card style={{ borderRadius: 16, textAlign: 'center', padding: '80px 24px', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: '80px 24px' } }}>
+        <Spin size="large" />
+      </Card>
     )
   }
 

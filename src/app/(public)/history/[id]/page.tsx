@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { Typography, Spin, Button, Space, Card } from 'antd'
+
+
 import dayjs from 'dayjs'
 import { api } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
@@ -38,9 +40,9 @@ export default function HistoryDetailPage() {
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: 80 }}>
+      <Card style={{ borderRadius: 16, textAlign: 'center', padding: '80px 24px', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: '80px 24px' } }}>
         <Spin size="large" />
-      </div>
+      </Card>
     )
   }
 
