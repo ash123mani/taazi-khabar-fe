@@ -9,7 +9,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{
+          __html: `(function(){try{var t=JSON.parse(localStorage.getItem('taazi-theme'));if(t&&t.state&&!t.state.isDark)document.documentElement.setAttribute('data-theme','light');}catch(e){}})();`
+        }} />
+      </head>
       <body style={{ margin: 0 }}>
         <RootLayoutClient>{children}</RootLayoutClient>
       </body>
