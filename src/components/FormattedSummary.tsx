@@ -60,6 +60,7 @@ function isFooterLine(line: string): boolean {
 }
 
 function parseSections(md: string): Section[] {
+  md = md.replace(/^\|.*\|\s*$/gm, '').replace(/^[-| ]+$/gm, '').replace(/\n{3,}/g, '\n\n').trim()
   const lines = md.split('\n')
   const sections: Section[] = []
   let currentKey = ''
