@@ -18,6 +18,7 @@ const SECTION_ALIASES: [string[], string][] = [
   [['analysis', 'mains dimensions', 'law/rule change', 'law & rule change', 'significance'], 'law'],
   [['syllabus tag', 'syllabus topic', 'syllabus', 'why it matters', 'upsc syllabus connect'], 'syllabus'],
   [['interview angle', 'interview'], 'interview'],
+  [['category'], 'category'],
   [['key terms', 'terms'], 'terms'],
 ]
 
@@ -50,6 +51,7 @@ function detectSection(line: string): string | null {
   return null
 }
 
+const SKIP_SECTIONS = ['category']
 const FOOTER_MARKERS = ['syllabus topic', 'key terms', 'gk gist']
 
 function isFooterLine(line: string): boolean {
@@ -80,6 +82,11 @@ function parseSections(md: string): Section[] {
     }
     const sectionKey = detectSection(stripped)
     if (sectionKey) {
+      if (SKIP_SECTIONS.includes(sectionKey)) {
+        flush()
+        currentKey = ''
+        continue
+      }
       flush()
       currentKey = sectionKey
       const colonIdx = stripped.indexOf(':')
@@ -112,8 +119,8 @@ function parseSections(md: string): Section[] {
 }
 
 const SECTION_CONFIG: Record<string, { collapsible: boolean; defaultExpanded: boolean }> = {
-  summary: { collapsible: true, defaultExpanded: false },
-  pointers: { collapsible: true, defaultExpanded: true },
+  summary: { collapsible: true, defaultExpanded: true },
+  pointers: { collapsible: true, defaultExpanded: false },
   law: { collapsible: true, defaultExpanded: false },
   interview: { collapsible: true, defaultExpanded: false },
   syllabus: { collapsible: true, defaultExpanded: false },
@@ -237,7 +244,7 @@ function SectionBlock({ section }: { section: Section }) {
   )
 }
 
-const SECTION_ORDER = ['pointers', 'summary', 'law', 'interview', 'syllabus', 'terms']
+const SECTION_ORDER = ['summary', 'pointers', 'law', 'interview', 'syllabus', 'terms']
 
 export default function FormattedSummary({ summary }: { summary: string }) {
   const sections = parseSections(summary)
