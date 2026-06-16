@@ -124,9 +124,11 @@ export default function HistoryDetailPage() {
         <div style={{ marginBottom: 28 }}>
           <Collapse
             ghost
+            style={{ margin: 0, padding: 0 }}
+            styles={{ header: { padding: 0, alignItems: 'center' }, body: { padding: 0 } }}
             items={[{
               key: 'articles',
-              label: <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--color-text)' }}>Linked Articles ({quiz.articles.length})</span>,
+              label: <span style={{ fontWeight: 600, fontSize: 15, color: 'var(--color-text)' }}>Linked Articles ({quiz.articles.length})</span>,
               children: (
                 <Space direction="vertical" size={12} style={{ width: '100%', marginTop: 8 }}>
                   {quiz.articles.map((article) => (
