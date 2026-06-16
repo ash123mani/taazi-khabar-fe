@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { Typography, Spin, Button, Space, Card } from 'antd'
+import { Typography, Spin, Button, Space, Card, Collapse } from 'antd'
 
 
 import dayjs from 'dayjs'
@@ -122,12 +122,20 @@ export default function HistoryDetailPage() {
 
       {quiz.articles && quiz.articles.length > 0 && (
         <div style={{ marginBottom: 28 }}>
-          <Text strong style={{ fontSize: 15, display: 'block', marginBottom: 12, color: 'var(--color-text)' }}>Linked Articles</Text>
-          <Space direction="vertical" size={12} style={{ width: '100%' }}>
-            {quiz.articles.map((article) => (
-              <ArticleCard key={article.id} article={article} />
-            ))}
-          </Space>
+          <Collapse
+            ghost
+            items={[{
+              key: 'articles',
+              label: <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--color-text)' }}>Linked Articles ({quiz.articles.length})</span>,
+              children: (
+                <Space direction="vertical" size={12} style={{ width: '100%', marginTop: 8 }}>
+                  {quiz.articles.map((article) => (
+                    <ArticleCard key={article.id} article={article} />
+                  ))}
+                </Space>
+              ),
+            }]}
+          />
         </div>
       )}
 
