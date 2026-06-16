@@ -88,6 +88,15 @@ describe('NewsFeedPage', () => {
     expect(screen.getByText(/All/)).toBeInTheDocument();
   });
 
+  it('shows PIB source filter option with count', async () => {
+    mockGetArticles.mockResolvedValue([]);
+    mockGetArticleCounts.mockResolvedValue({ total: 5, thehindu: 2, indianexpress: 2, pib: 1 });
+    render(<NewsFeedPage />);
+    await waitFor(() => {
+      expect(screen.getByText(/PIB/)).toBeInTheDocument();
+    });
+  });
+
   it('shows article count', async () => {
     mockGetArticles.mockResolvedValue([{ id: 'a1', headline: 'A1', published_at: '2026-06-15', source: 'thehindu', url: 'https://example.com', image_url: null, key_terms: [], syllabus_tag: null }]);
     mockGetArticleCounts.mockResolvedValue({ total: 1, thehindu: 1, indianexpress: 0, pib: 0 });

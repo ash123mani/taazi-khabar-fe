@@ -123,4 +123,6 @@ describe('QuizContent', () => {
     const articlesEls = screen.getAllByText('Articles');
     expect(articlesEls.length).toBeGreaterThanOrEqual(1);
   });
+
+
 });
