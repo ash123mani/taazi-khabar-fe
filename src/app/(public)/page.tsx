@@ -188,6 +188,7 @@ export default function NewsFeedPage() {
                   { label: `All (${counts.total || 0})`, value: 'all' },
                   { label: `The Hindu (${counts.thehindu || 0})`, value: 'thehindu' },
                   { label: `Indian Express (${counts.indianexpress || 0})`, value: 'indianexpress' },
+                  { label: `PIB (${counts.pib || 0})`, value: 'pib' },
                 ]}
                 value={sourceFilter}
                 onChange={(val) => setSourceFilter(val as string)}

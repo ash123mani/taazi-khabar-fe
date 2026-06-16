@@ -45,7 +45,10 @@ export default function AdminDashboard() {
       title: 'Source',
       dataIndex: 'source',
       key: 'source',
-      render: (source: string) => <Tag style={{ borderRadius: 6, fontWeight: 600, fontSize: 12, background: 'var(--color-surface)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)' }}>{source === 'thehindu' ? 'The Hindu' : source === 'indianexpress' ? 'Indian Express' : source}</Tag>,
+      render: (source: string) => {
+        const label: Record<string, string> = { thehindu: 'The Hindu', indianexpress: 'Indian Express', pib: 'PIB' }
+        return <Tag style={{ borderRadius: 6, fontWeight: 600, fontSize: 12, background: 'var(--color-surface)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)' }}>{label[source] || source}</Tag>
+      },
     },
     {
       title: 'Date',

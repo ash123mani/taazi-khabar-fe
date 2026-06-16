@@ -26,13 +26,15 @@ interface ArticleWithSummary {
 const SOURCE_COLORS: Record<string, string> = {
   thehindu: 'blue',
   indianexpress: 'orange',
+  pib: 'green',
 }
 const SOURCE_LABELS: Record<string, string> = {
   thehindu: 'The Hindu',
   indianexpress: 'The Indian Express',
+  pib: 'PIB',
 }
 
-const SOURCES = ['thehindu', 'indianexpress']
+const SOURCES = ['thehindu', 'indianexpress', 'pib']
 
 export default function SummariesPage() {
   const [date, setDate] = useState<string>(new Date().toISOString().slice(0, 10))
@@ -145,7 +147,10 @@ export default function SummariesPage() {
       dataIndex: 'source',
       key: 'source',
       width: 100,
-      render: (s: string) => <Tag color={SOURCE_COLORS[s] || 'default'} style={{ background: s === 'thehindu' ? '#3b82f6' : '#f97316', color: '#fff', border: 'none' }}>{SOURCE_LABELS[s] || s}</Tag>,
+      render: (s: string) => {
+        const bg: Record<string, string> = { thehindu: '#3b82f6', indianexpress: '#f97316', pib: '#22c55e' }
+        return <Tag color={SOURCE_COLORS[s] || 'default'} style={{ background: bg[s] || '#6b7280', color: '#fff', border: 'none' }}>{SOURCE_LABELS[s] || s}</Tag>
+      },
     },
     {
       title: 'Headline',

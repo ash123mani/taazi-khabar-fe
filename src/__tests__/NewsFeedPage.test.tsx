@@ -59,7 +59,7 @@ describe('NewsFeedPage', () => {
 
   it('renders articles after loading', async () => {
     mockGetArticles.mockResolvedValue([{ id: 'a1', headline: 'Article 1', published_at: '2026-06-15', source: 'thehindu', url: 'https://example.com', image_url: null, key_terms: [], syllabus_tag: null }, { id: 'a2', headline: 'Article 2', published_at: '2026-06-15', source: 'indianexpress', url: 'https://example.com', image_url: null, key_terms: [], syllabus_tag: null }]);
-    mockGetArticleCounts.mockResolvedValue({ total: 2, thehindu: 1, indianexpress: 1 });
+    mockGetArticleCounts.mockResolvedValue({ total: 2, thehindu: 1, indianexpress: 1, pib: 0 });
     render(<NewsFeedPage />);
     await waitFor(() => {
       expect(screen.getAllByTestId('article-card').length).toBe(2);
@@ -90,7 +90,7 @@ describe('NewsFeedPage', () => {
 
   it('shows article count', async () => {
     mockGetArticles.mockResolvedValue([{ id: 'a1', headline: 'A1', published_at: '2026-06-15', source: 'thehindu', url: 'https://example.com', image_url: null, key_terms: [], syllabus_tag: null }]);
-    mockGetArticleCounts.mockResolvedValue({ total: 1, thehindu: 1, indianexpress: 0 });
+    mockGetArticleCounts.mockResolvedValue({ total: 1, thehindu: 1, indianexpress: 0, pib: 0 });
     render(<NewsFeedPage />);
     await waitFor(() => {
       expect(screen.getByText('1 article')).toBeInTheDocument();
@@ -100,7 +100,7 @@ describe('NewsFeedPage', () => {
   it('renders category filter buttons', async () => {
     mockGetArticles.mockReturnValue(new Promise(() => {}));
     mockGetCategories.mockResolvedValue([{ id: 'c1', name: 'Polity' }, { id: 'c2', name: 'Economy' }]);
-    mockGetArticleCounts.mockResolvedValue({ total: 0, thehindu: 0, indianexpress: 0, categories: { Polity: 0, Economy: 0 } });
+    mockGetArticleCounts.mockResolvedValue({ total: 0, thehindu: 0, indianexpress: 0, pib: 0, categories: { Polity: 0, Economy: 0 } });
     render(<NewsFeedPage />);
     await waitFor(() => {
       expect(screen.getByText('Polity (0)')).toBeInTheDocument();
@@ -115,7 +115,7 @@ describe('NewsFeedPage', () => {
       key_terms: [], syllabus_tag: null,
     }));
     mockGetArticles.mockResolvedValue({ articles, total: 15 });
-    mockGetArticleCounts.mockResolvedValue({ total: 15, thehindu: 15, indianexpress: 0 });
+    mockGetArticleCounts.mockResolvedValue({ total: 15, thehindu: 15, indianexpress: 0, pib: 0 });
     render(<NewsFeedPage />);
     await waitFor(() => {
       expect(screen.getByText(/Load More/)).toBeInTheDocument();

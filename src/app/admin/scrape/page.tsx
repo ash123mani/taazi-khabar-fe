@@ -35,6 +35,7 @@ interface SourceData {
 const SOURCE_LABELS: Record<string, string> = {
   thehindu: 'The Hindu',
   indianexpress: 'The Indian Express',
+  pib: 'PIB',
 }
 
 export default function ScrapePage() {

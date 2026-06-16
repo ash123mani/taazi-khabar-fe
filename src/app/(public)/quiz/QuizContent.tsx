@@ -245,7 +245,7 @@ export default function QuizContent() {
                   }
                   description={
                     <Tag style={{ borderRadius: 4, margin: 0, fontSize: 11 }}>
-                      {article.source === 'thehindu' ? 'The Hindu' : 'Indian Express'}
+                      {article.source === 'thehindu' ? 'The Hindu' : article.source === 'indianexpress' ? 'Indian Express' : 'PIB'}
                     </Tag>
                   }
                 />
