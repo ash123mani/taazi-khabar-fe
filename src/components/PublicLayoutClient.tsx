@@ -68,8 +68,8 @@ export default function PublicLayoutClient({ children }: { children: React.React
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: isMobile ? '0 12px' : '0 24px',
-          height: 56,
+          padding: isMobile ? '0 8px' : '0 16px',
+          height: 40,
           position: 'sticky',
           top: 0,
           zIndex: 100,
@@ -80,20 +80,20 @@ export default function PublicLayoutClient({ children }: { children: React.React
         }}
       >
         <Space
-          size={8}
+          size={4}
           style={{ cursor: 'pointer', flexShrink: 0 }}
           onClick={() => router.push('/')}
         >
           <div style={{
-            width: isMobile ? 28 : 32,
-            height: isMobile ? 28 : 32,
-            borderRadius: 8,
+            width: isMobile ? 22 : 26,
+            height: isMobile ? 22 : 26,
+            borderRadius: 6,
             background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             color: '#fff',
-            fontSize: isMobile ? 11 : 13,
+            fontSize: isMobile ? 9 : 11,
             fontWeight: 800,
             letterSpacing: -1,
             boxShadow: '0 2px 8px rgba(99, 102, 241, 0.3)',
@@ -101,7 +101,7 @@ export default function PublicLayoutClient({ children }: { children: React.React
             TK
           </div>
           {!isMobile && (
-            <Text strong style={{ fontSize: 17, letterSpacing: '-0.5px', color: 'var(--color-text)', fontWeight: 700 }}>
+            <Text strong style={{ fontSize: 14, letterSpacing: '-0.5px', color: 'var(--color-text)', fontWeight: 700 }}>
               Taazi Khabar
             </Text>
           )}
@@ -110,7 +110,7 @@ export default function PublicLayoutClient({ children }: { children: React.React
         {isMobile ? (
           <div style={{ flex: 1 }} />
         ) : (
-          <div style={{ flex: 1, overflow: 'hidden', margin: '0 16px' }}>
+          <div style={{ flex: 1, overflow: 'hidden', margin: '0 8px' }}>
             <Menu
               mode="horizontal"
               selectedKeys={[selectedKey(pathname)]}
@@ -122,15 +122,16 @@ export default function PublicLayoutClient({ children }: { children: React.React
                 justifyContent: 'center',
                 display: 'flex',
                 minWidth: 0,
+                lineHeight: '40px',
               }}
             />
           </div>
         )}
 
-        <Space style={{ flexShrink: 0 }} size={isMobile ? 2 : 8}>
+        <Space style={{ flexShrink: 0 }} size={isMobile ? 2 : 4}>
           <Button
             type="text"
-            size={isMobile ? 'small' : 'middle'}
+            size={isMobile ? 'small' : 'small'}
             icon={isDark ? <SunOutlined /> : <MoonOutlined />}
             onClick={toggle}
             style={{ color: 'var(--color-text-secondary)' }}
@@ -139,7 +140,7 @@ export default function PublicLayoutClient({ children }: { children: React.React
             isMobile ? null : (
               <Button
                 type="text"
-                size="middle"
+                size="small"
                 icon={<LogoutOutlined />}
                 onClick={() => signOut()}
                 style={{ color: 'var(--color-text-secondary)' }}
@@ -149,7 +150,7 @@ export default function PublicLayoutClient({ children }: { children: React.React
             )
           ) : (
             isMobile ? null : (
-              <Button type="primary" ghost icon={<LoginOutlined />} onClick={() => router.push('/login')}>
+              <Button type="primary" ghost size="small" icon={<LoginOutlined />} onClick={() => router.push('/login')}>
                 Login
               </Button>
             )
@@ -157,7 +158,8 @@ export default function PublicLayoutClient({ children }: { children: React.React
           {isMobile && (
             <Button
               type="text"
-              icon={<MenuOutlined style={{ fontSize: 20 }} />}
+              size="small"
+              icon={<MenuOutlined style={{ fontSize: 16 }} />}
               onClick={() => setDrawerOpen(true)}
               style={{ color: 'var(--color-text-secondary)' }}
             />
