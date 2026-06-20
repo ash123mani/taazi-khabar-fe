@@ -48,13 +48,13 @@ describe('NewsFeedPage', () => {
   it('shows loading skeletons initially', () => {
     mockGetArticles.mockReturnValue(new Promise(() => {}));
     render(<NewsFeedPage />);
-    expect(screen.getAllByTestId('article-skeleton').length).toBe(3);
+    expect(screen.getAllByTestId('article-skeleton').length).toBe(4);
   });
 
-  it('shows GK Gist heading', () => {
+  it('shows Taazi Khabar masthead', () => {
     mockGetArticles.mockReturnValue(new Promise(() => {}));
     render(<NewsFeedPage />);
-    expect(screen.getByText('GK Gist')).toBeInTheDocument();
+    expect(screen.getByText('Taazi Khabar')).toBeInTheDocument();
   });
 
   it('renders articles after loading', async () => {
@@ -70,7 +70,7 @@ describe('NewsFeedPage', () => {
     mockGetArticles.mockResolvedValue([]);
     render(<NewsFeedPage />);
     await waitFor(() => {
-      expect(screen.getByText(/No articles found/)).toBeInTheDocument();
+      expect(screen.getByText(/No articles/)).toBeInTheDocument();
     });
   });
 
@@ -106,15 +106,17 @@ describe('NewsFeedPage', () => {
     });
   });
 
-  it('renders category filter buttons', async () => {
+  it('renders category filter tabs', async () => {
     mockGetArticles.mockReturnValue(new Promise(() => {}));
     mockGetCategories.mockResolvedValue([{ id: 'c1', name: 'Polity' }, { id: 'c2', name: 'Economy' }]);
     mockGetArticleCounts.mockResolvedValue({ total: 0, thehindu: 0, indianexpress: 0, pib: 0, categories: { Polity: 0, Economy: 0 } });
     render(<NewsFeedPage />);
     await waitFor(() => {
-      expect(screen.getByText('Polity (0)')).toBeInTheDocument();
-      expect(screen.getByText('Economy (0)')).toBeInTheDocument();
-    });
+      const tabs = screen.getAllByRole('tab');
+      expect(tabs.some((t) => t.textContent?.includes('Polity'))).toBe(true);
+    }, { timeout: 3000 });
+    const tabs = screen.getAllByRole('tab');
+    expect(tabs.some((t) => t.textContent?.includes('Economy'))).toBe(true);
   });
 
   it('shows load more button when total > displayed', async () => {

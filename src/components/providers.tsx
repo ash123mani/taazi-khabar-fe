@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { StyleProvider } from '@ant-design/cssinjs'
 import { useAuth } from '@/hooks/useAuth'
 import ThemeProvider from './ThemeProvider'
+import { ArticleModalProvider } from './ArticleModalContext'
 
 function AuthSync({ children }: { children: React.ReactNode }) {
   useAuth()
@@ -20,7 +21,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       <QueryClientProvider client={queryClient}>
         <StyleProvider hashPriority="high">
           <ThemeProvider>
-            <AuthSync>{children}</AuthSync>
+            <AuthSync>
+              <ArticleModalProvider>
+                {children}
+              </ArticleModalProvider>
+            </AuthSync>
           </ThemeProvider>
         </StyleProvider>
       </QueryClientProvider>

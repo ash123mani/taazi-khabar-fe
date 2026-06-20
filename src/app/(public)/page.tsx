@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { Typography, Card, Row, Col, Input, Segmented, DatePicker, Button, Space } from 'antd'
-import { CalendarOutlined, BookOutlined, SearchOutlined, FireOutlined } from '@ant-design/icons'
+import { Typography, Input, DatePicker, Space, Tabs } from 'antd'
+import { CalendarOutlined, SearchOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import { api } from '@/lib/api'
 import { useIsMobile } from '@/hooks/useIsMobile'
@@ -13,6 +13,13 @@ import { ArticleSkeleton } from '@/components/Skeletons'
 const { Title, Text } = Typography
 
 const PAGE_SIZE = 10
+
+const SOURCE_META: Record<string, { label: string; color: string }> = {
+  all: { label: 'All', color: '#6366f1' },
+  thehindu: { label: 'The Hindu', color: '#3b82f6' },
+  indianexpress: { label: 'Indian Express', color: '#f97316' },
+  pib: { label: 'PIB', color: '#22c55e' },
+}
 
 export default function NewsFeedPage() {
   const isMobile = useIsMobile()
@@ -99,199 +106,255 @@ export default function NewsFeedPage() {
     fetchArticles(date, sourceFilter, categoryFilter, search, newSkip, true)
   }
 
+  const catTotal = filteredCounts?.categories
+    ? Object.values(filteredCounts.categories).reduce((a: number, b: any) => a + (b as number), 0)
+    : 0
+
+  const tabItems = [
+    {
+      key: 'all',
+      label: (
+        <span style={{ fontSize: isMobile ? 12 : 13, fontWeight: categoryFilter === 'all' ? 700 : 500, letterSpacing: '0.3px' }}>
+          All
+          <span style={{ marginLeft: 4, fontSize: 10, fontWeight: 600, color: 'var(--color-text-tertiary)' }}>({catTotal})</span>
+        </span>
+      ),
+    },
+    ...categories.map((c) => ({
+      key: c.id,
+      label: (
+        <span style={{ fontSize: isMobile ? 12 : 13, fontWeight: categoryFilter === c.id ? 700 : 500, letterSpacing: '0.3px' }}>
+          {c.name}
+          <span style={{ marginLeft: 4, fontSize: 10, fontWeight: 600, color: 'var(--color-text-tertiary)' }}>
+            ({filteredCounts?.categories?.[c.id] || 0})
+          </span>
+        </span>
+      ),
+    })),
+  ]
+
   return (
     <div>
-      <Card
-        style={{
-          marginBottom: 28,
-          background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 35%, #312e81 80%, rgba(5,5,5,0.95) 100%)',
-          border: '1px solid rgba(99, 102, 241, 0.25)',
-          borderRadius: 16,
-          overflow: 'hidden',
-          boxShadow: '0 8px 40px rgba(99, 102, 241, 0.12)',
-        }}
-        styles={{ body: { padding: isMobile ? '20px 16px' : '32px 28px' } }}
-      >
-        <Row gutter={[12, 12]} align="middle">
-          <Col xs={24} md={14}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 8 : 10 }}>
-                <div style={{
-                  width: isMobile ? 28 : 40, height: isMobile ? 28 : 40, borderRadius: 8,
-                  background: 'rgba(99,102,241,0.25)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  backdropFilter: 'blur(4px)', flexShrink: 0,
-                }}>
-                  <BookOutlined style={{ fontSize: isMobile ? 14 : 20, color: '#a5b4fc' }} />
-                </div>
-                <div>
-                  <Text style={{ color: 'rgba(165,180,252,0.7)', fontSize: isMobile ? 9 : 10, fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase', display: 'block' }}>
-                    News Digest
-                  </Text>
-                  <Title level={4} style={{ margin: 0, fontWeight: 700, color: '#fff', letterSpacing: '-0.3px', fontSize: isMobile ? 15 : 20 }}>
-                    GK Gist
-                  </Title>
-                </div>
-              </div>
-              {isMobile && (
-                <DatePicker
-                  value={dayjs(date)}
-                  onChange={(d) => { if (d) setDate(d.format('YYYY-MM-DD')) }}
-                  allowClear={false}
-                  format="DD-MM-YYYY"
-                  suffixIcon={<CalendarOutlined style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)' }} />}
-                  size="small"
-                  style={{
-                    width: 120,
-                    background: 'rgba(255,255,255,0.08)',
-                    border: '1px solid rgba(255,255,255,0.15)',
-                    borderRadius: 8,
-                    fontSize: 11,
-                    backdropFilter: 'blur(4px)',
-                  }}
-                />
-              )}
-            </div>
-            {!isMobile && (
-              <Text style={{ color: 'rgba(255,255,255,0.65)', fontSize: 14, display: 'block', lineHeight: 1.6, marginTop: 6 }}>
-                AI-curated current affairs summaries for UPSC preparation. Stay ahead with daily updates from trusted sources.
-              </Text>
-            )}
-          </Col>
-          {!isMobile && (
-            <Col md={10} style={{ textAlign: 'right' }}>
-              <DatePicker
-                value={dayjs(date)}
-                onChange={(d) => { if (d) setDate(d.format('YYYY-MM-DD')) }}
-                allowClear={false}
-                format="DD-MM-YYYY"
-                suffixIcon={<CalendarOutlined style={{ color: 'rgba(255,255,255,0.6)' }} />}
-                size="middle"
-                style={{
-                  background: 'rgba(255,255,255,0.08)',
-                  border: '1px solid rgba(255,255,255,0.15)',
-                  borderRadius: 10,
-                  backdropFilter: 'blur(4px)',
-                }}
-              />
-            </Col>
-          )}
-        </Row>
-      </Card>
-
-      <Card style={{ marginBottom: isMobile ? 16 : 24, borderRadius: 12, background: 'var(--color-surface)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: isMobile ? '10px 12px' : '14px 18px' } }}>
-        <Row gutter={[8, 8]} align="middle">
-          <Col xs={24} md={14}>
-            <div style={{ overflow: 'auto', paddingBottom: 4 }}>
-              <Segmented
-                options={[
-                  { label: `All (${counts.total || 0})`, value: 'all' },
-                  { label: `The Hindu (${counts.thehindu || 0})`, value: 'thehindu' },
-                  { label: `Indian Express (${counts.indianexpress || 0})`, value: 'indianexpress' },
-                  { label: `PIB (${counts.pib || 0})`, value: 'pib' },
-                ]}
-                value={sourceFilter}
-                onChange={(val) => setSourceFilter(val as string)}
-                size="small"
-              />
-            </div>
-          </Col>
-          <Col xs={24} md={10}>
-            <Input.Search
-              placeholder="Search articles..."
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              onSearch={handleSearch}
-              allowClear
-              size="small"
-              style={{ width: '100%' }}
-              prefix={<SearchOutlined style={{ color: 'var(--color-text-tertiary)' }} />}
-            />
-          </Col>
-        </Row>
-        {categories.length > 0 && (
-          <div style={{ marginTop: 8, paddingTop: 8, borderTop: '1px solid var(--color-border)' }}>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                  {[
-                { label: 'All Topics', value: 'all' },
-                ...categories.map((c) => ({ label: c.name, value: c.id })),
-              ].map((opt) => {
-                const active = categoryFilter === opt.value
-                const catCount = opt.value === 'all'
-                  ? (filteredCounts?.categories ? Object.values(filteredCounts.categories).reduce((a: number, b: any) => a + (b as number), 0) : 0)
-                  : (filteredCounts?.categories?.[opt.value] || 0)
-                return (
-                  <button
-                    key={opt.value}
-                    onClick={() => setCategoryFilter(opt.value)}
-                    style={{
-                      padding: isMobile ? '1px 8px' : '2px 10px',
-                      fontSize: isMobile ? 11 : 12,
-                      fontWeight: active ? 600 : 400,
-                      borderRadius: 6,
-                      border: 'none',
-                      cursor: 'pointer',
-                      background: active ? '#6366f1' : 'var(--color-surface)',
-                      color: active ? 'var(--color-text)' : 'var(--color-text-secondary)',
-                      transition: 'all 0.15s',
-                      lineHeight: isMobile ? '20px' : '24px',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {opt.label} ({catCount})
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        )}
-        {!loading && (
-          <div style={{ marginTop: 4, textAlign: 'right' }}>
-            <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 11 }}>
-              {total} article{total !== 1 ? 's' : ''}
+      {/* Masthead */}
+      <div style={{
+        borderBottom: '2px solid var(--color-border)',
+        paddingBottom: isMobile ? 12 : 16,
+        marginBottom: isMobile ? 12 : 16,
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'baseline',
+          justifyContent: 'space-between',
+          gap: 8,
+        }}>
+          <div>
+            <Title level={2} style={{
+              margin: 0,
+              fontWeight: 900,
+              fontSize: isMobile ? 20 : 28,
+              letterSpacing: '-1px',
+              color: 'var(--color-text)',
+              lineHeight: 1.1,
+            }}>
+              Today's Briefing
+            </Title>
+            <Text style={{
+              fontSize: isMobile ? 10 : 12,
+              color: 'var(--color-text-tertiary)',
+              letterSpacing: '2px',
+              textTransform: 'uppercase',
+              fontWeight: 500,
+            }}>
+              UPSC Current Affairs Digest
             </Text>
           </div>
-        )}
-      </Card>
+          <Space size={8} align="center">
+            <DatePicker
+              value={dayjs(date)}
+              onChange={(d) => { if (d) setDate(d.format('YYYY-MM-DD')) }}
+              allowClear={false}
+              format="DD-MM-YYYY"
+              suffixIcon={<CalendarOutlined style={{ fontSize: isMobile ? 10 : 13, color: 'var(--color-text-tertiary)' }} />}
+              size={isMobile ? 'small' : 'middle'}
+              style={{
+                background: 'transparent',
+                border: '1px solid var(--color-border)',
+                borderRadius: 6,
+              }}
+            />
+          </Space>
+        </div>
+      </div>
 
+      {/* Source filter */}
+      <div style={{
+        marginBottom: isMobile ? 8 : 12,
+        paddingBottom: isMobile ? 10 : 12,
+        borderBottom: '1px solid var(--color-border)',
+      }}>
+        <div style={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+          {(['all', 'thehindu', 'indianexpress', 'pib'] as const).map((key) => {
+            const active = sourceFilter === key
+            const meta = SOURCE_META[key]
+            return (
+              <button
+                key={key}
+                onClick={() => setSourceFilter(key)}
+                style={{
+                  padding: isMobile ? '2px 8px' : '3px 10px',
+                  fontSize: isMobile ? 10 : 11,
+                  fontWeight: active ? 700 : 500,
+                  letterSpacing: '0.5px',
+                  textTransform: 'uppercase',
+                  border: 'none',
+                  borderRadius: 0,
+                  cursor: 'pointer',
+                  background: 'transparent',
+                  color: active ? meta.color : 'var(--color-text-tertiary)',
+                  transition: 'all 0.15s',
+                }}
+              >
+                {meta.label}
+                {(counts as any)[key] != null && (
+                  <span style={{ marginLeft: 3, fontWeight: 400, opacity: 0.7 }}>
+                    ({(counts as any)[key]})
+                  </span>
+                )}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Category tabs */}
+      {categories.length > 0 && (
+        <div style={{ marginBottom: isMobile ? 8 : 12 }}>
+          <Tabs
+            activeKey={categoryFilter}
+            onChange={setCategoryFilter}
+            items={tabItems}
+            size={isMobile ? 'small' : 'middle'}
+            style={{ marginBottom: 0 }}
+            tabBarStyle={{ marginBottom: 0 }}
+          />
+        </div>
+      )}
+
+      {/* Search */}
+      <div style={{
+        marginBottom: isMobile ? 8 : 12,
+        paddingBottom: isMobile ? 10 : 12,
+        borderBottom: '1px solid var(--color-border)',
+      }}>
+        <Input.Search
+          placeholder="Search articles..."
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          onSearch={handleSearch}
+          onClear={() => { setSearchInput(''); setSearch(''); setSkip(0); fetchArticles(date, sourceFilter, categoryFilter, '', 0) }}
+          allowClear
+          size="small"
+          style={{ width: '100%' }}
+          variant="borderless"
+          prefix={<SearchOutlined style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }} />}
+        />
+      </div>
+
+      {/* Article count */}
+      {!loading && !error && articles.length > 0 && (
+        <div style={{
+          marginBottom: isMobile ? 8 : 12,
+          textAlign: 'right',
+          fontSize: 11,
+          color: 'var(--color-text-tertiary)',
+          fontStyle: 'italic',
+        }}>
+          {total} article{total !== 1 ? 's' : ''}
+        </div>
+      )}
+
+      {/* Content */}
       {loading ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {[1, 2, 3].map((i) => <ArticleSkeleton key={i} />)}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+          gap: 0,
+        }}>
+          {[1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              style={{
+                borderBottom: '1px solid var(--color-border)',
+                borderRight: !isMobile && i % 2 === 1 ? '1px solid var(--color-border)' : 'none',
+                padding: isMobile ? '10px 0' : '12px 14px',
+              }}
+            >
+              <ArticleSkeleton hasImage={isMobile ? true : i % 2 === 0} />
+            </div>
+          ))}
         </div>
       ) : error ? (
-        <Card style={{ borderRadius: 12, background: 'var(--color-surface)', border: '1px solid #ef4444' }} styles={{ body: { padding: '16px 20px' } }}>
-          <Text style={{ color: '#fca5a5' }}>{error}</Text>
-        </Card>
+        <div style={{
+          padding: isMobile ? '24px 12px' : '32px 16px',
+          textAlign: 'center',
+          borderBottom: '1px solid var(--color-border)',
+        }}>
+          <Text style={{ color: '#ef4444', fontSize: 14 }}>{error}</Text>
+        </div>
       ) : articles.length === 0 ? (
-        <Card style={{ borderRadius: 12, textAlign: 'center', padding: '60px 24px', background: 'var(--color-surface)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: '60px 24px' } }}>
-          <div style={{ width: 64, height: 64, borderRadius: 16, background: 'var(--color-surface)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
-            <BookOutlined style={{ fontSize: 28, color: '#4a4a4a' }} />
-          </div>
-          <Title level={4} style={{ margin: 0, marginBottom: 8, color: 'var(--color-text-secondary)' }}>
-            {search ? 'No articles match your search' : `No articles found for ${dayjs(date).format('DD-MM-YYYY')}`}
+        <div style={{
+          padding: isMobile ? '40px 12px' : '60px 16px',
+          textAlign: 'center',
+          borderBottom: '1px solid var(--color-border)',
+        }}>
+          <Title level={4} style={{ margin: 0, marginBottom: 8, color: 'var(--color-text-secondary)', fontWeight: 600 }}>
+            {search ? 'No articles match your search' : `No articles for ${dayjs(date).format('DD-MM-YYYY')}`}
           </Title>
-          <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 14 }}>
-            {search ? 'Try adjusting your search terms' : 'Try selecting a different date or source'}
+          <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 13 }}>
+            {search ? 'Try different keywords' : 'Select another date or source'}
           </Text>
-        </Card>
+        </div>
       ) : (
         <div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-            {articles.map((article) => (
-              <ArticleCard key={article.id} article={article} />
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+            gap: 0,
+          }}>
+            {articles.map((article, idx) => (
+              <div
+                key={article.id}
+                style={{
+                  borderBottom: '1px solid var(--color-border)',
+                  borderRight: !isMobile && idx % 2 === 0 ? '1px solid var(--color-border)' : 'none',
+                  padding: isMobile ? '10px 0' : '12px 14px',
+                }}
+              >
+                <ArticleCard article={article} />
+              </div>
             ))}
           </div>
           {total > articles.length && (
-            <div style={{ textAlign: 'center', marginTop: isMobile ? 16 : 24, marginBottom: 8 }}>
-              <Button
-                type="primary"
+            <div style={{ textAlign: 'center', marginTop: isMobile ? 16 : 20, marginBottom: 8 }}>
+              <button
                 onClick={handleLoadMore}
-                loading={loadingMore}
-                size={isMobile ? 'middle' : 'large'}
-                style={{ fontWeight: 600, borderRadius: 8, padding: isMobile ? '0 20px' : '0 32px', height: isMobile ? 36 : 44, fontSize: isMobile ? 13 : 14 }}
+                disabled={loadingMore}
+                style={{
+                  padding: '8px 28px',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  letterSpacing: '0.5px',
+                  textTransform: 'uppercase',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 0,
+                  cursor: loadingMore ? 'not-allowed' : 'pointer',
+                  background: 'transparent',
+                  color: 'var(--color-text-secondary)',
+                  transition: 'all 0.15s',
+                }}
               >
-                Load More ({articles.length}/{total})
-              </Button>
+                {loadingMore ? 'Loading...' : `Load More (${articles.length}/${total})`}
+              </button>
             </div>
           )}
         </div>

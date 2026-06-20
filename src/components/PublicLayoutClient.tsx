@@ -206,7 +206,7 @@ export default function PublicLayoutClient({ children }: { children: React.React
         style={{
           flex: 1,
           width: '100%',
-          maxWidth: 860,
+          maxWidth: 1200,
           margin: '0 auto',
           padding: isMobile ? '16px 12px' : '32px 24px',
           boxSizing: 'border-box',
