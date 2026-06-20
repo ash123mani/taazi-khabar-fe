@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Modal, Typography, Button, message, Space } from 'antd'
+import { Modal, Typography, Button, message } from 'antd'
 import { HeartOutlined, HeartFilled, LinkOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import { api } from '@/lib/api'
@@ -51,47 +51,50 @@ export default function ArticleModal({ article, onClose }: { article: Article | 
       footer={null}
       width={isMobile ? 'calc(100% - 16px)' : 700}
       centered
-      closable={false}
+      closable={isMobile}
+      style={{ '--ant-modal-content-padding': isMobile ? '12px' : '28px' } as React.CSSProperties}
       styles={{
-        body: { padding: isMobile ? 16 : 28, maxHeight: isMobile ? '85vh' : undefined, overflowY: 'auto' },
+        body: { maxHeight: isMobile ? '85vh' : undefined, overflowY: 'auto' },
         mask: { backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)' },
       }}
     >
+      {isMobile && <div style={{ height: 32 }} />}
       {/* Source label + date */}
-      <div style={{ marginBottom: isMobile ? 8 : 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Space size={8}>
-          <span style={{
-            width: 8,
-            height: 8,
-            borderRadius: '50%',
-            background: sourceMeta.color,
-            display: 'inline-block',
-          }} />
-          <Text style={{
-            fontSize: isMobile ? 10 : 11,
-            fontWeight: 600,
-            letterSpacing: '0.5px',
-            textTransform: 'uppercase',
-            color: sourceMeta.color,
-          }}>
-            {sourceMeta.label}
-          </Text>
-          <Text style={{ fontSize: isMobile ? 10 : 11, color: 'var(--color-text-tertiary)' }}>
-            {dayjs(article.published_at).format('DD-MM-YYYY')}
-          </Text>
-        </Space>
-        <Button
-          type="text"
-          size="small"
-          loading={toggling}
-          onClick={toggleBookmark}
-          icon={bookmarked ? (
-            <HeartFilled style={{ color: '#ef4444', fontSize: 14 }} />
-          ) : (
-            <HeartOutlined style={{ color: 'var(--color-text-tertiary)', fontSize: 14 }} />
-          )}
-          style={{ color: bookmarked ? '#ef4444' : 'var(--color-text-tertiary)' }}
-        />
+      <div style={{ marginBottom: isMobile ? 8 : 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+        <span style={{
+          width: 8,
+          height: 8,
+          borderRadius: '50%',
+          background: sourceMeta.color,
+          display: 'inline-block',
+          flexShrink: 0,
+        }} />
+        <Text style={{
+          fontSize: isMobile ? 10 : 11,
+          fontWeight: 600,
+          letterSpacing: '0.5px',
+          textTransform: 'uppercase',
+          color: sourceMeta.color,
+        }}>
+          {sourceMeta.label}
+        </Text>
+        <Text style={{ fontSize: isMobile ? 10 : 11, color: 'var(--color-text-tertiary)' }}>
+          {dayjs(article.published_at).format('DD-MM-YYYY')}
+        </Text>
+        <div style={{ marginLeft: 'auto' }}>
+          <Button
+            type="text"
+            size="small"
+            loading={toggling}
+            onClick={toggleBookmark}
+            icon={bookmarked ? (
+              <HeartFilled style={{ color: '#ef4444', fontSize: 14 }} />
+            ) : (
+              <HeartOutlined style={{ color: 'var(--color-text-tertiary)', fontSize: 14 }} />
+            )}
+            style={{ color: bookmarked ? '#ef4444' : 'var(--color-text-tertiary)' }}
+          />
+        </div>
       </div>
 
       {/* Thumbnail */}

@@ -51,10 +51,10 @@ describe('NewsFeedPage', () => {
     expect(screen.getAllByTestId('article-skeleton').length).toBe(4);
   });
 
-  it('shows Taazi Khabar masthead', () => {
+  it("shows Today's Briefing masthead", () => {
     mockGetArticles.mockReturnValue(new Promise(() => {}));
     render(<NewsFeedPage />);
-    expect(screen.getByText('Taazi Khabar')).toBeInTheDocument();
+    expect(screen.getByText("Today's Briefing")).toBeInTheDocument();
   });
 
   it('renders articles after loading', async () => {
