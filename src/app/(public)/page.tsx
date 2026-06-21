@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { Typography, Input, DatePicker, Space, Tabs } from 'antd'
+import { Typography, Input, DatePicker, Tabs } from 'antd'
 import { CalendarOutlined, SearchOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import { api } from '@/lib/api'
@@ -157,44 +157,29 @@ export default function NewsFeedPage() {
           top: 0,
           zIndex: 49,
           background: 'var(--color-bg)',
-          paddingBottom: isMobile ? 4 : 6,
           marginBottom: isMobile ? 6 : 10,
         }}
       >
-        {/* Source filter */}
-        <div style={{ paddingTop: isMobile ? 4 : 6, paddingBottom: isMobile ? 4 : 6, borderBottom: '1px solid var(--color-border-light)' }}>
-          <Space size={4} wrap>
-            {(['all', 'thehindu', 'indianexpress', 'pib'] as const).map((key) => {
-              const active = sourceFilter === key
-              const meta = SOURCE_META[key]
-              return (
-                <button
-                  key={key}
-                  onClick={() => setSourceFilter(key)}
-                  style={{
-                    padding: isMobile ? '2px 8px' : '3px 12px',
-                    fontSize: isMobile ? 10 : 11,
-                    fontWeight: active ? 600 : 400,
-                    letterSpacing: '0.5px',
-                    border: '1px solid',
-                    cursor: 'pointer',
-                    borderRadius: 2,
-                    background: active ? meta.color : 'transparent',
-                    borderColor: active ? meta.color : 'var(--color-border)',
-                    color: active ? '#fff' : 'var(--color-text-tertiary)',
-                    transition: 'all 0.15s',
-                  }}
-                  onMouseEnter={(e) => { if (!active) { e.currentTarget.style.borderColor = meta.color; e.currentTarget.style.color = meta.color } }}
-                  onMouseLeave={(e) => { if (!active) { e.currentTarget.style.borderColor = 'var(--color-border)'; e.currentTarget.style.color = 'var(--color-text-tertiary)' } }}
-                >
-                  {meta.label}
+        {/* Source tabs */}
+        <div style={{ borderBottom: '1px solid var(--color-border-light)' }}>
+          <Tabs
+            activeKey={sourceFilter}
+            onChange={(key) => { setSourceFilter(key); setCategoryFilter('all') }}
+            items={(['all', 'thehindu', 'indianexpress', 'pib'] as const).map((key) => ({
+              key,
+              label: (
+                <span style={{ fontSize: isMobile ? 12 : 13, fontWeight: sourceFilter === key ? 700 : 400 }}>
+                  {SOURCE_META[key].label}
                   {(counts as any)[key] != null && (
-                    <span style={{ marginLeft: 2, fontWeight: 300, opacity: 0.6 }}>{(counts as any)[key]}</span>
+                    <span style={{ marginLeft: 4, fontSize: 10, color: 'var(--color-text-tertiary)' }}>{(counts as any)[key]}</span>
                   )}
-                </button>
-              )
-            })}
-          </Space>
+                </span>
+              ),
+            }))}
+            size="small"
+            style={{ marginBottom: 0 }}
+            tabBarStyle={{ marginBottom: 0, borderBottom: 'none' }}
+          />
         </div>
 
         {/* Category tabs */}
@@ -212,7 +197,7 @@ export default function NewsFeedPage() {
         )}
 
         {/* Search */}
-        <div style={{ paddingTop: isMobile ? 4 : 6, paddingBottom: 0 }}>
+        <div style={{ borderBottom: '1px solid var(--color-border-light)' }}>
           <Input.Search
             placeholder="Search articles..."
             value={searchInput}
@@ -223,6 +208,7 @@ export default function NewsFeedPage() {
             size="small"
             variant="borderless"
             prefix={<SearchOutlined style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }} />}
+            style={{ height: isMobile ? 34 : 38 }}
           />
         </div>
       </div>
