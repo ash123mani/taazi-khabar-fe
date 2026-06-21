@@ -157,47 +157,47 @@ export default function NewsFeedPage() {
           top: 0,
           zIndex: 49,
           background: 'var(--color-bg)',
+          borderBottom: '1px solid var(--color-border-light)',
           marginBottom: isMobile ? 6 : 10,
         }}
       >
         {/* Source tabs */}
-        <div style={{ borderBottom: '1px solid var(--color-border-light)' }}>
+        <Tabs
+          activeKey={sourceFilter}
+          onChange={(key) => { setSourceFilter(key); setCategoryFilter('all') }}
+          items={(['all', 'thehindu', 'indianexpress', 'pib'] as const).map((key) => ({
+            key,
+            label: (
+              <span style={{ fontSize: isMobile ? 12 : 13, fontWeight: sourceFilter === key ? 700 : 400 }}>
+                {SOURCE_META[key].label}
+                {(counts as any)[key] != null && (
+                  <span style={{ marginLeft: 4, fontSize: 10, color: 'var(--color-text-tertiary)' }}>{(counts as any)[key]}</span>
+                )}
+              </span>
+            ),
+          }))}
+          size="small"
+          style={{ marginBottom: 0 }}
+          tabBarStyle={{ marginBottom: 0, borderBottom: 'none' }}
+        />
+
+        {/* Category tabs */}
+        {categories.length > 0 && (
           <Tabs
-            activeKey={sourceFilter}
-            onChange={(key) => { setSourceFilter(key); setCategoryFilter('all') }}
-            items={(['all', 'thehindu', 'indianexpress', 'pib'] as const).map((key) => ({
-              key,
-              label: (
-                <span style={{ fontSize: isMobile ? 12 : 13, fontWeight: sourceFilter === key ? 700 : 400 }}>
-                  {SOURCE_META[key].label}
-                  {(counts as any)[key] != null && (
-                    <span style={{ marginLeft: 4, fontSize: 10, color: 'var(--color-text-tertiary)' }}>{(counts as any)[key]}</span>
-                  )}
-                </span>
-              ),
-            }))}
+            activeKey={categoryFilter}
+            onChange={setCategoryFilter}
+            items={tabItems}
             size="small"
             style={{ marginBottom: 0 }}
             tabBarStyle={{ marginBottom: 0, borderBottom: 'none' }}
           />
-        </div>
-
-        {/* Category tabs */}
-        {categories.length > 0 && (
-          <div style={{ borderBottom: '1px solid var(--color-border-light)' }}>
-            <Tabs
-              activeKey={categoryFilter}
-              onChange={setCategoryFilter}
-              items={tabItems}
-              size="small"
-              style={{ marginBottom: 0 }}
-              tabBarStyle={{ marginBottom: 0, borderBottom: 'none' }}
-            />
-          </div>
         )}
 
         {/* Search */}
-        <div style={{ borderBottom: '1px solid var(--color-border-light)' }}>
+        <div style={{
+          borderTop: '1px solid var(--color-border-light)',
+          padding: '2px 0',
+        }}>
           <Input.Search
             placeholder="Search articles..."
             value={searchInput}
@@ -208,7 +208,7 @@ export default function NewsFeedPage() {
             size="small"
             variant="borderless"
             prefix={<SearchOutlined style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }} />}
-            style={{ height: isMobile ? 34 : 38 }}
+            style={{ height: isMobile ? 30 : 34 }}
           />
         </div>
       </div>
