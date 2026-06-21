@@ -136,7 +136,7 @@ export default function NewsFeedPage() {
             color: 'var(--color-text)',
             lineHeight: 1.15,
           }}>
-            Today's Briefing
+            {dayjs(date).format('D MMMM')} Briefings
           </div>
           <DatePicker
             value={dayjs(date)}

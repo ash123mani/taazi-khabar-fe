@@ -58,7 +58,7 @@ export default function QuizContent() {
             color: 'var(--color-text)',
             lineHeight: 1.15,
           }}>
-            Daily Quiz
+            Quiz — {dayjs(date).format('D MMMM YYYY')}
           </div>
           <DatePicker
             value={dayjs(date)}
