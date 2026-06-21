@@ -18,7 +18,7 @@ const mockLogout = vi.fn();
 const mockStore = { setUser: mockSetUser, setLoading: mockSetLoading, logout: mockLogout };
 
 vi.mock('@/stores/authStore', () => ({
-  useAuthStore: (sel?: any) => sel ? sel(mockStore) : mockStore,
+  useAuthStore: (sel?: any) => (sel ? sel(mockStore) : mockStore),
 }));
 
 describe('useAuth', () => {
@@ -41,10 +41,7 @@ describe('useAuth', () => {
       status: 'authenticated',
     });
     renderHook(() => useAuth());
-    expect(mockSetUser).toHaveBeenCalledWith(
-      { id: '1', email: 'a@b.com', name: 'A', is_admin: true },
-      'token123'
-    );
+    expect(mockSetUser).toHaveBeenCalledWith({ id: '1', email: 'a@b.com', name: 'A', is_admin: true }, 'token123');
   });
 
   it('calls logout when no session', () => {

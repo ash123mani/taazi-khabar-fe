@@ -21,9 +21,42 @@ vi.mock('antd', async () => {
 });
 
 const articles: Article[] = [
-  { id: 'a1', headline: 'Polity Update', gk_summary: 'Polity summary', published_at: '2026-06-15', source: 'thehindu', url: 'https://example.com/1', image_url: null, key_terms: [], syllabus_tag: null, is_bookmarked: false },
-  { id: 'a2', headline: 'Economy News', gk_summary: 'Economy summary', published_at: '2026-06-15', source: 'indianexpress', url: 'https://example.com/2', image_url: null, key_terms: [], syllabus_tag: null, is_bookmarked: false },
-  { id: 'a3', headline: 'Science Breakthrough', gk_summary: 'Science summary', published_at: '2026-06-15', source: 'thehindu', url: 'https://example.com/3', image_url: null, key_terms: [], syllabus_tag: null, is_bookmarked: false },
+  {
+    id: 'a1',
+    headline: 'Polity Update',
+    gk_summary: 'Polity summary',
+    published_at: '2026-06-15',
+    source: 'thehindu',
+    url: 'https://example.com/1',
+    image_url: null,
+    key_terms: [],
+    syllabus_tag: null,
+    is_bookmarked: false,
+  },
+  {
+    id: 'a2',
+    headline: 'Economy News',
+    gk_summary: 'Economy summary',
+    published_at: '2026-06-15',
+    source: 'indianexpress',
+    url: 'https://example.com/2',
+    image_url: null,
+    key_terms: [],
+    syllabus_tag: null,
+    is_bookmarked: false,
+  },
+  {
+    id: 'a3',
+    headline: 'Science Breakthrough',
+    gk_summary: 'Science summary',
+    published_at: '2026-06-15',
+    source: 'thehindu',
+    url: 'https://example.com/3',
+    image_url: null,
+    key_terms: [],
+    syllabus_tag: null,
+    is_bookmarked: false,
+  },
 ];
 
 describe('ArticleSelector', () => {

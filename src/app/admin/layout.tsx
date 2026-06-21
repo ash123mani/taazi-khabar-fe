@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
-import { Layout, Menu, Button, Typography, Dropdown, Avatar, Space, theme } from 'antd'
+import { useState } from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { Layout, Menu, Button, Typography, Dropdown, Avatar, Space, theme } from 'antd';
 import {
   DashboardOutlined,
   FileTextOutlined,
@@ -19,12 +19,12 @@ import {
   MenuUnfoldOutlined,
   SunOutlined,
   MoonOutlined,
-} from '@ant-design/icons'
-import { useAuthStore } from '@/stores/authStore'
-import { useThemeStore } from '@/stores/themeStore'
+} from '@ant-design/icons';
+import { useAuthStore } from '@/stores/authStore';
+import { useThemeStore } from '@/stores/themeStore';
 
-const { Header, Sider, Content } = Layout
-const { Text } = Typography
+const { Header, Sider, Content } = Layout;
+const { Text } = Typography;
 
 const menuItems = [
   { key: '/admin', icon: <DashboardOutlined />, label: 'Dashboard' },
@@ -36,23 +36,23 @@ const menuItems = [
   { key: '/admin/summaries', icon: <FileSearchOutlined />, label: 'Summaries' },
   { key: '/admin/training-data', icon: <DatabaseOutlined />, label: 'Training Data' },
   { key: '/admin/users', icon: <SafetyOutlined />, label: 'Users' },
-]
+];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const [collapsed, setCollapsed] = useState(false)
-  const pathname = usePathname()
-  const router = useRouter()
-  const { user, logout } = useAuthStore()
-  const isDark = useThemeStore((s) => s.isDark)
-  const toggleTheme = useThemeStore((s) => s.toggle)
+  const [collapsed, setCollapsed] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+  const { user, logout } = useAuthStore();
+  const isDark = useThemeStore((s) => s.isDark);
+  const toggleTheme = useThemeStore((s) => s.toggle);
   const {
     token: { colorBgContainer, colorText },
-  } = theme.useToken()
+  } = theme.useToken();
 
   const handleLogout = () => {
-    logout()
-    window.location.href = '/login'
-  }
+    logout();
+    window.location.href = '/login';
+  };
 
   const userMenuItems = [
     {
@@ -66,7 +66,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       label: 'Logout',
       onClick: handleLogout,
     },
-  ]
+  ];
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -80,20 +80,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         }}
         width={240}
       >
-        <div style={{
-          height: 64,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderBottom: '1px solid var(--color-border)',
-        }}>
+        <div
+          style={{
+            height: 64,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderBottom: '1px solid var(--color-border)',
+          }}
+        >
           <Link href="/" style={{ textDecoration: 'none' }}>
-            <Text strong style={{
-              fontSize: collapsed ? 16 : 18,
-              color: '#ffffff',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-            }}>
+            <Text
+              strong
+              style={{
+                fontSize: collapsed ? 16 : 18,
+                color: '#ffffff',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+              }}
+            >
               {collapsed ? 'TK' : 'Taazi Khabar'}
             </Text>
           </Link>
@@ -112,15 +117,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         />
       </Sider>
       <Layout>
-        <Header style={{
-          padding: '0 24px',
-          background: colorBgContainer,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          borderBottom: '1px solid #1f1f1f',
-          height: 64,
-        }}>
+        <Header
+          style={{
+            padding: '0 24px',
+            background: colorBgContainer,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderBottom: '1px solid #1f1f1f',
+            height: 64,
+          }}
+        >
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -147,16 +154,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </Dropdown>
           </Space>
         </Header>
-        <Content style={{
-          margin: 24,
-          padding: 24,
-          minHeight: 280,
-          background: colorBgContainer,
-          borderRadius: 12,
-        }}>
+        <Content
+          style={{
+            margin: 24,
+            padding: 24,
+            minHeight: 280,
+            background: colorBgContainer,
+            borderRadius: 12,
+          }}
+        >
           {children}
         </Content>
       </Layout>
     </Layout>
-  )
+  );
 }

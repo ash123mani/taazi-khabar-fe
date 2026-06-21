@@ -19,7 +19,11 @@ describe('ThemeProvider', () => {
   });
 
   it('renders children', () => {
-    render(<ThemeProvider><div>Child content</div></ThemeProvider>);
+    render(
+      <ThemeProvider>
+        <div>Child content</div>
+      </ThemeProvider>,
+    );
     expect(screen.getByText('Child content')).toBeInTheDocument();
   });
 
@@ -27,14 +31,22 @@ describe('ThemeProvider', () => {
     const setAttribute = vi.fn();
     document.documentElement.setAttribute = setAttribute;
     mockUseThemeStore.mockImplementation((sel: any) => sel({ isDark: true, setDark: vi.fn() }));
-    render(<ThemeProvider><div>Content</div></ThemeProvider>);
+    render(
+      <ThemeProvider>
+        <div>Content</div>
+      </ThemeProvider>,
+    );
     expect(setAttribute).toHaveBeenCalledWith('data-theme', 'dark');
   });
 
   it('calls setDark on mount', () => {
     const setDark = vi.fn();
     mockUseThemeStore.mockImplementation((sel: any) => sel({ isDark: true, setDark }));
-    render(<ThemeProvider><div>Content</div></ThemeProvider>);
+    render(
+      <ThemeProvider>
+        <div>Content</div>
+      </ThemeProvider>,
+    );
     expect(setDark).toHaveBeenCalledWith(true);
   });
 });

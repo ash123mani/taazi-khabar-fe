@@ -69,7 +69,15 @@ describe('QuizContent', () => {
         total_articles: 10,
         total_questions: 30,
         categories: [
-          { id: 'cat1', name: 'Polity', article_count: 3, question_count: 9, articles: [{ id: 'a1', headline: 'Polity Article', source: 'thehindu', url: 'https://example.com', image_url: null }] },
+          {
+            id: 'cat1',
+            name: 'Polity',
+            article_count: 3,
+            question_count: 9,
+            articles: [
+              { id: 'a1', headline: 'Polity Article', source: 'thehindu', url: 'https://example.com', image_url: null },
+            ],
+          },
           { id: 'cat2', name: 'Economy', article_count: 2, question_count: 6, articles: [] },
         ],
       },
@@ -92,9 +100,7 @@ describe('QuizContent', () => {
         date: '2026-06-15',
         total_articles: 1,
         total_questions: 3,
-        categories: [
-          { id: 'cat1', name: 'Polity', article_count: 1, question_count: 3, articles: [] },
-        ],
+        categories: [{ id: 'cat1', name: 'Polity', article_count: 1, question_count: 3, articles: [] }],
       },
       isLoading: false,
     });
@@ -111,7 +117,15 @@ describe('QuizContent', () => {
         total_articles: 1,
         total_questions: 3,
         categories: [
-          { id: 'cat1', name: 'Polity', article_count: 1, question_count: 3, articles: [{ id: 'a1', headline: 'Polity Article', source: 'thehindu', url: 'https://example.com', image_url: null }] },
+          {
+            id: 'cat1',
+            name: 'Polity',
+            article_count: 1,
+            question_count: 3,
+            articles: [
+              { id: 'a1', headline: 'Polity Article', source: 'thehindu', url: 'https://example.com', image_url: null },
+            ],
+          },
         ],
       },
       isLoading: false,
@@ -123,6 +137,4 @@ describe('QuizContent', () => {
     const articlesEls = screen.getAllByText('Articles');
     expect(articlesEls.length).toBeGreaterThanOrEqual(1);
   });
-
-
 });

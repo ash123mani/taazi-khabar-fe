@@ -1,8 +1,8 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Layout, Menu, Button, Space, Typography, Drawer } from 'antd'
-import { useIsMobile } from '@/hooks/useIsMobile'
+import { useState } from 'react';
+import { Layout, Menu, Button, Space, Typography, Drawer } from 'antd';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import {
   BookOutlined,
   QuestionCircleOutlined,
@@ -15,13 +15,13 @@ import {
   SunOutlined,
   MoonOutlined,
   MenuOutlined,
-} from '@ant-design/icons'
-import { useRouter, usePathname } from 'next/navigation'
-import { useSession, signOut } from 'next-auth/react'
-import { useThemeStore } from '@/stores/themeStore'
+} from '@ant-design/icons';
+import { useRouter, usePathname } from 'next/navigation';
+import { useSession, signOut } from 'next-auth/react';
+import { useThemeStore } from '@/stores/themeStore';
 
-const { Header, Content, Footer } = Layout
-const { Text } = Typography
+const { Header, Content, Footer } = Layout;
+const { Text } = Typography;
 
 const publicMenuItems = [
   { key: '/', icon: <BookOutlined />, label: 'Articles' },
@@ -29,66 +29,73 @@ const publicMenuItems = [
   { key: '/bookmarks', icon: <HeartOutlined />, label: 'Bookmarks' },
   { key: '/analytics', icon: <TrophyOutlined />, label: 'Analytics' },
   { key: '/history', icon: <HistoryOutlined />, label: 'History' },
-]
+];
 
 function selectedKey(pathname: string): string {
-  if (pathname === '/') return '/'
-  if (pathname.startsWith('/quiz')) return '/quiz'
-  if (pathname.startsWith('/bookmarks')) return '/bookmarks'
-  if (pathname.startsWith('/analytics')) return '/analytics'
-  if (pathname.startsWith('/history')) return '/history'
-  return ''
+  if (pathname === '/') return '/';
+  if (pathname.startsWith('/quiz')) return '/quiz';
+  if (pathname.startsWith('/bookmarks')) return '/bookmarks';
+  if (pathname.startsWith('/analytics')) return '/analytics';
+  if (pathname.startsWith('/history')) return '/history';
+  return '';
 }
 
 export default function PublicLayoutClient({ children }: { children: React.ReactNode }) {
-  const router = useRouter()
-  const pathname = usePathname()
-  const { data: session } = useSession()
-  const isDark = useThemeStore((s) => s.isDark)
-  const toggle = useThemeStore((s) => s.toggle)
-  const isMobile = useIsMobile()
-  const [drawerOpen, setDrawerOpen] = useState(false)
+  const router = useRouter();
+  const pathname = usePathname();
+  const { data: session } = useSession();
+  const isDark = useThemeStore((s) => s.isDark);
+  const toggle = useThemeStore((s) => s.toggle);
+  const isMobile = useIsMobile();
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const isAdmin = (session?.user as any)?.is_admin
+  const isAdmin = (session?.user as any)?.is_admin;
 
   const nav = [
     ...publicMenuItems,
     ...(isAdmin ? [{ key: '/admin' as const, icon: <ThunderboltOutlined />, label: 'Admin' }] : []),
-  ]
+  ];
 
   const handleNav = (key: string) => {
-    router.push(key)
-    setDrawerOpen(false)
-  }
+    router.push(key);
+    setDrawerOpen(false);
+  };
 
   return (
     <Layout style={{ minHeight: '100vh', background: 'var(--color-bg)' }}>
       {/* Masthead */}
       <div style={{ flexShrink: 0 }}>
         {/* Nameplate */}
-        <div style={{
-          textAlign: 'center',
-          padding: isMobile ? '10px 12px 8px' : '18px 20px 12px',
-          borderBottom: '1px solid var(--color-border)',
-        }}>
+        <div
+          style={{
+            textAlign: 'center',
+            padding: isMobile ? '10px 12px 8px' : '18px 20px 12px',
+            borderBottom: '1px solid var(--color-border)',
+          }}
+        >
           <div onClick={() => router.push('/')} style={{ cursor: 'pointer' }}>
-            <div className="newspaper-heading" style={{
-              fontWeight: 900,
-              fontSize: isMobile ? 26 : 42,
-              letterSpacing: isMobile ? '-0.5px' : '-1px',
-              color: 'var(--color-text)',
-              lineHeight: 1.05,
-            }}>
+            <div
+              className="newspaper-heading"
+              style={{
+                fontWeight: 900,
+                fontSize: isMobile ? 26 : 42,
+                letterSpacing: isMobile ? '-0.5px' : '-1px',
+                color: 'var(--color-text)',
+                lineHeight: 1.05,
+              }}
+            >
               Taazi Khabar
             </div>
-            <div style={{
-              fontSize: isMobile ? 8 : 10,
-              fontWeight: 500,
-              letterSpacing: isMobile ? '2px' : '4px',
-              textTransform: 'uppercase',
-              color: 'var(--color-text-tertiary)',
-              marginTop: isMobile ? 2 : 4,
-            }}>
+            <div
+              style={{
+                fontSize: isMobile ? 8 : 10,
+                fontWeight: 500,
+                letterSpacing: isMobile ? '2px' : '4px',
+                textTransform: 'uppercase',
+                color: 'var(--color-text-tertiary)',
+                marginTop: isMobile ? 2 : 4,
+              }}
+            >
               UPSC Current Affairs Digest
             </div>
           </div>
@@ -135,29 +142,44 @@ export default function PublicLayoutClient({ children }: { children: React.React
 
           <Space style={{ flexShrink: 0 }} size={isMobile ? 2 : 8}>
             <Button
-              type="text" size="small"
+              type="text"
+              size="small"
               icon={isDark ? <SunOutlined /> : <MoonOutlined />}
               onClick={toggle}
               style={{ color: 'var(--color-text-secondary)', fontSize: 14 }}
             />
             {session ? (
               isMobile ? null : (
-                <Button type="text" size="small" icon={<LogoutOutlined />} onClick={() => signOut()}
-                  style={{ color: 'var(--color-text-secondary)', fontSize: 12 }}>
+                <Button
+                  type="text"
+                  size="small"
+                  icon={<LogoutOutlined />}
+                  onClick={() => signOut()}
+                  style={{ color: 'var(--color-text-secondary)', fontSize: 12 }}
+                >
                   Logout
                 </Button>
               )
-            ) : (
-              isMobile ? null : (
-                <Button type="primary" ghost size="small" icon={<LoginOutlined />} onClick={() => router.push('/login')}
-                  style={{ fontSize: 12, height: 30, border: '1px solid var(--color-border)' }}>
-                  Login
-                </Button>
-              )
+            ) : isMobile ? null : (
+              <Button
+                type="primary"
+                ghost
+                size="small"
+                icon={<LoginOutlined />}
+                onClick={() => router.push('/login')}
+                style={{ fontSize: 12, height: 30, border: '1px solid var(--color-border)' }}
+              >
+                Login
+              </Button>
             )}
             {isMobile && (
-              <Button type="text" size="small" icon={<MenuOutlined />} onClick={() => setDrawerOpen(true)}
-                style={{ color: 'var(--color-text-secondary)' }} />
+              <Button
+                type="text"
+                size="small"
+                icon={<MenuOutlined />}
+                onClick={() => setDrawerOpen(true)}
+                style={{ color: 'var(--color-text-secondary)' }}
+              />
             )}
           </Space>
         </Header>
@@ -165,7 +187,11 @@ export default function PublicLayoutClient({ children }: { children: React.React
 
       {/* Mobile Drawer */}
       <Drawer
-        title={<span className="newspaper-heading" style={{ fontSize: 18, fontWeight: 700 }}>Taazi Khabar</span>}
+        title={
+          <span className="newspaper-heading" style={{ fontSize: 18, fontWeight: 700 }}>
+            Taazi Khabar
+          </span>
+        }
         placement="left"
         onClose={() => setDrawerOpen(false)}
         open={drawerOpen}
@@ -180,14 +206,21 @@ export default function PublicLayoutClient({ children }: { children: React.React
             { type: 'divider' },
             ...(session
               ? [{ key: '__logout__', icon: <LogoutOutlined />, label: 'Logout', danger: true }]
-              : [{ key: '/login', icon: <LoginOutlined />, label: 'Login' }]
-            ),
+              : [{ key: '/login', icon: <LoginOutlined />, label: 'Login' }]),
           ]}
           onClick={({ key }) => {
-            if (key === '__logout__') { signOut(); setDrawerOpen(false) }
-            else handleNav(key)
+            if (key === '__logout__') {
+              signOut();
+              setDrawerOpen(false);
+            } else handleNav(key);
           }}
-          style={{ borderInlineEnd: 'none', fontSize: 13, fontWeight: 500, letterSpacing: '0.5px', textTransform: 'uppercase' }}
+          style={{
+            borderInlineEnd: 'none',
+            fontSize: 13,
+            fontWeight: 500,
+            letterSpacing: '0.5px',
+            textTransform: 'uppercase',
+          }}
         />
       </Drawer>
 
@@ -217,7 +250,10 @@ export default function PublicLayoutClient({ children }: { children: React.React
       >
         {isMobile ? (
           <div style={{ textAlign: 'center' }}>
-            <div className="newspaper-heading" style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-text-secondary)', marginBottom: 6 }}>
+            <div
+              className="newspaper-heading"
+              style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-text-secondary)', marginBottom: 6 }}
+            >
               Taazi Khabar
             </div>
             <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 10, display: 'block', marginBottom: 4 }}>
@@ -230,24 +266,51 @@ export default function PublicLayoutClient({ children }: { children: React.React
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: 48 }}>
             <div>
-              <div className="newspaper-heading" style={{ fontSize: 20, fontWeight: 700, color: 'var(--color-text)', marginBottom: 8, letterSpacing: '-0.3px' }}>
+              <div
+                className="newspaper-heading"
+                style={{
+                  fontSize: 20,
+                  fontWeight: 700,
+                  color: 'var(--color-text)',
+                  marginBottom: 8,
+                  letterSpacing: '-0.3px',
+                }}
+              >
                 Taazi Khabar
               </div>
-              <div className="newspaper-body" style={{ color: 'var(--color-text-tertiary)', fontSize: 13, lineHeight: 1.7 }}>
-                An AI-powered current affairs platform for UPSC preparation. Daily curated news, summaries, and quizzes to help you stay ahead.
+              <div
+                className="newspaper-body"
+                style={{ color: 'var(--color-text-tertiary)', fontSize: 13, lineHeight: 1.7 }}
+              >
+                An AI-powered current affairs platform for UPSC preparation. Daily curated news, summaries, and quizzes
+                to help you stay ahead.
               </div>
             </div>
             <div>
-              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--color-text-secondary)', marginBottom: 12 }}>
+              <div
+                style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  letterSpacing: '2px',
+                  textTransform: 'uppercase',
+                  color: 'var(--color-text-secondary)',
+                  marginBottom: 12,
+                }}
+              >
                 Sections
               </div>
               {['Articles', 'Quiz', 'Bookmarks', 'Analytics', 'History'].map((label) => (
                 <div key={label} style={{ marginBottom: 6 }}>
                   <Text
                     onClick={() => router.push(`/${label.toLowerCase()}`)}
-                    style={{ color: 'var(--color-text-tertiary)', fontSize: 13, cursor: 'pointer', transition: 'color 0.15s' }}
-                    onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-text)'}
-                    onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-text-tertiary)'}
+                    style={{
+                      color: 'var(--color-text-tertiary)',
+                      fontSize: 13,
+                      cursor: 'pointer',
+                      transition: 'color 0.15s',
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-text)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-tertiary)')}
                   >
                     {label}
                   </Text>
@@ -255,7 +318,16 @@ export default function PublicLayoutClient({ children }: { children: React.React
               ))}
             </div>
             <div>
-              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--color-text-secondary)', marginBottom: 12 }}>
+              <div
+                style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  letterSpacing: '2px',
+                  textTransform: 'uppercase',
+                  color: 'var(--color-text-secondary)',
+                  marginBottom: 12,
+                }}
+              >
                 Built With
               </div>
               <div style={{ color: 'var(--color-text-tertiary)', fontSize: 13, lineHeight: 1.7 }}>
@@ -266,7 +338,16 @@ export default function PublicLayoutClient({ children }: { children: React.React
               </div>
             </div>
             <div>
-              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--color-text-secondary)', marginBottom: 12 }}>
+              <div
+                style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  letterSpacing: '2px',
+                  textTransform: 'uppercase',
+                  color: 'var(--color-text-secondary)',
+                  marginBottom: 12,
+                }}
+              >
                 Info
               </div>
               <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 13, display: 'block' }}>
@@ -277,5 +358,5 @@ export default function PublicLayoutClient({ children }: { children: React.React
         )}
       </Footer>
     </Layout>
-  )
+  );
 }

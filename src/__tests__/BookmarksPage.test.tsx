@@ -54,7 +54,16 @@ describe('BookmarksPage', () => {
 
   it('renders bookmarked articles', async () => {
     mockGetBookmarkedArticles.mockResolvedValue([
-      { id: 'a1', headline: 'Bookmarked Article', published_at: '2026-06-15', source: 'thehindu', url: 'https://example.com', image_url: null, key_terms: [], syllabus_tag: null },
+      {
+        id: 'a1',
+        headline: 'Bookmarked Article',
+        published_at: '2026-06-15',
+        source: 'thehindu',
+        url: 'https://example.com',
+        image_url: null,
+        key_terms: [],
+        syllabus_tag: null,
+      },
     ]);
     render(<BookmarksPage />);
     await waitFor(() => {

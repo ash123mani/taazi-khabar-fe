@@ -28,11 +28,21 @@ import ScrapePage from '@/app/admin/scrape/page';
 const sampleSources = {
   sources: {
     thehindu: [
-      { date: '2026-06-06', total_articles: 5, scrape_times: ['2026-06-06T10:00:00Z'], categories: { 'GS Paper II': 3, 'GS Paper III': 2 } },
+      {
+        date: '2026-06-06',
+        total_articles: 5,
+        scrape_times: ['2026-06-06T10:00:00Z'],
+        categories: { 'GS Paper II': 3, 'GS Paper III': 2 },
+      },
       { date: '2026-06-05', total_articles: 0, scrape_times: [], categories: {} },
     ],
     indianexpress: [
-      { date: '2026-06-06', total_articles: 3, scrape_times: ['2026-06-06T11:00:00Z'], categories: { 'GS Paper I': 3 } },
+      {
+        date: '2026-06-06',
+        total_articles: 3,
+        scrape_times: ['2026-06-06T11:00:00Z'],
+        categories: { 'GS Paper I': 3 },
+      },
       { date: '2026-06-05', total_articles: 0, scrape_times: [], categories: {} },
     ],
   },
@@ -130,9 +140,7 @@ describe('Admin Scrape Page', () => {
     fireEvent.click(screen.getAllByText('Scrape')[0]);
 
     await waitFor(() => {
-      expect(mockMessageSuccess).toHaveBeenCalledWith(
-        'Created 10 articles, filtered out 2'
-      );
+      expect(mockMessageSuccess).toHaveBeenCalledWith('Created 10 articles, filtered out 2');
     });
   });
 
@@ -190,7 +198,7 @@ describe('Admin Scrape Page', () => {
 
     await waitFor(() => {
       const allScrapeBtns = screen.getAllByText('Scrape');
-      allScrapeBtns.forEach(btn => {
+      allScrapeBtns.forEach((btn) => {
         expect(btn.closest('button')).toBeDisabled();
       });
     });

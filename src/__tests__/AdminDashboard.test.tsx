@@ -30,7 +30,10 @@ describe('AdminDashboard', () => {
   });
 
   it('renders dashboard stats', async () => {
-    mockAdminGetArticles.mockResolvedValue({ articles: [{ id: 'a1', headline: 'Article 1', source: 'thehindu', published_at: '2026-06-15' }], total: 1 });
+    mockAdminGetArticles.mockResolvedValue({
+      articles: [{ id: 'a1', headline: 'Article 1', source: 'thehindu', published_at: '2026-06-15' }],
+      total: 1,
+    });
     mockGetHistory.mockResolvedValue([]);
     render(<AdminDashboard />);
     await waitFor(() => {
@@ -42,7 +45,10 @@ describe('AdminDashboard', () => {
   });
 
   it('renders recent articles table', async () => {
-    mockAdminGetArticles.mockResolvedValue({ articles: [{ id: 'a1', headline: 'Article 1', source: 'thehindu', published_at: '2026-06-15' }], total: 1 });
+    mockAdminGetArticles.mockResolvedValue({
+      articles: [{ id: 'a1', headline: 'Article 1', source: 'thehindu', published_at: '2026-06-15' }],
+      total: 1,
+    });
     mockGetHistory.mockResolvedValue([]);
     render(<AdminDashboard />);
     await waitFor(() => {
@@ -52,7 +58,9 @@ describe('AdminDashboard', () => {
 
   it('renders recent quizzes table', async () => {
     mockAdminGetArticles.mockResolvedValue({ articles: [], total: 0 });
-    mockGetHistory.mockResolvedValue({ quizzes: [{ id: 'q1', score: 8, total_questions: 10, created_at: '2026-06-15T10:00:00Z' }] });
+    mockGetHistory.mockResolvedValue({
+      quizzes: [{ id: 'q1', score: 8, total_questions: 10, created_at: '2026-06-15T10:00:00Z' }],
+    });
     render(<AdminDashboard />);
     await waitFor(() => {
       expect(screen.getByText('Recent Quizzes')).toBeInTheDocument();
@@ -69,10 +77,13 @@ describe('AdminDashboard', () => {
   });
 
   it('shows article counts in stats cards', async () => {
-    mockAdminGetArticles.mockResolvedValue({ articles: [
-      { id: 'a1', headline: 'A1', source: 'thehindu', published_at: '2026-06-15' },
-      { id: 'a2', headline: 'A2', source: 'indianexpress', published_at: '2026-06-15' },
-    ], total: 2 });
+    mockAdminGetArticles.mockResolvedValue({
+      articles: [
+        { id: 'a1', headline: 'A1', source: 'thehindu', published_at: '2026-06-15' },
+        { id: 'a2', headline: 'A2', source: 'indianexpress', published_at: '2026-06-15' },
+      ],
+      total: 2,
+    });
     mockGetHistory.mockResolvedValue([]);
     render(<AdminDashboard />);
     await waitFor(() => {

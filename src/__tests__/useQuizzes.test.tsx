@@ -51,7 +51,12 @@ describe('useDailyQuizSummary', () => {
   });
 
   it('fetches daily summary', async () => {
-    mockGetDailyQuizSummary.mockResolvedValue({ date: '2026-06-15', categories: [], total_articles: 0, total_questions: 0 });
+    mockGetDailyQuizSummary.mockResolvedValue({
+      date: '2026-06-15',
+      categories: [],
+      total_articles: 0,
+      total_questions: 0,
+    });
     const { result } = renderHook(() => useDailyQuizSummary(), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toEqual({ date: '2026-06-15', categories: [], total_articles: 0, total_questions: 0 });

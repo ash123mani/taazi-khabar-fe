@@ -29,12 +29,12 @@ Opens at `http://localhost:3000`.
 
 ## Available Commands
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start dev server |
+| Command         | Description      |
+| --------------- | ---------------- |
+| `npm run dev`   | Start dev server |
 | `npm run build` | Production build |
-| `npm run lint` | Lint |
-| `npm test` | Run tests |
+| `npm run lint`  | Lint             |
+| `npm test`      | Run tests        |
 
 ## Project Structure
 

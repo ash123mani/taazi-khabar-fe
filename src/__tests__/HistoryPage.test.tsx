@@ -64,8 +64,24 @@ describe('HistoryPage', () => {
 
   it('renders quiz list', async () => {
     mockGetHistory.mockResolvedValue([
-      { id: 'h1', title: 'Quiz 1', score: 8, total_questions: 10, created_at: '2026-06-15T10:00:00Z', articles: [], questions: [] },
-      { id: 'h2', title: 'Quiz 2', score: 5, total_questions: 10, created_at: '2026-06-14T10:00:00Z', articles: [], questions: [] },
+      {
+        id: 'h1',
+        title: 'Quiz 1',
+        score: 8,
+        total_questions: 10,
+        created_at: '2026-06-15T10:00:00Z',
+        articles: [],
+        questions: [],
+      },
+      {
+        id: 'h2',
+        title: 'Quiz 2',
+        score: 5,
+        total_questions: 10,
+        created_at: '2026-06-14T10:00:00Z',
+        articles: [],
+        questions: [],
+      },
     ]);
     render(<HistoryPage />);
     await waitFor(() => {
@@ -75,7 +91,15 @@ describe('HistoryPage', () => {
 
   it('shows total quizzes stat', async () => {
     mockGetHistory.mockResolvedValue([
-      { id: 'h1', title: 'Q1', score: 8, total_questions: 10, created_at: '2026-06-15T10:00:00Z', articles: [], questions: [] },
+      {
+        id: 'h1',
+        title: 'Q1',
+        score: 8,
+        total_questions: 10,
+        created_at: '2026-06-15T10:00:00Z',
+        articles: [],
+        questions: [],
+      },
     ]);
     render(<HistoryPage />);
     await waitFor(() => {
@@ -85,8 +109,24 @@ describe('HistoryPage', () => {
 
   it('calculates average score', async () => {
     mockGetHistory.mockResolvedValue([
-      { id: 'h1', title: 'Q1', score: 8, total_questions: 10, created_at: '2026-06-15T10:00:00Z', articles: [], questions: [] },
-      { id: 'h2', title: 'Q2', score: 4, total_questions: 10, created_at: '2026-06-14T10:00:00Z', articles: [], questions: [] },
+      {
+        id: 'h1',
+        title: 'Q1',
+        score: 8,
+        total_questions: 10,
+        created_at: '2026-06-15T10:00:00Z',
+        articles: [],
+        questions: [],
+      },
+      {
+        id: 'h2',
+        title: 'Q2',
+        score: 4,
+        total_questions: 10,
+        created_at: '2026-06-14T10:00:00Z',
+        articles: [],
+        questions: [],
+      },
     ]);
     render(<HistoryPage />);
     await waitFor(() => {

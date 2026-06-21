@@ -1,49 +1,49 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import { Typography, Table, Space, Button, message, Card, Input, Popconfirm } from 'antd'
-import dayjs from 'dayjs'
-import { api } from '@/lib/api'
-import type { Category } from '@/lib/types'
+import { useEffect, useState } from 'react';
+import { Typography, Table, Space, Button, message, Card, Input, Popconfirm } from 'antd';
+import dayjs from 'dayjs';
+import { api } from '@/lib/api';
+import type { Category } from '@/lib/types';
 
-const { Title } = Typography
-const { Search } = Input
+const { Title } = Typography;
+const { Search } = Input;
 
 export default function CategoriesPage() {
-  const [categories, setCategories] = useState<Category[]>([])
-  const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState('')
-  const [pagination, setPagination] = useState({ current: 1, pageSize: 10 })
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 10 });
 
   const fetchCategories = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const data = await api.getCategories()
-      setCategories(data?.categories || data || [])
+      const data = await api.getCategories();
+      setCategories(data?.categories || data || []);
     } catch (err: any) {
-      message.error(err.message || 'Failed to load categories')
+      message.error(err.message || 'Failed to load categories');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchCategories()
-  }, [])
+    fetchCategories();
+  }, []);
 
   const handleDelete = async (id: string) => {
     try {
-      await api.deleteCategory(id)
-      message.success('Category deleted successfully')
-      fetchCategories()
+      await api.deleteCategory(id);
+      message.success('Category deleted successfully');
+      fetchCategories();
     } catch (err: any) {
-      message.error(err.message || 'Failed to delete category')
+      message.error(err.message || 'Failed to delete category');
     }
-  }
+  };
 
   const filteredCategories = categories.filter((category) => {
-    return !search || category.name?.toLowerCase().includes(search.toLowerCase())
-  })
+    return !search || category.name?.toLowerCase().includes(search.toLowerCase());
+  });
 
   const columns = [
     {
@@ -68,14 +68,18 @@ export default function CategoriesPage() {
       title: 'Created',
       dataIndex: 'created_at',
       key: 'created_at',
-      render: (date: string) => <span style={{ color: 'var(--color-text-tertiary)' }}>{dayjs(date).format('DD-MM-YYYY')}</span>,
+      render: (date: string) => (
+        <span style={{ color: 'var(--color-text-tertiary)' }}>{dayjs(date).format('DD-MM-YYYY')}</span>
+      ),
     },
     {
       title: 'Actions',
       key: 'actions',
       render: (_: any, record: Category) => (
         <Space>
-          <Button size="small" type="default" style={{ fontWeight: 600, borderRadius: 6 }}>Edit</Button>
+          <Button size="small" type="default" style={{ fontWeight: 600, borderRadius: 6 }}>
+            Edit
+          </Button>
           <Popconfirm
             title="Delete category"
             description="Are you sure you want to delete this category?"
@@ -84,17 +88,24 @@ export default function CategoriesPage() {
             cancelText="Cancel"
             okButtonProps={{ danger: true }}
           >
-            <Button danger size="small" style={{ borderRadius: 6 }}>Delete</Button>
+            <Button danger size="small" style={{ borderRadius: 6 }}>
+              Delete
+            </Button>
           </Popconfirm>
         </Space>
       ),
     },
-  ]
+  ];
 
   return (
     <div>
-      <Title level={4} style={{ margin: 0, marginBottom: 20, fontSize: 16, color: 'var(--color-text)' }}>Category Management</Title>
-      <Card style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 12 }} styles={{ body: { padding: 18 } }}>
+      <Title level={4} style={{ margin: 0, marginBottom: 20, fontSize: 16, color: 'var(--color-text)' }}>
+        Category Management
+      </Title>
+      <Card
+        style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 12 }}
+        styles={{ body: { padding: 18 } }}
+      >
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
           <Search
             placeholder="Search categories..."
@@ -102,7 +113,9 @@ export default function CategoriesPage() {
             style={{ width: 260 }}
             allowClear
           />
-          <Button onClick={fetchCategories} type="default" style={{ fontWeight: 600, borderRadius: 8 }}>Refresh</Button>
+          <Button onClick={fetchCategories} type="default" style={{ fontWeight: 600, borderRadius: 8 }}>
+            Refresh
+          </Button>
         </div>
         <Table
           columns={columns}
@@ -118,5 +131,5 @@ export default function CategoriesPage() {
         />
       </Card>
     </div>
-  )
+  );
 }

@@ -26,7 +26,9 @@ function createWrapper() {
 }
 
 describe('useInteractions', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('fetches interactions list', async () => {
     mockGetInteractions.mockResolvedValue([{ id: 'i1', persona: 'summarizer' }]);
@@ -43,7 +45,9 @@ describe('useInteractions', () => {
 });
 
 describe('useModels', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('fetches models', async () => {
     mockGetModels.mockResolvedValue({ summarizer: ['model1'], question_setter: ['model2'] });
@@ -54,7 +58,9 @@ describe('useModels', () => {
 });
 
 describe('useBuildDataset', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('calls api.buildDataset on mutate', async () => {
     mockBuildDataset.mockResolvedValue({ id: 'ds1', name: 'Test' });
@@ -65,7 +71,9 @@ describe('useBuildDataset', () => {
 });
 
 describe('useUpdateModels', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('calls api.updateModels on mutate', async () => {
     mockUpdateModels.mockResolvedValue({ status: 'updated' });

@@ -2,5 +2,5 @@
 const nextConfig = {
   output: 'standalone',
   images: { domains: [] },
-}
-module.exports = nextConfig
+};
+module.exports = nextConfig;

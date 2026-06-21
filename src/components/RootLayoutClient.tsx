@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import Providers from './providers'
+import Providers from './providers';
 
 export default function RootLayoutClient({ children }: { children: React.ReactNode }) {
-  return <Providers>{children}</Providers>
+  return <Providers>{children}</Providers>;
 }

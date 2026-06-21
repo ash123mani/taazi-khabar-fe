@@ -1,16 +1,16 @@
-import { useAuthStore } from '@/stores/authStore'
+import { useAuthStore } from '@/stores/authStore';
 
 const rawUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 const API_BASE = rawUrl.replace(/\/+$/, '').replace(/\/api$/, '') + '/api';
 
 async function fetchApi(path: string, options?: RequestInit) {
-  const token = useAuthStore.getState().accessToken
+  const token = useAuthStore.getState().accessToken;
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(options?.headers as Record<string, string>),
-  }
+  };
   if (token) {
-    headers['Authorization'] = `Bearer ${token}`
+    headers['Authorization'] = `Bearer ${token}`;
   }
   const res = await fetch(`${API_BASE}${path}`, {
     ...options,
@@ -74,41 +74,35 @@ export const api = {
   getTrainingDatasets: (params?: Record<string, string>) =>
     fetchApi(`/admin/datasets${params ? `?${new URLSearchParams(params)}` : ''}`),
 
-  deleteTrainingDataset: (id: string) =>
-    fetchApi(`/admin/datasets/${id}`, { method: 'DELETE' }),
+  deleteTrainingDataset: (id: string) => fetchApi(`/admin/datasets/${id}`, { method: 'DELETE' }),
 
-  buildDataset: (data: any) =>
-    fetchApi('/admin/datasets', { method: 'POST', body: JSON.stringify(data) }),
+  buildDataset: (data: any) => fetchApi('/admin/datasets', { method: 'POST', body: JSON.stringify(data) }),
 
   downloadDataset: async (id: string) => {
-    const token = useAuthStore.getState().accessToken
+    const token = useAuthStore.getState().accessToken;
     const res = await fetch(`${API_BASE}/admin/datasets/${id}/download`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
-    })
-    if (!res.ok) throw new Error(`Download failed: ${res.statusText}`)
-    const blob = await res.blob()
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = res.headers.get('content-disposition')?.split('filename="')?.[1]?.split('"')?.[0] || 'dataset.jsonl'
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
+    });
+    if (!res.ok) throw new Error(`Download failed: ${res.statusText}`);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = res.headers.get('content-disposition')?.split('filename="')?.[1]?.split('"')?.[0] || 'dataset.jsonl';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   },
 
   getModels: () => fetchApi('/admin/models'),
 
-  deleteModel: (id: string) =>
-    fetchApi(`/admin/models/${id}`, { method: 'DELETE' }),
+  deleteModel: (id: string) => fetchApi(`/admin/models/${id}`, { method: 'DELETE' }),
 
-  updateModels: (data: any) =>
-    fetchApi('/admin/models', { method: 'PUT', body: JSON.stringify(data) }),
+  updateModels: (data: any) => fetchApi('/admin/models', { method: 'PUT', body: JSON.stringify(data) }),
 
-  getScrapeDates: (days?: number) =>
-    fetchApi(`/admin/scrape-dates${days ? `?days=${days}` : ''}`),
-  getScrapeSummary: (days?: number) =>
-    fetchApi(`/admin/scrape-summary${days ? `?days=${days}` : ''}`),
+  getScrapeDates: (days?: number) => fetchApi(`/admin/scrape-dates${days ? `?days=${days}` : ''}`),
+  getScrapeSummary: (days?: number) => fetchApi(`/admin/scrape-summary${days ? `?days=${days}` : ''}`),
   getScrapeArticles: (source: string, date: string) =>
     fetchApi(`/admin/scrape-articles?source=${encodeURIComponent(source)}&date=${encodeURIComponent(date)}`),
   scrapeDate: (source: string, date: string) =>
@@ -129,11 +123,9 @@ export const api = {
   adminGetArticles: (params?: Record<string, string>) =>
     fetchApi(`/admin/articles${params ? `?${new URLSearchParams(params)}` : ''}`),
 
-  adminDeleteArticle: (id: string) =>
-    fetchApi(`/admin/articles/${id}`, { method: 'DELETE' }),
+  adminDeleteArticle: (id: string) => fetchApi(`/admin/articles/${id}`, { method: 'DELETE' }),
 
-  deleteArticle: (id: string) =>
-    fetchApi(`/articles/${id}`, { method: 'DELETE' }),
+  deleteArticle: (id: string) => fetchApi(`/articles/${id}`, { method: 'DELETE' }),
 
   adminGetCategories: (params?: Record<string, string>) =>
     fetchApi(`/admin/categories${params ? `?${new URLSearchParams(params)}` : ''}`),
@@ -150,11 +142,9 @@ export const api = {
       body: JSON.stringify(data),
     }),
 
-  adminDeleteCategory: (id: string) =>
-    fetchApi(`/admin/categories/${id}`, { method: 'DELETE' }),
+  adminDeleteCategory: (id: string) => fetchApi(`/admin/categories/${id}`, { method: 'DELETE' }),
 
-  deleteCategory: (id: string) =>
-    fetchApi(`/categories/${id}`, { method: 'DELETE' }),
+  deleteCategory: (id: string) => fetchApi(`/categories/${id}`, { method: 'DELETE' }),
 
   getCategories: (params?: Record<string, string>) =>
     fetchApi(`/categories${params ? `?${new URLSearchParams(params)}` : ''}`),
@@ -172,11 +162,9 @@ export const api = {
 
   getBookmarkedArticles: () => fetchApi('/bookmarks/articles'),
 
-  toggleBookmark: (articleId: string) =>
-    fetchApi(`/bookmarks/${articleId}`, { method: 'POST' }),
+  toggleBookmark: (articleId: string) => fetchApi(`/bookmarks/${articleId}`, { method: 'POST' }),
 
-  getDailyQuizSummary: (date?: string) =>
-    fetchApi(`/quizzes/by-date${date ? `?date_str=${date}` : ''}`),
+  getDailyQuizSummary: (date?: string) => fetchApi(`/quizzes/by-date${date ? `?date_str=${date}` : ''}`),
 
   startDailyQuiz: (date: string, category_id?: string) =>
     fetchApi('/quizzes/daily-start', {

@@ -5,7 +5,11 @@ const mockFetch = vi.fn();
 globalThis.fetch = mockFetch;
 
 function ok(body: any) {
-  return Promise.resolve({ ok: true, json: () => Promise.resolve(body), text: () => Promise.resolve(JSON.stringify(body)) } as Response);
+  return Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve(body),
+    text: () => Promise.resolve(JSON.stringify(body)),
+  } as Response);
 }
 
 function fail(status: number, body: string) {
@@ -18,16 +22,26 @@ beforeEach(() => {
 
 describe('api', () => {
   it('register calls POST /auth/register', async () => {
-    mockFetch.mockResolvedValueOnce(ok({ access_token: 't', user: { id: '1', email: 'a@b.com', name: 'A', is_admin: false } }));
+    mockFetch.mockResolvedValueOnce(
+      ok({ access_token: 't', user: { id: '1', email: 'a@b.com', name: 'A', is_admin: false } }),
+    );
     const res = await api.register({ email: 'a@b.com', password: 'p', name: 'A' });
-    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/auth/register'), expect.objectContaining({ method: 'POST' }));
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringContaining('/auth/register'),
+      expect.objectContaining({ method: 'POST' }),
+    );
     expect(res.access_token).toBe('t');
   });
 
   it('login calls POST /auth/login', async () => {
-    mockFetch.mockResolvedValueOnce(ok({ access_token: 't', user: { id: '1', email: 'a@b.com', name: 'A', is_admin: false } }));
+    mockFetch.mockResolvedValueOnce(
+      ok({ access_token: 't', user: { id: '1', email: 'a@b.com', name: 'A', is_admin: false } }),
+    );
     const res = await api.login({ email: 'a@b.com', password: 'p' });
-    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/auth/login'), expect.objectContaining({ method: 'POST' }));
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringContaining('/auth/login'),
+      expect.objectContaining({ method: 'POST' }),
+    );
     expect(res.access_token).toBe('t');
   });
 
@@ -54,7 +68,10 @@ describe('api', () => {
   it('generateQuiz calls POST /quizzes/generate', async () => {
     mockFetch.mockResolvedValueOnce(ok({ quiz_id: 'q1', cached: false }));
     const res = await api.generateQuiz(['a1', 'a2'], 3);
-    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/quizzes/generate'), expect.objectContaining({ method: 'POST' }));
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringContaining('/quizzes/generate'),
+      expect.objectContaining({ method: 'POST' }),
+    );
     expect(res.quiz_id).toBe('q1');
   });
 
@@ -68,7 +85,10 @@ describe('api', () => {
   it('submitQuiz calls POST /quizzes/:id/submit', async () => {
     mockFetch.mockResolvedValueOnce(ok({ score: 2, total_questions: 2 }));
     const res = await api.submitQuiz('q1', { qid: 'B' });
-    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/quizzes/q1/submit'), expect.objectContaining({ method: 'POST' }));
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringContaining('/quizzes/q1/submit'),
+      expect.objectContaining({ method: 'POST' }),
+    );
     expect(res.score).toBe(2);
   });
 
@@ -95,41 +115,61 @@ describe('api', () => {
   it('adminGetArticles calls GET /admin/articles with params', async () => {
     mockFetch.mockResolvedValueOnce(ok({ articles: [], total: 0 }));
     await api.adminGetArticles({ search: 'test', source: 'thehindu' });
-    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/admin/articles?search=test&source=thehindu'), expect.any(Object));
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringContaining('/admin/articles?search=test&source=thehindu'),
+      expect.any(Object),
+    );
   });
 
   it('adminDeleteArticle calls DELETE /admin/articles/:id', async () => {
     mockFetch.mockResolvedValueOnce(ok({ status: 'deleted', id: 'a1' }));
     const res = await api.adminDeleteArticle('a1');
-    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/admin/articles/a1'), expect.objectContaining({ method: 'DELETE' }));
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringContaining('/admin/articles/a1'),
+      expect.objectContaining({ method: 'DELETE' }),
+    );
     expect(res.status).toBe('deleted');
   });
 
   it('adminGetCategories calls GET /admin/categories with params', async () => {
     mockFetch.mockResolvedValueOnce(ok({ categories: [], total: 0 }));
     await api.adminGetCategories({ search: 'polity' });
-    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/admin/categories?search=polity'), expect.any(Object));
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringContaining('/admin/categories?search=polity'),
+      expect.any(Object),
+    );
   });
 
   it('adminCreateCategory calls POST /admin/categories', async () => {
     mockFetch.mockResolvedValueOnce(ok({ status: 'created', id: 'c1', name: 'Polity', description: 'Indian Polity' }));
     const res = await api.adminCreateCategory({ name: 'Polity', description: 'Indian Polity' });
-    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/admin/categories'), expect.objectContaining({ method: 'POST' }));
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringContaining('/admin/categories'),
+      expect.objectContaining({ method: 'POST' }),
+    );
     expect(res.status).toBe('created');
     expect(res.id).toBe('c1');
   });
 
   it('adminUpdateCategory calls PUT /admin/categories/:id', async () => {
-    mockFetch.mockResolvedValueOnce(ok({ status: 'updated', id: 'c1', name: 'Polity', description: 'Updated description' }));
+    mockFetch.mockResolvedValueOnce(
+      ok({ status: 'updated', id: 'c1', name: 'Polity', description: 'Updated description' }),
+    );
     const res = await api.adminUpdateCategory('c1', { name: 'Polity', description: 'Updated description' });
-    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/admin/categories/c1'), expect.objectContaining({ method: 'PUT' }));
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringContaining('/admin/categories/c1'),
+      expect.objectContaining({ method: 'PUT' }),
+    );
     expect(res.status).toBe('updated');
   });
 
   it('adminDeleteCategory calls DELETE /admin/categories/:id', async () => {
     mockFetch.mockResolvedValueOnce(ok({ status: 'deleted', id: 'c1' }));
     const res = await api.adminDeleteCategory('c1');
-    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/admin/categories/c1'), expect.objectContaining({ method: 'DELETE' }));
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringContaining('/admin/categories/c1'),
+      expect.objectContaining({ method: 'DELETE' }),
+    );
     expect(res.status).toBe('deleted');
   });
 
@@ -140,9 +180,14 @@ describe('api', () => {
   });
 
   it('adminUpdateUserRole calls PUT /admin/users/:id/role', async () => {
-    mockFetch.mockResolvedValueOnce(ok({ status: 'updated', id: 'u1', email: 'admin@example.com', name: 'Admin User', is_admin: true }));
+    mockFetch.mockResolvedValueOnce(
+      ok({ status: 'updated', id: 'u1', email: 'admin@example.com', name: 'Admin User', is_admin: true }),
+    );
     const res = await api.adminUpdateUserRole('u1', { is_admin: true });
-    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/admin/users/u1/role'), expect.objectContaining({ method: 'PUT' }));
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringContaining('/admin/users/u1/role'),
+      expect.objectContaining({ method: 'PUT' }),
+    );
     expect(res.status).toBe('updated');
     expect(res.is_admin).toBe(true);
   });

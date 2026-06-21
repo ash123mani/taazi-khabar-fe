@@ -1,90 +1,111 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { Typography, Button, Form, Input } from 'antd'
-import { MailOutlined, LockOutlined } from '@ant-design/icons'
-import { useAuthStore } from '@/stores/authStore'
-import { useIsMobile } from '@/hooks/useIsMobile'
+import { useState } from 'react';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Typography, Button, Form, Input } from 'antd';
+import { MailOutlined, LockOutlined } from '@ant-design/icons';
+import { useAuthStore } from '@/stores/authStore';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
-const { Text } = Typography
+const { Text } = Typography;
 
 export default function LoginPage() {
-  const router = useRouter()
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const token = useAuthStore((s) => s.accessToken)
-  const isMobile = useIsMobile()
+  const router = useRouter();
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const token = useAuthStore((s) => s.accessToken);
+  const isMobile = useIsMobile();
 
   const handleSubmit = async (values: { email: string; password: string }) => {
-    setLoading(true)
-    setError('')
+    setLoading(true);
+    setError('');
 
     const res = await signIn('credentials', {
       email: values.email,
       password: values.password,
       redirect: false,
-    })
+    });
 
     if (res?.error) {
-      setError('Invalid email or password')
-      setLoading(false)
+      setError('Invalid email or password');
+      setLoading(false);
     } else {
-      router.push('/')
+      router.push('/');
     }
-  }
+  };
 
   if (token) {
-    router.push('/')
-    return null
+    router.push('/');
+    return null;
   }
 
   return (
     <div style={{ maxWidth: 420, margin: '0 auto', paddingTop: isMobile ? 24 : 48 }}>
-      <div style={{
-        borderBottom: '1px solid var(--color-border)',
-        paddingBottom: 16,
-        marginBottom: 28,
-        textAlign: 'center',
-      }}>
-        <div className="newspaper-heading" style={{
-          fontWeight: 900,
-          fontSize: 28,
-          letterSpacing: '-0.5px',
-          color: 'var(--color-text)',
-          lineHeight: 1.1,
-          marginBottom: 4,
-        }}>
+      <div
+        style={{
+          borderBottom: '1px solid var(--color-border)',
+          paddingBottom: 16,
+          marginBottom: 28,
+          textAlign: 'center',
+        }}
+      >
+        <div
+          className="newspaper-heading"
+          style={{
+            fontWeight: 900,
+            fontSize: 28,
+            letterSpacing: '-0.5px',
+            color: 'var(--color-text)',
+            lineHeight: 1.1,
+            marginBottom: 4,
+          }}
+        >
           Welcome Back
         </div>
-        <Text style={{
-          fontSize: 11,
-          color: 'var(--color-text-tertiary)',
-          letterSpacing: '2px',
-          textTransform: 'uppercase',
-          fontWeight: 500,
-        }}>
+        <Text
+          style={{
+            fontSize: 11,
+            color: 'var(--color-text-tertiary)',
+            letterSpacing: '2px',
+            textTransform: 'uppercase',
+            fontWeight: 500,
+          }}
+        >
           Sign in to Taazi Khabar
         </Text>
       </div>
 
       {error && (
-        <div style={{
-          padding: '10px 14px',
-          border: '1px solid #ef4444',
-          marginBottom: 20,
-          fontSize: 13,
-          color: '#ef4444',
-        }}>
+        <div
+          style={{
+            padding: '10px 14px',
+            border: '1px solid #ef4444',
+            marginBottom: 20,
+            fontSize: 13,
+            color: '#ef4444',
+          }}
+        >
           {error}
         </div>
       )}
 
       <Form layout="vertical" onFinish={handleSubmit} requiredMark={false} size="middle">
         <Form.Item
-          label={<Text style={{ color: 'var(--color-text-secondary)', fontWeight: 600, fontSize: 12, letterSpacing: '0.5px', textTransform: 'uppercase' }}>Email</Text>}
+          label={
+            <Text
+              style={{
+                color: 'var(--color-text-secondary)',
+                fontWeight: 600,
+                fontSize: 12,
+                letterSpacing: '0.5px',
+                textTransform: 'uppercase',
+              }}
+            >
+              Email
+            </Text>
+          }
           name="email"
           rules={[{ required: true, type: 'email', message: 'Please enter a valid email' }]}
           style={{ marginBottom: 16 }}
@@ -97,7 +118,19 @@ export default function LoginPage() {
         </Form.Item>
 
         <Form.Item
-          label={<Text style={{ color: 'var(--color-text-secondary)', fontWeight: 600, fontSize: 12, letterSpacing: '0.5px', textTransform: 'uppercase' }}>Password</Text>}
+          label={
+            <Text
+              style={{
+                color: 'var(--color-text-secondary)',
+                fontWeight: 600,
+                fontSize: 12,
+                letterSpacing: '0.5px',
+                textTransform: 'uppercase',
+              }}
+            >
+              Password
+            </Text>
+          }
           name="password"
           rules={[{ required: true, message: 'Please enter your password' }]}
           style={{ marginBottom: 20 }}
@@ -130,12 +163,14 @@ export default function LoginPage() {
         </Form.Item>
       </Form>
 
-      <div style={{
-        marginTop: 20,
-        paddingTop: 16,
-        borderTop: '1px solid var(--color-border)',
-        textAlign: 'center',
-      }}>
+      <div
+        style={{
+          marginTop: 20,
+          paddingTop: 16,
+          borderTop: '1px solid var(--color-border)',
+          textAlign: 'center',
+        }}
+      >
         <Text style={{ fontSize: 13, color: 'var(--color-text-tertiary)' }}>
           Don&rsquo;t have an account?{' '}
           <Link
@@ -147,13 +182,19 @@ export default function LoginPage() {
               borderBottom: '1px solid var(--color-border)',
               transition: 'color 0.2s',
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.color = '#6366f1'; e.currentTarget.style.borderColor = '#6366f1' }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--color-text)'; e.currentTarget.style.borderColor = 'var(--color-border)' }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = '#6366f1';
+              e.currentTarget.style.borderColor = '#6366f1';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = 'var(--color-text)';
+              e.currentTarget.style.borderColor = 'var(--color-border)';
+            }}
           >
             Create one now
           </Link>
         </Text>
       </div>
     </div>
-  )
+  );
 }

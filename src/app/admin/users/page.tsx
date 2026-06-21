@@ -1,68 +1,81 @@
-'use client'
+'use client';
 
-import { useEffect, useState, useCallback } from 'react'
-import { Typography, Table, Tag, Button, Input, Switch, Space, message, Card, Row, Col, Statistic } from 'antd'
-import { UserOutlined, UsergroupAddOutlined, SafetyOutlined } from '@ant-design/icons'
-import dayjs from 'dayjs'
-import { api } from '@/lib/api'
+import { useEffect, useState, useCallback } from 'react';
+import { Typography, Table, Tag, Button, Input, Switch, Space, message, Card, Row, Col, Statistic } from 'antd';
+import { UserOutlined, UsergroupAddOutlined, SafetyOutlined } from '@ant-design/icons';
+import dayjs from 'dayjs';
+import { api } from '@/lib/api';
 
-const { Title, Text } = Typography
+const { Title, Text } = Typography;
 
 interface UserData {
-  id: string
-  email: string
-  name: string | null
-  is_admin: boolean
-  created_at: string
+  id: string;
+  email: string;
+  name: string | null;
+  is_admin: boolean;
+  created_at: string;
 }
 
 export default function AdminUsersPage() {
-  const [users, setUsers] = useState<UserData[]>([])
-  const [total, setTotal] = useState(0)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [search, setSearch] = useState('')
+  const [users, setUsers] = useState<UserData[]>([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
 
   const fetchUsers = useCallback(async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const params: Record<string, string> = {}
-      if (search) params['search'] = search
+      const params: Record<string, string> = {};
+      if (search) params['search'] = search;
 
-      const data = await api.adminGetUsers(params)
-      setUsers(data.users || [])
-      setTotal(data.total || 0)
+      const data = await api.adminGetUsers(params);
+      setUsers(data.users || []);
+      setTotal(data.total || 0);
     } catch (err: any) {
-      setError(err.message || 'Failed to load users')
+      setError(err.message || 'Failed to load users');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [search])
+  }, [search]);
 
-  useEffect(() => { fetchUsers() }, [fetchUsers])
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   const handleSearch = (value: string) => {
-    setSearch(value)
-  }
+    setSearch(value);
+  };
 
   const handleToggleRole = async (id: string, checked: boolean) => {
     try {
-      await api.adminUpdateUserRole(id, { is_admin: checked })
+      await api.adminUpdateUserRole(id, { is_admin: checked });
     } catch (err: any) {
-      message.error(err?.message || 'Failed to update role')
-      fetchUsers()
+      message.error(err?.message || 'Failed to update role');
+      fetchUsers();
     }
-  }
+  };
 
-  const adminCount = users.filter(u => u.is_admin).length
-  const userCount = users.filter(u => !u.is_admin).length
+  const adminCount = users.filter((u) => u.is_admin).length;
+  const userCount = users.filter((u) => !u.is_admin).length;
 
   return (
     <div>
-      <Card style={{ marginBottom: 24, borderRadius: 16, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: '24px 28px' } }}>
+      <Card
+        style={{
+          marginBottom: 24,
+          borderRadius: 16,
+          background: 'var(--color-bg)',
+          border: '1px solid var(--color-border)',
+        }}
+        styles={{ body: { padding: '24px 28px' } }}
+      >
         <Row justify="space-between" align="middle">
           <Col>
-            <Title level={3} style={{ margin: 0, letterSpacing: '-0.5px', fontWeight: 700, color: 'var(--color-text)' }}>
+            <Title
+              level={3}
+              style={{ margin: 0, letterSpacing: '-0.5px', fontWeight: 700, color: 'var(--color-text)' }}
+            >
               User Management
             </Title>
             <Text style={{ color: 'var(--color-text-secondary)', fontSize: 14, display: 'block', marginTop: 4 }}>
@@ -88,7 +101,15 @@ export default function AdminUsersPage() {
         </Row>
       </Card>
 
-      <Card style={{ marginBottom: 16, borderRadius: 12, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: '16px 20px' } }}>
+      <Card
+        style={{
+          marginBottom: 16,
+          borderRadius: 12,
+          background: 'var(--color-bg)',
+          border: '1px solid var(--color-border)',
+        }}
+        styles={{ body: { padding: '16px 20px' } }}
+      >
         <Row gutter={12} align="middle">
           <Col flex="auto">
             <Input.Search
@@ -109,12 +130,23 @@ export default function AdminUsersPage() {
       </Card>
 
       {error && (
-        <Card style={{ marginBottom: 16, borderRadius: 12, background: 'var(--color-surface)', border: '1px solid #ef4444' }} styles={{ body: { padding: '12px 16px' } }}>
+        <Card
+          style={{
+            marginBottom: 16,
+            borderRadius: 12,
+            background: 'var(--color-surface)',
+            border: '1px solid #ef4444',
+          }}
+          styles={{ body: { padding: '12px 16px' } }}
+        >
           <Text style={{ color: '#fca5a5' }}>{error}</Text>
         </Card>
       )}
 
-      <Card style={{ borderRadius: 12, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: 0 } }}>
+      <Card
+        style={{ borderRadius: 12, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}
+        styles={{ body: { padding: 0 } }}
+      >
         <Table
           dataSource={users}
           columns={[
@@ -123,7 +155,12 @@ export default function AdminUsersPage() {
               dataIndex: 'name',
               key: 'name',
               width: 160,
-              render: (text: string | null) => text ? <Text style={{ color: 'var(--color-text)' }}>{text}</Text> : <Text style={{ color: 'var(--color-text-tertiary)', fontStyle: 'italic' }}>No name</Text>,
+              render: (text: string | null) =>
+                text ? (
+                  <Text style={{ color: 'var(--color-text)' }}>{text}</Text>
+                ) : (
+                  <Text style={{ color: 'var(--color-text-tertiary)', fontStyle: 'italic' }}>No name</Text>
+                ),
             },
             {
               title: 'Email',
@@ -140,11 +177,7 @@ export default function AdminUsersPage() {
               render: (isAdmin: boolean, record: UserData) => (
                 <Space>
                   <Tag color={isAdmin ? 'purple' : 'default'}>{isAdmin ? 'Admin' : 'User'}</Tag>
-                  <Switch
-                    checked={isAdmin}
-                    onChange={(checked) => handleToggleRole(record.id, checked)}
-                    size="small"
-                  />
+                  <Switch checked={isAdmin} onChange={(checked) => handleToggleRole(record.id, checked)} size="small" />
                 </Space>
               ),
             },
@@ -168,5 +201,5 @@ export default function AdminUsersPage() {
         />
       </Card>
     </div>
-  )
+  );
 }
