@@ -1,6 +1,5 @@
-'use client'
-
 import { Typography } from 'antd'
+import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons'
 import type { QuizQuestion as QuizQuestionType } from '@/lib/types'
 
 const { Text } = Typography
@@ -23,71 +22,125 @@ export default function QuizQuestion({
   showResults,
 }: QuizQuestionProps) {
   return (
-    <div>
+    <div style={{ marginBottom: 0 }}>
       <div style={{
-        fontSize: 10,
-        fontWeight: 700,
-        letterSpacing: '1px',
-        textTransform: 'uppercase',
-        color: 'var(--color-text-tertiary)',
-        marginBottom: 8,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 10,
+        marginBottom: 14,
       }}>
-        Question {index + 1}
-      </div>
-      <div className="newspaper-heading" style={{
-        fontWeight: 600,
-        fontSize: 16,
-        lineHeight: 1.4,
-        color: 'var(--color-text)',
-        whiteSpace: 'pre-line',
-        marginBottom: 16,
-      }}>
-        {question.question_text}
+        <div style={{
+          width: 28,
+          height: 28,
+          borderRadius: '50%',
+          background: 'var(--color-accent)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+        }}>
+          <Text style={{ color: '#fff', fontSize: 12, fontWeight: 700 }}>{index + 1}</Text>
+        </div>
+        <div className="newspaper-heading" style={{
+          fontWeight: 600,
+          fontSize: 17,
+          lineHeight: 1.4,
+          color: 'var(--color-text)',
+        }}>
+          {question.question_text}
+        </div>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {Object.entries(question.options).map(([key, value], i) => {
           const isCorrectAnswer = showResults && key === question.correct_answer
           const isWrongAnswer = showResults && key === selected && selected !== question.correct_answer
           const isSelected = key === selected
 
+          let bg = 'transparent'
+          let border = '1px solid var(--color-border)'
+          let circleBg = 'transparent'
+          let circleBorder = '1px solid var(--color-border)'
+          let circleColor = 'var(--color-text-tertiary)'
+          let textColor = 'var(--color-text-secondary)'
+
+          if (showResults) {
+            if (isCorrectAnswer) {
+              bg = 'rgba(34, 197, 94, 0.08)'
+              border = '1px solid #22c55e'
+              circleBg = '#22c55e'
+              circleBorder = '1px solid #22c55e'
+              circleColor = '#fff'
+              textColor = 'var(--color-text)'
+            } else if (isWrongAnswer) {
+              bg = 'rgba(239, 68, 68, 0.08)'
+              border = '1px solid #ef4444'
+              circleBg = '#ef4444'
+              circleBorder = '1px solid #ef4444'
+              circleColor = '#fff'
+              textColor = 'var(--color-text)'
+            }
+          } else if (isSelected) {
+            bg = 'rgba(99, 102, 241, 0.08)'
+            border = '1px solid #6366f1'
+            circleBg = '#6366f1'
+            circleBorder = '1px solid #6366f1'
+            circleColor = '#fff'
+            textColor = 'var(--color-text)'
+          }
+
           return (
             <div
               key={key}
+              onClick={() => !showResults && onSelect(key)}
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 12,
-                padding: '10px 12px',
-                border: '1px solid',
+                gap: 14,
+                padding: '14px 16px',
+                border,
+                borderRadius: 10,
                 cursor: showResults ? 'default' : 'pointer',
                 transition: 'all 0.15s ease',
-                background: isCorrectAnswer ? 'rgba(34, 197, 94, 0.06)' : isWrongAnswer ? 'rgba(239, 68, 68, 0.06)' : isSelected ? 'rgba(99, 102, 241, 0.04)' : 'transparent',
-                borderColor: isCorrectAnswer ? '#22c55e' : isWrongAnswer ? '#ef4444' : isSelected ? '#6366f1' : 'var(--color-border)',
+                background: bg,
               }}
-              onClick={() => !showResults && onSelect(key)}
+              onMouseEnter={(e) => {
+                if (!showResults && !isSelected) {
+                  e.currentTarget.style.background = 'var(--color-surface)'
+                  e.currentTarget.style.borderColor = 'var(--color-text-tertiary)'
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!showResults && !isSelected) {
+                  e.currentTarget.style.background = 'transparent'
+                  e.currentTarget.style.borderColor = 'var(--color-border)'
+                }
+              }}
             >
               <div
                 style={{
-                  width: 24,
-                  height: 24,
+                  width: 32,
+                  height: 32,
+                  borderRadius: '50%',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  border: '1px solid',
                   fontWeight: 700,
-                  fontSize: 10,
+                  fontSize: 12,
                   flexShrink: 0,
-                  background: isCorrectAnswer ? 'rgba(34, 197, 94, 0.1)' : isWrongAnswer ? 'rgba(239, 68, 68, 0.1)' : isSelected ? 'rgba(99, 102, 241, 0.1)' : 'transparent',
-                  borderColor: isCorrectAnswer ? '#22c55e' : isWrongAnswer ? '#ef4444' : isSelected ? '#6366f1' : 'var(--color-border)',
-                  color: isCorrectAnswer ? '#22c55e' : isWrongAnswer ? '#ef4444' : isSelected ? '#818cf8' : 'var(--color-text-tertiary)',
+                  background: circleBg,
+                  border: circleBorder,
+                  color: circleColor,
+                  transition: 'all 0.15s',
                 }}
               >
                 {OPTION_LABELS[i]}
               </div>
-              <span style={{ fontSize: 14, flex: 1, color: 'var(--color-text-secondary)', lineHeight: 1.4 }}>{value}</span>
-              {isCorrectAnswer && <span style={{ fontWeight: 700, fontSize: 14, color: '#22c55e' }}>✓</span>}
-              {isWrongAnswer && <span style={{ fontWeight: 700, fontSize: 14, color: '#ef4444' }}>✗</span>}
+              <Text style={{ fontSize: 15, flex: 1, color: textColor, lineHeight: 1.4 }}>
+                {value}
+              </Text>
+              {isCorrectAnswer && <CheckCircleFilled style={{ color: '#22c55e', fontSize: 18 }} />}
+              {isWrongAnswer && <CloseCircleFilled style={{ color: '#ef4444', fontSize: 18 }} />}
             </div>
           )
         })}
@@ -97,23 +150,29 @@ export default function QuizQuestion({
         <div
           style={{
             marginTop: 14,
-            padding: 12,
-            border: '1px solid',
-            fontSize: 13,
-            background: selected === question.correct_answer ? 'rgba(34, 197, 94, 0.06)' : 'rgba(234, 179, 8, 0.06)',
-            borderColor: selected === question.correct_answer ? '#22c55e' : '#eab308',
+            padding: '14px 16px',
+            borderRadius: 10,
+            fontSize: 14,
+            background: selected === question.correct_answer
+              ? 'rgba(34, 197, 94, 0.06)'
+              : 'rgba(234, 179, 8, 0.06)',
+            border: selected === question.correct_answer
+              ? '1px solid rgba(34, 197, 94, 0.2)'
+              : '1px solid rgba(234, 179, 8, 0.2)',
           }}
         >
           <Text strong style={{
             display: 'block',
-            marginBottom: 4,
+            marginBottom: 6,
             color: 'var(--color-text)',
             fontSize: 13,
           }}>
-            {selected === question.correct_answer ? '✓ Correct' : '✗ Incorrect'}
+            {selected === question.correct_answer ? 'Correct' : 'Incorrect'}
           </Text>
           {question.explanation && (
-            <Text style={{ color: 'var(--color-text-tertiary)' }}>{question.explanation}</Text>
+            <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 13, lineHeight: 1.6, display: 'block' }}>
+              {question.explanation}
+            </Text>
           )}
         </div>
       )}

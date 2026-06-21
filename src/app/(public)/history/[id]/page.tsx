@@ -100,94 +100,37 @@ export default function HistoryDetailPage() {
       <div style={{
         display: 'grid',
         gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)',
-        gap: 0,
-        borderBottom: '1px solid var(--color-border)',
+        gap: 10,
         marginBottom: isMobile ? 14 : 20,
       }}>
-        <div style={{
-          padding: isMobile ? '10px 10px' : '14px 14px',
-          borderRight: '1px solid var(--color-border)',
-          borderBottom: isMobile ? '1px solid var(--color-border)' : 'none',
-        }}>
-          <Text style={{
-            fontSize: 8,
-            fontWeight: 600,
-            textTransform: 'uppercase',
-            letterSpacing: '0.8px',
-            color: 'var(--color-text-tertiary)',
-            display: 'block',
-            marginBottom: 2,
+        {[
+          { label: 'Score', value: <span style={{ color: scoreColor }}>{quiz.score}/{quiz.total_questions}{percentage !== null ? <span style={{ fontSize: isMobile ? 11 : 13, marginLeft: 4, color: 'var(--color-text-tertiary)' }}>({percentage}%)</span> : null}</span> },
+          { label: 'Date', value: dayjs(quiz.created_at).format('DD-MM-YYYY') },
+          { label: 'Time', value: quiz.time_taken_sec ? `${Math.floor(quiz.time_taken_sec / 60)}m ${quiz.time_taken_sec % 60}s` : 'N/A' },
+          { label: 'Articles', value: quiz.articles?.length || 0 },
+        ].map((stat) => (
+          <div key={stat.label} style={{
+            background: 'var(--color-surface)',
+            borderRadius: 12,
+            padding: isMobile ? 12 : 16,
+            border: '1px solid var(--color-border)',
           }}>
-            Score
-          </Text>
-          <div className="newspaper-heading" style={{
-            fontWeight: 700,
-            fontSize: isMobile ? 16 : 20,
-            color: scoreColor,
-            lineHeight: 1,
-          }}>
-            {quiz.score}/{quiz.total_questions}
-            {percentage !== null && <span style={{ fontSize: isMobile ? 11 : 13, marginLeft: 4, color: 'var(--color-text-tertiary)' }}>({percentage}%)</span>}
+            <Text style={{
+              fontSize: 8,
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.8px',
+              color: 'var(--color-text-tertiary)',
+              display: 'block',
+              marginBottom: 4,
+            }}>
+              {stat.label}
+            </Text>
+            <Text style={{ fontSize: isMobile ? 14 : 16, fontWeight: 700, color: 'var(--color-text)' }}>
+              {stat.value}
+            </Text>
           </div>
-        </div>
-        <div style={{
-          padding: isMobile ? '10px 10px' : '14px 14px',
-          borderRight: !isMobile ? '1px solid var(--color-border)' : 'none',
-          borderBottom: isMobile ? '1px solid var(--color-border)' : 'none',
-        }}>
-          <Text style={{
-            fontSize: 8,
-            fontWeight: 600,
-            textTransform: 'uppercase',
-            letterSpacing: '0.8px',
-            color: 'var(--color-text-tertiary)',
-            display: 'block',
-            marginBottom: 2,
-          }}>
-            Date
-          </Text>
-          <Text style={{ fontSize: isMobile ? 12 : 14, color: 'var(--color-text-secondary)' }}>
-            {dayjs(quiz.created_at).format('DD-MM-YYYY')}
-          </Text>
-        </div>
-        <div style={{
-          padding: isMobile ? '10px 10px' : '14px 14px',
-          borderRight: '1px solid var(--color-border)',
-          borderBottom: isMobile ? '1px solid var(--color-border)' : 'none',
-        }}>
-          <Text style={{
-            fontSize: 8,
-            fontWeight: 600,
-            textTransform: 'uppercase',
-            letterSpacing: '0.8px',
-            color: 'var(--color-text-tertiary)',
-            display: 'block',
-            marginBottom: 2,
-          }}>
-            Time
-          </Text>
-          <Text style={{ fontSize: isMobile ? 12 : 14, color: 'var(--color-text-secondary)' }}>
-            {quiz.time_taken_sec ? `${Math.floor(quiz.time_taken_sec / 60)}m ${quiz.time_taken_sec % 60}s` : 'N/A'}
-          </Text>
-        </div>
-        <div style={{
-          padding: isMobile ? '10px 10px' : '14px 14px',
-        }}>
-          <Text style={{
-            fontSize: 8,
-            fontWeight: 600,
-            textTransform: 'uppercase',
-            letterSpacing: '0.8px',
-            color: 'var(--color-text-tertiary)',
-            display: 'block',
-            marginBottom: 2,
-          }}>
-            Articles
-          </Text>
-          <Text style={{ fontSize: isMobile ? 12 : 14, color: 'var(--color-text-secondary)' }}>
-            {quiz.articles?.length || 0}
-          </Text>
-        </div>
+        ))}
       </div>
 
       {quiz.articles && quiz.articles.length > 0 && (
@@ -254,7 +197,13 @@ export default function HistoryDetailPage() {
         </div>
 
         {quiz.questions?.map((question, i) => (
-          <div key={question.id} style={{ borderBottom: '1px solid var(--color-border)', padding: isMobile ? '8px 0' : '12px 0' }}>
+          <div key={question.id} style={{
+            background: 'var(--color-surface)',
+            borderRadius: 12,
+            padding: isMobile ? 14 : 18,
+            marginBottom: 12,
+            border: '1px solid var(--color-border)',
+          }}>
             <QuizQuestionComponent
               question={question}
               index={i}

@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import { Button, Typography, Spin, Progress, Modal } from 'antd'
+import { ClockCircleOutlined, CheckCircleFilled } from '@ant-design/icons'
 import { api } from '@/lib/api'
 import { useIsMobile } from '@/hooks/useIsMobile'
 import type { Quiz } from '@/lib/types'
@@ -91,6 +92,7 @@ export default function TakeQuizPage() {
 
   const answered = Object.values(answers).filter(Boolean).length
   const total = quiz?.questions?.length || 0
+  const pct = total > 0 ? Math.round((answered / total) * 100) : 0
 
   const formatTime = (sec: number) => {
     const m = Math.floor(sec / 60)
@@ -121,127 +123,102 @@ export default function TakeQuizPage() {
     return (
       <div>
         <QuizResult quiz={quiz} />
-        <div style={{ marginTop: 28 }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            marginBottom: 16,
+        {quiz.questions?.map((question, i) => (
+          <div key={question.id} style={{
+            background: 'var(--color-surface)',
+            borderRadius: 12,
+            padding: isMobile ? 16 : 20,
+            marginBottom: 14,
+            border: '1px solid var(--color-border)',
           }}>
-            <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
-            <Text style={{
-              fontSize: 9,
-              fontWeight: 700,
-              letterSpacing: '2px',
-              textTransform: 'uppercase',
-              color: 'var(--color-text-tertiary)',
-              whiteSpace: 'nowrap',
-            }}>
-              Questions &amp; Answers
-            </Text>
-            <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
-          </div>
-          {quiz.questions?.map((question, i) => (
             <QuizQuestionComponent
-              key={question.id}
               question={question}
               index={i}
               selected={answers[question.id] || null}
               onSelect={() => {}}
               showResults
             />
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     )
   }
 
   return (
     <div>
+      {/* Timer + Progress header */}
       <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 24,
+        paddingBottom: 16,
         borderBottom: '1px solid var(--color-border)',
-        paddingBottom: isMobile ? 10 : 14,
-        marginBottom: isMobile ? 12 : 20,
       }}>
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-end',
-          gap: 8,
-        }}>
-          <div>
-            <div className="newspaper-heading" style={{
-              fontWeight: 900,
-              fontSize: isMobile ? 20 : 28,
-              letterSpacing: '-0.5px',
-              color: 'var(--color-text)',
-              lineHeight: 1.1,
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '6px 12px',
+            borderRadius: 8,
+            background: timeLeft < 60 ? 'rgba(239,68,68,0.1)' : timeLeft < 180 ? 'rgba(234,179,8,0.1)' : 'var(--color-surface)',
+            border: '1px solid',
+            borderColor: timeLeft < 60 ? 'rgba(239,68,68,0.2)' : timeLeft < 180 ? 'rgba(234,179,8,0.2)' : 'var(--color-border)',
+          }}>
+            <ClockCircleOutlined style={{ fontSize: 13, color: timeLeft < 60 ? '#ef4444' : timeLeft < 180 ? '#eab308' : 'var(--color-text-tertiary)' }} />
+            <Text style={{
+              fontSize: 14,
+              fontWeight: 700,
+              color: timeLeft < 60 ? '#ef4444' : timeLeft < 180 ? '#eab308' : 'var(--color-text)',
+              fontVariantNumeric: 'tabular-nums',
             }}>
-              {quiz.title || 'Quiz'}
-            </div>
-            {quiz.articles?.length && !isMobile ? (
-              <Text style={{ fontSize: 13, fontStyle: 'italic', color: 'var(--color-text-tertiary)', marginTop: 2, display: 'block' }}>
-                Based on {quiz.articles.length} article{quiz.articles.length > 1 ? 's' : ''}
-              </Text>
-            ) : null}
+              {formatTime(timeLeft)}
+            </Text>
           </div>
-          <div style={{ display: 'flex', gap: isMobile ? 16 : 24, alignItems: 'flex-end' }}>
-            <div style={{ textAlign: 'center' }}>
-              <Text style={{
-                fontSize: 9,
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '1px',
-                color: 'var(--color-text-tertiary)',
-                display: 'block',
-                marginBottom: 2,
-              }}>
-                Time
-              </Text>
-              <div className="newspaper-heading" style={{
-                fontWeight: 700,
-                fontSize: isMobile ? 18 : 22,
-                lineHeight: 1,
-                color: timeLeft < 60 ? '#ef4444' : timeLeft < 180 ? '#eab308' : 'var(--color-text)',
-              }}>
-                {formatTime(timeLeft)}
-              </div>
-            </div>
-            <div style={{ textAlign: 'right' }}>
-              <Text style={{
-                fontSize: 9,
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '1px',
-                color: 'var(--color-text-tertiary)',
-                display: 'block',
-                marginBottom: 2,
-              }}>
-                Done
-              </Text>
-              <div className="newspaper-heading" style={{
-                fontWeight: 700,
-                fontSize: isMobile ? 18 : 22,
-                lineHeight: 1,
-                color: answered === total ? '#22c55e' : 'var(--color-text)',
-              }}>
-                {answered}/{total}
-              </div>
-            </div>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '6px 12px',
+            borderRadius: 8,
+            background: 'var(--color-surface)',
+            border: '1px solid var(--color-border)',
+          }}>
+            <CheckCircleFilled style={{ fontSize: 13, color: answered === total ? '#22c55e' : 'var(--color-text-tertiary)' }} />
+            <Text style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-text)' }}>
+              {answered}/{total}
+            </Text>
           </div>
         </div>
-        <Progress
-          percent={Math.round((answered / total) * 100)}
-          showInfo={false}
-          strokeColor={answered === total ? '#22c55e' : '#6366f1'}
-          trailColor="var(--color-border)"
-          size="small"
-          style={{ marginTop: 10, marginBottom: 0 }}
-        />
+        <div className="newspaper-heading" style={{
+          fontSize: isMobile ? 15 : 17,
+          fontWeight: 700,
+          color: 'var(--color-text)',
+        }}>
+          {quiz.title || 'Quiz'}
+        </div>
       </div>
 
+      {/* Progress bar */}
+      <Progress
+        percent={pct}
+        showInfo={false}
+        strokeColor={answered === total ? '#22c55e' : '#6366f1'}
+        trailColor="var(--color-border)"
+        size="small"
+        style={{ marginBottom: 24 }}
+      />
+
+      {/* Questions */}
       {quiz.questions?.map((question, i) => (
-        <div key={question.id} style={{ borderBottom: '1px solid var(--color-border)', paddingBottom: isMobile ? 8 : 12, marginBottom: isMobile ? 10 : 16 }}>
+        <div key={question.id} style={{
+          background: 'var(--color-surface)',
+          borderRadius: 12,
+          padding: isMobile ? 16 : 20,
+          marginBottom: 14,
+          border: '1px solid var(--color-border)',
+        }}>
           <QuizQuestionComponent
             question={question}
             index={i}
@@ -255,20 +232,20 @@ export default function TakeQuizPage() {
         </div>
       ))}
 
-      <div style={{ textAlign: 'center', marginTop: isMobile ? 20 : 28, marginBottom: isMobile ? 20 : 32 }}>
+      {/* Submit */}
+      <div style={{ textAlign: 'center', marginTop: 8, marginBottom: 12 }}>
         <Button
           type="primary"
-          size={isMobile ? 'middle' : 'large'}
+          size="large"
           loading={submitting}
           onClick={handleSubmit}
           style={{
-            height: isMobile ? 40 : 46,
-            padding: isMobile ? '0 28px' : '0 44px',
+            height: 48,
+            padding: '0 40px',
             fontWeight: 700,
-            fontSize: isMobile ? 12 : 13,
-            borderRadius: 0,
+            fontSize: 14,
+            borderRadius: 10,
             letterSpacing: '1px',
-            textTransform: 'uppercase',
           }}
         >
           Submit Answers ({answered}/{total})

@@ -102,23 +102,25 @@ export default function QuizContent() {
           <div style={{
             display: 'grid',
             gridTemplateColumns: isMobile ? 'repeat(3, 1fr) 1fr' : 'repeat(4, 1fr)',
-            borderBottom: '1px solid var(--color-border-light)',
-            marginBottom: isMobile ? 10 : 16,
+            gap: 10,
+            marginBottom: isMobile ? 14 : 20,
           }}>
             {[
               { label: 'Articles', value: summary.total_articles },
               { label: 'Questions', value: summary.total_questions },
               { label: 'Categories', value: summary.categories.length },
-            ].map((stat, idx) => (
+            ].map((stat) => (
               <div key={stat.label} style={{
-                padding: isMobile ? '10px 4px' : '14px 10px',
+                background: 'var(--color-surface)',
+                borderRadius: 12,
+                padding: isMobile ? '12px 6px' : '16px 12px',
                 textAlign: 'center',
-                borderRight: !isMobile || idx < 2 ? '1px solid var(--color-border-light)' : 'none',
+                border: '1px solid var(--color-border)',
               }}>
-                <div className="newspaper-heading" style={{
-                  fontWeight: 700, fontSize: isMobile ? 20 : 24, color: 'var(--color-text)', lineHeight: 1, marginBottom: 2,
+                <div style={{
+                  fontWeight: 700, fontSize: isMobile ? 22 : 26, color: 'var(--color-text)', lineHeight: 1, marginBottom: 4,
                 }}>{stat.value}</div>
-                <Text style={{ color: 'var(--color-text-tertiary)', fontSize: isMobile ? 8 : 9, fontWeight: 600, letterSpacing: '0.8px' }}>
+                <Text style={{ color: 'var(--color-text-tertiary)', fontSize: isMobile ? 9 : 10, fontWeight: 600, letterSpacing: '0.5px' }}>
                   {stat.label}
                 </Text>
               </div>
@@ -126,15 +128,20 @@ export default function QuizContent() {
             <div
               onClick={() => handleStartQuiz()}
               style={{
-                padding: isMobile ? '10px 4px' : '14px 10px',
+                background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                borderRadius: 12,
+                padding: isMobile ? '12px 6px' : '16px 12px',
                 textAlign: 'center',
                 cursor: 'pointer',
-                background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-                color: '#fff',
+                border: 'none',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
-              <ThunderboltOutlined style={{ fontSize: isMobile ? 20 : 24 }} />
-              <Text style={{ color: '#fff', fontWeight: 700, fontSize: isMobile ? 9 : 9, display: 'block', marginTop: 1, letterSpacing: '0.5px' }}>Take All</Text>
+              <ThunderboltOutlined style={{ fontSize: isMobile ? 22 : 26, color: '#fff' }} />
+              <Text style={{ color: '#fff', fontWeight: 700, fontSize: isMobile ? 9 : 10, marginTop: 4, letterSpacing: '0.5px' }}>Take All</Text>
             </div>
           </div>
 
@@ -148,47 +155,46 @@ export default function QuizContent() {
           </div>
 
           {/* Category grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: 0 }}>
-            {summary.categories.map((cat: DailyQuizCategory, idx: number) => (
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: 12 }}>
+            {summary.categories.map((cat: DailyQuizCategory) => (
               <div key={cat.id} style={{
-                borderBottom: '1px solid var(--color-border-light)',
-                borderRight: !isMobile && idx % 2 === 0 ? '1px solid var(--color-border-light)' : 'none',
-                padding: isMobile ? '10px 12px' : '14px 16px',
+                background: 'var(--color-surface)',
+                borderRadius: 12,
+                padding: isMobile ? 14 : 18,
+                border: '1px solid var(--color-border)',
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 8 : 10, marginBottom: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 10 : 12, marginBottom: 12 }}>
                   <div style={{
-                    width: isMobile ? 28 : 34, height: isMobile ? 28 : 34,
+                    width: isMobile ? 32 : 38,
+                    height: isMobile ? 32 : 38,
+                    borderRadius: 8,
                     background: catColors[cat.name] || '#6366f1',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     flexShrink: 0,
                   }}>
-                    <BookOutlined style={{ fontSize: isMobile ? 13 : 16, color: '#fff' }} />
+                    <BookOutlined style={{ fontSize: isMobile ? 14 : 17, color: '#fff' }} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div className="newspaper-heading" style={{ fontWeight: 700, fontSize: isMobile ? 14 : 16, color: 'var(--color-text)', lineHeight: 1.2 }}>
+                    <div style={{ fontWeight: 700, fontSize: isMobile ? 14 : 16, color: 'var(--color-text)', lineHeight: 1.2 }}>
                       {cat.name}
                     </div>
-                    <Text style={{ color: 'var(--color-text-tertiary)', fontSize: isMobile ? 9 : 10 }}>
+                    <Text style={{ color: 'var(--color-text-tertiary)', fontSize: isMobile ? 10 : 11, marginTop: 1, display: 'block' }}>
                       {cat.article_count} article{cat.article_count !== 1 ? 's' : ''} &middot; {cat.question_count} question{cat.question_count !== 1 ? 's' : ''}
                     </Text>
                   </div>
                 </div>
-                <div style={{ display: 'flex', gap: 4, justifyContent: 'flex-end', borderTop: '1px solid var(--color-border-light)', paddingTop: isMobile ? 6 : 8 }}>
+                <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
                   <Button
                     type="default" size="small" icon={<EyeOutlined />}
                     onClick={() => setModalCat(cat)}
-                    style={{ borderRadius: 2, fontSize: 10, border: '1px solid var(--color-border)', color: 'var(--color-text-tertiary)', background: 'transparent', height: isMobile ? 24 : 26 }}
-                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--color-text-tertiary)'; e.currentTarget.style.color = 'var(--color-text-secondary)' }}
-                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--color-border)'; e.currentTarget.style.color = 'var(--color-text-tertiary)' }}
+                    style={{ borderRadius: 8, fontSize: 11, height: 30, border: '1px solid var(--color-border)', color: 'var(--color-text-tertiary)', background: 'transparent' }}
                   >
                     Articles
                   </Button>
                   <Button
-                    size="small" icon={<ThunderboltOutlined />}
+                    type="primary" size="small" icon={<ThunderboltOutlined />}
                     onClick={() => handleStartQuiz(cat.id)}
-                    style={{ borderRadius: 2, fontSize: 10, border: '1px solid #6366f1', color: '#6366f1', background: 'transparent', height: isMobile ? 24 : 26 }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(99,102,241,0.08)' }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
+                    style={{ borderRadius: 8, fontSize: 11, height: 30 }}
                   >
                     Start Quiz
                   </Button>
