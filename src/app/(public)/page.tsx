@@ -143,6 +143,10 @@ export default function NewsFeedPage() {
             onChange={(d) => { if (d) setDate(d.format('YYYY-MM-DD')) }}
             allowClear={false}
             format="DD-MM-YYYY"
+            disabledDate={(current) => {
+              if (!current) return false
+              return current.isBefore(dayjs('2026-06-07')) || current.isAfter(dayjs())
+            }}
             suffixIcon={<CalendarOutlined style={{ fontSize: isMobile ? 10 : 12, color: 'var(--color-text-tertiary)' }} />}
             size="small"
             style={{ background: 'transparent', border: '1px solid var(--color-border)', borderRadius: 2, fontSize: 11 }}

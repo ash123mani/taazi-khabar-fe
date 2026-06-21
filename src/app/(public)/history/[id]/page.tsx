@@ -177,14 +177,14 @@ export default function HistoryDetailPage() {
               width: 32,
               height: 32,
               borderRadius: '50%',
-              background: 'var(--color-accent)',
+              border: '1px solid var(--color-border)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               flexShrink: 0,
               marginTop: 2,
             }}>
-              <Text style={{ color: '#fff', fontSize: 14, fontWeight: 700 }}>{i + 1}</Text>
+              <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 14, fontWeight: 700 }}>{i + 1}</Text>
             </div>
             <div style={{
               flex: 1,
