@@ -30,7 +30,7 @@ describe('LoginPage', () => {
 
   it('renders login form', () => {
     render(<LoginPage />);
-    expect(screen.getByText('Welcome back')).toBeInTheDocument();
+    expect(screen.getByText('Welcome Back')).toBeInTheDocument();
     expect(screen.getByText('Sign In')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('you@example.com')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('••••••••')).toBeInTheDocument();

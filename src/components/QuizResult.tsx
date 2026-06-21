@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, Typography, Card } from 'antd'
+import { Button, Typography } from 'antd'
 import Link from 'next/link'
 import type { Quiz } from '@/lib/types'
 
@@ -22,7 +22,7 @@ export default function QuizResult({ quiz }: { quiz: Quiz }) {
   }
 
   return (
-    <Card style={{ borderRadius: 12, marginBottom: 28, textAlign: 'center', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: 32 } }}>
+    <div style={{ marginBottom: 28, textAlign: 'center', borderBottom: '2px solid var(--color-border)', paddingBottom: 28 }}>
       <div style={{
         fontSize: 64,
         fontWeight: 800,
@@ -52,16 +52,16 @@ export default function QuizResult({ quiz }: { quiz: Quiz }) {
         marginTop: quiz.time_taken_sec ? 0 : 24,
       }}>
         <Link href={`/history/${quiz.id}`}>
-          <Button type="default" style={{ height: 40, padding: '0 24px', fontWeight: 600, borderRadius: 8 }}>
+          <Button type="default" style={{ height: 40, padding: '0 24px', fontWeight: 600, borderRadius: 0, border: '1px solid var(--color-border)', background: 'transparent' }}>
             Review Answers
           </Button>
         </Link>
         <Link href="/quiz">
-          <Button type="primary" style={{ height: 40, padding: '0 24px', fontWeight: 600, borderRadius: 8 }}>
+          <Button type="primary" style={{ height: 40, padding: '0 24px', fontWeight: 600, borderRadius: 0, border: 'none' }}>
             New Quiz
           </Button>
         </Link>
       </div>
-    </Card>
+    </div>
   )
 }

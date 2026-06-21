@@ -82,7 +82,7 @@ describe('QuizContent', () => {
     });
     expect(screen.getByText('10')).toBeInTheDocument();
     expect(screen.getByText('30')).toBeInTheDocument();
-    expect(screen.getByText('Take All Quiz')).toBeInTheDocument();
+    expect(screen.getByText('Take All')).toBeInTheDocument();
   });
 
   it('routes to login when not authenticated and start quiz clicked', async () => {
@@ -100,7 +100,7 @@ describe('QuizContent', () => {
     });
     render(<QuizContent />);
     await waitFor(() => {
-      expect(screen.getByText('Take All Quiz')).toBeInTheDocument();
+      expect(screen.getByText('Take All')).toBeInTheDocument();
     });
   });
 

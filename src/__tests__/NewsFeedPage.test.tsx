@@ -102,7 +102,7 @@ describe('NewsFeedPage', () => {
     mockGetArticleCounts.mockResolvedValue({ total: 1, thehindu: 1, indianexpress: 0, pib: 0 });
     render(<NewsFeedPage />);
     await waitFor(() => {
-      expect(screen.getByText('1 article')).toBeInTheDocument();
+      expect(screen.getByText('1 article in this edition')).toBeInTheDocument();
     });
   });
 

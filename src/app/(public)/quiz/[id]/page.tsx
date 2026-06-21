@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { useParams } from 'next/navigation'
-import { Button, Typography, Spin, Card, Progress, Modal } from 'antd'
+import { Button, Typography, Spin, Progress, Modal } from 'antd'
 import { api } from '@/lib/api'
 import { useIsMobile } from '@/hooks/useIsMobile'
 import type { Quiz } from '@/lib/types'
@@ -10,7 +10,7 @@ import QuizQuestionComponent from '@/components/QuizQuestion'
 import QuizResult from '@/components/QuizResult'
 import { QuizSkeleton } from '@/components/Skeletons'
 
-const { Title, Text } = Typography
+const { Text } = Typography
 
 const QUIZ_TIME_LIMIT_SEC = 600
 
@@ -103,11 +103,11 @@ export default function TakeQuizPage() {
   if (error) {
     return (
       <div style={{ textAlign: 'center', padding: 48 }}>
-        <div style={{ padding: '10px 14px', border: '1px solid #ef4444', borderRadius: 6, background: 'rgba(239,68,68,0.1)', color: '#fca5a5', marginBottom: 16, fontSize: 14, display: 'inline-block' }}>
+        <div style={{ padding: '10px 14px', border: '1px solid #ef4444', color: '#fca5a5', marginBottom: 16, fontSize: 13, display: 'inline-block' }}>
           {error}
         </div>
         <div>
-          <Button onClick={() => window.location.reload()} type="default" style={{ fontWeight: 600, borderRadius: 8 }}>
+          <Button onClick={() => window.location.reload()} type="default" style={{ fontWeight: 600, borderRadius: 0 }}>
             Retry
           </Button>
         </div>
@@ -122,9 +122,25 @@ export default function TakeQuizPage() {
       <div>
         <QuizResult quiz={quiz} />
         <div style={{ marginTop: 28 }}>
-          <Text strong style={{ fontSize: 15, display: 'block', marginBottom: 16, color: '#ffffff' }}>
-            Questions & Answers
-          </Text>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            marginBottom: 16,
+          }}>
+            <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
+            <Text style={{
+              fontSize: 9,
+              fontWeight: 700,
+              letterSpacing: '2px',
+              textTransform: 'uppercase',
+              color: 'var(--color-text-tertiary)',
+              whiteSpace: 'nowrap',
+            }}>
+              Questions &amp; Answers
+            </Text>
+            <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
+          </div>
           {quiz.questions?.map((question, i) => (
             <QuizQuestionComponent
               key={question.id}
@@ -142,31 +158,75 @@ export default function TakeQuizPage() {
 
   return (
     <div>
-      <Card
-        style={{ marginBottom: isMobile ? 12 : 20, background: '#0a0a0a', border: '1px solid #1f1f1f', borderRadius: 10 }}
-        styles={{ body: { padding: isMobile ? 12 : 18 } }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+      <div style={{
+        borderBottom: '1px solid var(--color-border)',
+        paddingBottom: isMobile ? 10 : 14,
+        marginBottom: isMobile ? 12 : 20,
+      }}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-end',
+          gap: 8,
+        }}>
           <div>
-            <Title level={5} style={{ margin: 0, fontSize: isMobile ? 14 : 16, color: '#ffffff' }}>{quiz.title || 'Quiz'}</Title>
+            <div className="newspaper-heading" style={{
+              fontWeight: 900,
+              fontSize: isMobile ? 20 : 28,
+              letterSpacing: '-0.5px',
+              color: 'var(--color-text)',
+              lineHeight: 1.1,
+            }}>
+              {quiz.title || 'Quiz'}
+            </div>
             {quiz.articles?.length && !isMobile ? (
-              <Text style={{ fontSize: 12, color: '#6b6b6b' }}>
+              <Text style={{ fontSize: 13, fontStyle: 'italic', color: 'var(--color-text-tertiary)', marginTop: 2, display: 'block' }}>
                 Based on {quiz.articles.length} article{quiz.articles.length > 1 ? 's' : ''}
               </Text>
             ) : null}
           </div>
-          <div style={{ display: 'flex', gap: isMobile ? 12 : 20, alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: isMobile ? 16 : 24, alignItems: 'flex-end' }}>
             <div style={{ textAlign: 'center' }}>
-              <Text strong style={{ fontSize: isMobile ? 13 : 15, color: timeLeft < 60 ? '#ef4444' : timeLeft < 180 ? '#eab308' : '#a1a1a1' }}>
-                {formatTime(timeLeft)}
+              <Text style={{
+                fontSize: 9,
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                color: 'var(--color-text-tertiary)',
+                display: 'block',
+                marginBottom: 2,
+              }}>
+                Time
               </Text>
-              <Text style={{ fontSize: 10, color: '#6b6b6b', display: 'block' }}>left</Text>
+              <div className="newspaper-heading" style={{
+                fontWeight: 700,
+                fontSize: isMobile ? 18 : 22,
+                lineHeight: 1,
+                color: timeLeft < 60 ? '#ef4444' : timeLeft < 180 ? '#eab308' : 'var(--color-text)',
+              }}>
+                {formatTime(timeLeft)}
+              </div>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <Text strong style={{ fontSize: isMobile ? 13 : 15, color: answered === total ? '#22c55e' : '#a1a1a1' }}>
-                {answered}/{total}
+              <Text style={{
+                fontSize: 9,
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                color: 'var(--color-text-tertiary)',
+                display: 'block',
+                marginBottom: 2,
+              }}>
+                Done
               </Text>
-              <Text style={{ fontSize: 10, color: '#6b6b6b', display: 'block' }}>done</Text>
+              <div className="newspaper-heading" style={{
+                fontWeight: 700,
+                fontSize: isMobile ? 18 : 22,
+                lineHeight: 1,
+                color: answered === total ? '#22c55e' : 'var(--color-text)',
+              }}>
+                {answered}/{total}
+              </div>
             </div>
           </div>
         </div>
@@ -174,24 +234,25 @@ export default function TakeQuizPage() {
           percent={Math.round((answered / total) * 100)}
           showInfo={false}
           strokeColor={answered === total ? '#22c55e' : '#6366f1'}
-          trailColor="#1f1f1f"
+          trailColor="var(--color-border)"
           size="small"
-          style={{ marginTop: 8, marginBottom: 0 }}
+          style={{ marginTop: 10, marginBottom: 0 }}
         />
-      </Card>
+      </div>
 
       {quiz.questions?.map((question, i) => (
-        <QuizQuestionComponent
-          key={question.id}
-          question={question}
-          index={i}
-          selected={answers[question.id] || null}
-          onSelect={(optionKey) => {
-            if (submitted) return
-            setAnswers((prev) => ({ ...prev, [question.id]: optionKey }))
-          }}
-          showResults={false}
-        />
+        <div key={question.id} style={{ borderBottom: '1px solid var(--color-border)', paddingBottom: isMobile ? 8 : 12, marginBottom: isMobile ? 10 : 16 }}>
+          <QuizQuestionComponent
+            question={question}
+            index={i}
+            selected={answers[question.id] || null}
+            onSelect={(optionKey) => {
+              if (submitted) return
+              setAnswers((prev) => ({ ...prev, [question.id]: optionKey }))
+            }}
+            showResults={false}
+          />
+        </div>
       ))}
 
       <div style={{ textAlign: 'center', marginTop: isMobile ? 20 : 28, marginBottom: isMobile ? 20 : 32 }}>
@@ -202,10 +263,12 @@ export default function TakeQuizPage() {
           onClick={handleSubmit}
           style={{
             height: isMobile ? 40 : 46,
-            padding: isMobile ? '0 24px' : '0 40px',
+            padding: isMobile ? '0 28px' : '0 44px',
             fontWeight: 700,
-            fontSize: isMobile ? 13 : 15,
-            borderRadius: 10,
+            fontSize: isMobile ? 12 : 13,
+            borderRadius: 0,
+            letterSpacing: '1px',
+            textTransform: 'uppercase',
           }}
         >
           Submit Answers ({answered}/{total})

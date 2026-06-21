@@ -24,8 +24,8 @@ describe('RegisterPage', () => {
 
   it('renders registration form', () => {
     render(<RegisterPage />);
-    expect(screen.getByText('Create account')).toBeInTheDocument();
-    expect(screen.getByText('Create Account')).toBeInTheDocument();
+    expect(screen.getByText('Get started with Taazi Khabar')).toBeInTheDocument();
+    expect(screen.getAllByText('Create Account').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByPlaceholderText('Your full name')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('you@example.com')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('At least 6 characters')).toBeInTheDocument();
@@ -42,7 +42,7 @@ describe('RegisterPage', () => {
     fireEvent.change(screen.getByPlaceholderText('Your full name'), { target: { value: 'Test User' } });
     fireEvent.change(screen.getByPlaceholderText('you@example.com'), { target: { value: 'a@b.com' } });
     fireEvent.change(screen.getByPlaceholderText('At least 6 characters'), { target: { value: 'password123' } });
-    fireEvent.click(screen.getByText('Create Account'));
+    fireEvent.click(screen.getAllByText('Create Account')[1]);
     await waitFor(() => {
       expect(mockRegister).toHaveBeenCalledWith({ name: 'Test User', email: 'a@b.com', password: 'password123' });
     });
@@ -55,7 +55,7 @@ describe('RegisterPage', () => {
     fireEvent.change(screen.getByPlaceholderText('Your full name'), { target: { value: 'Test User' } });
     fireEvent.change(screen.getByPlaceholderText('you@example.com'), { target: { value: 'a@b.com' } });
     fireEvent.change(screen.getByPlaceholderText('At least 6 characters'), { target: { value: 'password123' } });
-    fireEvent.click(screen.getByText('Create Account'));
+    fireEvent.click(screen.getAllByText('Create Account')[1]);
     await waitFor(() => {
       expect(screen.getByText('Registration failed')).toBeInTheDocument();
     });
@@ -67,7 +67,7 @@ describe('RegisterPage', () => {
     fireEvent.change(screen.getByPlaceholderText('Your full name'), { target: { value: 'Test' } });
     fireEvent.change(screen.getByPlaceholderText('you@example.com'), { target: { value: 'a@b.com' } });
     fireEvent.change(screen.getByPlaceholderText('At least 6 characters'), { target: { value: 'password123' } });
-    fireEvent.click(screen.getByText('Create Account'));
+    fireEvent.click(screen.getAllByText('Create Account')[1]);
     await waitFor(() => {
       expect(screen.getByText('User already exists')).toBeInTheDocument();
     });
@@ -79,7 +79,7 @@ describe('RegisterPage', () => {
     fireEvent.change(screen.getByPlaceholderText('Your full name'), { target: { value: 'Test' } });
     fireEvent.change(screen.getByPlaceholderText('you@example.com'), { target: { value: 'a@b.com' } });
     fireEvent.change(screen.getByPlaceholderText('At least 6 characters'), { target: { value: 'password123' } });
-    fireEvent.click(screen.getByText('Create Account'));
+    fireEvent.click(screen.getAllByText('Create Account')[1]);
     await waitFor(() => {
       expect(screen.getByText('Registration failed')).toBeInTheDocument();
     });

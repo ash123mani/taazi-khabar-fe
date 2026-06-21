@@ -1,18 +1,20 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Typography, Card, Row, Col, Statistic, Progress, Table, Button, message, Spin } from 'antd'
+import { Typography, Button, message, Spin } from 'antd'
 import dayjs from 'dayjs'
 import { api } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
+import { useIsMobile } from '@/hooks/useIsMobile'
 
-const { Title, Text } = Typography
+const { Text } = Typography
 
 export default function AnalyticsPage() {
   const token = useAuthStore((s) => s.accessToken)
   const [stats, setStats] = useState<any>(null)
   const [history, setHistory] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     if (!token) {
@@ -40,9 +42,11 @@ export default function AnalyticsPage() {
 
   if (!token) {
     return (
-      <div style={{ textAlign: 'center', padding: 80 }}>
-        <Title level={3} style={{ color: 'var(--color-text)' }}>Please login to view analytics</Title>
-        <Button type="primary" href="/login" style={{ fontWeight: 600, borderRadius: 8 }}>
+      <div style={{ textAlign: 'center', padding: 60 }}>
+        <div className="newspaper-heading" style={{ fontSize: 20, fontWeight: 600, color: 'var(--color-text-secondary)', marginBottom: 12 }}>
+          Please login to view analytics
+        </div>
+        <Button type="primary" href="/login" style={{ fontWeight: 600, borderRadius: 2, letterSpacing: '0.5px', fontSize: 12, height: 36, padding: '0 24px' }}>
           Login
         </Button>
       </div>
@@ -51,114 +55,176 @@ export default function AnalyticsPage() {
 
   if (loading) {
     return (
-      <Card style={{ borderRadius: 16, textAlign: 'center', padding: '80px 24px', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: '80px 24px' } }}>
+      <div style={{ textAlign: 'center', padding: 60 }}>
         <Spin size="large" />
-      </Card>
+      </div>
     )
   }
 
-  const columns = [
-    {
-      title: 'Quiz',
-      dataIndex: 'id',
-      key: 'id',
-      render: (_: string, record: any) => {
-        const pct = record.total_questions ? Math.round((record.score || 0) / record.total_questions * 100) : 0
-        return <span style={{ color: 'var(--color-text)', fontWeight: 500 }}>{pct}% Score</span>
-      },
-    },
-    {
-      title: 'Score',
-      key: 'score',
-      render: (_: any, record: any) => {
-        const pct = record.total_questions ? Math.round((record.score || 0) / record.total_questions * 100) : 0
-        return <span style={{ color: getColor(pct), fontWeight: 600 }}>{record.score || 0}/{record.total_questions} ({pct}%)</span>
-      },
-    },
-    {
-      title: 'Date',
-      dataIndex: 'created_at',
-      key: 'created_at',
-      render: (date: string) => <span style={{ color: 'var(--color-text-tertiary)' }}>{date ? dayjs(date).format('DD-MM-YYYY') : '-'}</span>,
-    },
+  const statCards = [
+    { label: 'Quizzes Taken', value: stats?.total_quizzes || 0, color: 'var(--color-text)' },
+    { label: 'Overall Accuracy', value: `${stats?.overall_accuracy || 0}%`, color: getColor(stats?.overall_accuracy || 0) },
+    { label: 'Questions', value: stats?.total_questions || 0, color: 'var(--color-text)' },
+    { label: 'Correct', value: stats?.total_correct || 0, color: '#22c55e' },
   ]
 
   return (
     <div>
-      <Title level={4} style={{ margin: 0, marginBottom: 20, fontSize: 16, color: 'var(--color-text)' }}>Analytics</Title>
-      <Row gutter={[16, 16]}>
-        <Col xs={24} sm={12} lg={6}>
-          <Card style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 12 }} styles={{ body: { padding: 20 } }}>
-            <Statistic
-              title={<Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Quizzes Taken</Text>}
-              value={stats?.total_quizzes || 0}
-              valueStyle={{ color: 'var(--color-text)', fontWeight: 700 }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 12 }} styles={{ body: { padding: 20 } }}>
-            <Statistic
-              title={<Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Overall Accuracy</Text>}
-              value={stats?.overall_accuracy || 0}
-              suffix="%"
-              valueStyle={{ color: getColor(stats?.overall_accuracy || 0), fontWeight: 700 }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 12 }} styles={{ body: { padding: 20 } }}>
-            <Statistic
-              title={<Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Questions</Text>}
-              value={stats?.total_questions || 0}
-              valueStyle={{ color: 'var(--color-text)', fontWeight: 700 }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 12 }} styles={{ body: { padding: 20 } }}>
-            <Statistic
-              title={<Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Correct</Text>}
-              value={stats?.total_correct || 0}
-              valueStyle={{ color: '#22c55e', fontWeight: 700 }}
-            />
-          </Card>
-        </Col>
-      </Row>
+      <div style={{
+        borderBottom: '1px solid var(--color-border)',
+        paddingBottom: isMobile ? 8 : 12,
+        marginBottom: isMobile ? 10 : 16,
+      }}>
+        <div className="newspaper-heading" style={{
+          fontWeight: 800,
+          fontSize: isMobile ? 20 : 26,
+          letterSpacing: '-0.3px',
+          color: 'var(--color-text)',
+          lineHeight: 1.15,
+        }}>
+          Your Performance
+        </div>
+      </div>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)',
+        gap: 0,
+        borderBottom: '1px solid var(--color-border)',
+        marginBottom: isMobile ? 10 : 16,
+      }}>
+        {statCards.map((stat, idx) => (
+          <div key={stat.label} style={{
+            padding: isMobile ? '12px 10px' : '16px 14px',
+            borderRight: !isMobile && idx < statCards.length - 1 ? '1px solid var(--color-border)' : 'none',
+            borderBottom: isMobile && idx < 2 ? '1px solid var(--color-border)' : 'none',
+          }}>
+            <Text style={{
+              fontSize: 8,
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.8px',
+              color: 'var(--color-text-tertiary)',
+              display: 'block',
+              marginBottom: 4,
+            }}>
+              {stat.label}
+            </Text>
+            <div className="newspaper-heading" style={{
+              fontWeight: 700,
+              fontSize: isMobile ? 20 : 24,
+              color: stat.color,
+              lineHeight: 1,
+            }}>
+              {stat.value}
+            </div>
+          </div>
+        ))}
+      </div>
 
       {stats?.topics && stats.topics.length > 0 && (
-        <Card style={{ marginTop: 24, background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 12 }} styles={{ body: { padding: 22 } }}>
-          <Title level={5} style={{ margin: 0, marginBottom: 16, fontSize: 14, color: 'var(--color-text)' }}>Topic-wise Breakdown</Title>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {stats.topics.map((topic: any) => (
-              <div key={topic.topic}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                  <Text style={{ color: '#d4d4d8', fontSize: 13 }}>{topic.topic}</Text>
-                  <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }}>{topic.correct}/{topic.total} ({topic.accuracy}%)</Text>
-                </div>
-                <Progress
-                  percent={topic.accuracy}
-                  showInfo={false}
-                  strokeColor={getColor(topic.accuracy)}
-                  trailColor="#27272a"
-                  size="small"
-                />
-              </div>
-            ))}
+        <div style={{
+          borderBottom: '1px solid var(--color-border)',
+          paddingBottom: isMobile ? 10 : 14,
+          marginBottom: isMobile ? 10 : 16,
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            marginBottom: isMobile ? 10 : 14,
+          }}>
+            <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
+            <Text style={{
+              fontSize: 9,
+              fontWeight: 600,
+              letterSpacing: '1.5px',
+              textTransform: 'uppercase',
+              color: 'var(--color-text-tertiary)',
+              whiteSpace: 'nowrap',
+            }}>
+              Topic Breakdown
+            </Text>
+            <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
           </div>
-        </Card>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? 6 : 10 }}>
+            {stats.topics.map((topic: any) => {
+              const pct = topic.accuracy
+              return (
+                <div key={topic.topic}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
+                    <Text style={{ fontSize: isMobile ? 11 : 12, color: 'var(--color-text-secondary)' }}>
+                      {topic.topic}
+                    </Text>
+                    <Text style={{ fontSize: isMobile ? 10 : 11, color: 'var(--color-text-tertiary)' }}>
+                      {topic.correct}/{topic.total} ({pct}%)
+                    </Text>
+                  </div>
+                  <div style={{ height: 3, background: 'var(--color-border)', overflow: 'hidden' }}>
+                    <div style={{ width: `${pct}%`, height: '100%', background: getColor(pct), transition: 'width 0.3s' }} />
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
       )}
 
       {history.length > 0 && (
-        <Card style={{ marginTop: 24, background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 12 }} styles={{ body: { padding: 22 } }}>
-          <Title level={5} style={{ margin: 0, marginBottom: 16, fontSize: 14, color: 'var(--color-text)' }}>Recent Quizzes</Title>
-          <Table
-            columns={columns}
-            dataSource={history}
-            rowKey="id"
-            pagination={{ pageSize: 5, showTotal: (total) => <span style={{ color: 'var(--color-text-tertiary)' }}>Total {total} quizzes</span> }}
-          />
-        </Card>
+        <div>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            marginBottom: isMobile ? 8 : 12,
+          }}>
+            <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
+            <Text style={{
+              fontSize: 9,
+              fontWeight: 600,
+              letterSpacing: '1.5px',
+              textTransform: 'uppercase',
+              color: 'var(--color-text-tertiary)',
+              whiteSpace: 'nowrap',
+            }}>
+              Recent Quizzes
+            </Text>
+            <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+            {history.slice(0, 5).map((quiz: any) => {
+              const pct = quiz.total_questions ? Math.round((quiz.score || 0) / quiz.total_questions * 100) : 0
+              return (
+                <div key={quiz.id} style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: isMobile ? '8px 0' : '10px 0',
+                  borderBottom: '1px solid var(--color-border)',
+                }}>
+                  <div>
+                    <div className="newspaper-heading" style={{
+                      fontSize: isMobile ? 13 : 14,
+                      fontWeight: 600,
+                      color: 'var(--color-text)',
+                    }}>{pct}% Score</div>
+                    <Text style={{ fontSize: isMobile ? 9 : 10, color: 'var(--color-text-tertiary)', display: 'block', marginTop: 1 }}>
+                      {quiz.score || 0}/{quiz.total_questions} questions
+                    </Text>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <Text style={{ fontSize: isMobile ? 12 : 14, color: getColor(pct), fontWeight: 700 }}>{pct}%</Text>
+                    <Text style={{ fontSize: isMobile ? 9 : 9, color: 'var(--color-text-tertiary)', display: 'block', marginTop: 1 }}>
+                      {quiz.created_at ? dayjs(quiz.created_at).format('DD-MM-YYYY') : '-'}
+                    </Text>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
       )}
     </div>
   )

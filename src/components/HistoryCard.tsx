@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, Typography, Tag, Space } from 'antd'
+import { Typography, Tag } from 'antd'
 import Link from 'next/link'
 import { RightOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
@@ -19,56 +19,60 @@ export default function HistoryCard({ quiz }: { quiz: Quiz }) {
 
   return (
     <Link href={`/history/${quiz.id}`} style={{ textDecoration: 'none', display: 'block' }}>
-      <Card
-        style={{
-          borderRadius: 12,
-          marginBottom: 12,
-          transition: 'all 0.2s ease',
-          background: 'var(--color-bg)',
-          border: '1px solid var(--color-border)',
-        }}
-        styles={{ body: { padding: '16px 20px' }}}
-        hoverable
+      <div style={{
+        padding: '14px 16px',
+        borderBottom: '1px solid var(--color-border)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 12,
+        cursor: 'pointer',
+        transition: 'background 0.15s',
+      }}
+        onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--color-hover)')}
+        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <Text strong style={{ fontSize: 14, display: 'block', color: 'var(--color-text)' }}>
-              {quiz.title || 'Quiz'}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <Text strong style={{ fontSize: 15, display: 'block', color: 'var(--color-text)' }}>
+            {quiz.title || 'Quiz'}
+          </Text>
+          <div style={{ display: 'flex', gap: 8, marginTop: 4, alignItems: 'center', flexWrap: 'wrap' }}>
+            <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              {dayjs(quiz.created_at).format('DD-MM-YYYY')}
             </Text>
-            <Space size={12} style={{ marginTop: 6 }}>
-              <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }}>
-                {dayjs(quiz.created_at).format('DD-MM-YYYY')}
-              </Text>
-              <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }}>
-                {quiz.total_questions} questions
-              </Text>
-              {quiz.articles?.length ? (
-                <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }}>
+            <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--color-text-tertiary)', display: 'inline-block' }} />
+            <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 11 }}>
+              {quiz.total_questions} questions
+            </Text>
+            {quiz.articles?.length ? (
+              <>
+                <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--color-text-tertiary)', display: 'inline-block' }} />
+                <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 11 }}>
                   {quiz.articles.length} articles
                 </Text>
-              ) : null}
-            </Space>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            {percentage !== null && (
-              <Tag style={{
-                fontSize: 13,
-                fontWeight: 700,
-                borderRadius: 6,
-                margin: 0,
-                padding: '2px 10px',
-                color,
-                border: `1px solid ${color}`,
-                background: `${color}15`,
-              }}>
-                {percentage}%
-              </Tag>
-            )}
-            <RightOutlined style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }} />
+              </>
+            ) : null}
           </div>
         </div>
-      </Card>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          {percentage !== null && (
+            <Tag style={{
+              fontSize: 12,
+              fontWeight: 700,
+              borderRadius: 0,
+              margin: 0,
+              padding: '1px 8px',
+              color,
+              border: `1px solid ${color}`,
+              background: `${color}15`,
+            }}>
+              {percentage}%
+            </Tag>
+          )}
+          <RightOutlined style={{ color: 'var(--color-text-tertiary)', fontSize: 11 }} />
+        </div>
+      </div>
     </Link>
   )
 }

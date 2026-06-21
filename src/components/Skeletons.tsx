@@ -1,4 +1,4 @@
-import { Skeleton as AntSkeleton, Space, Card } from 'antd'
+import { Skeleton as AntSkeleton } from 'antd'
 import { useIsMobile } from '@/hooks/useIsMobile'
 
 export function ArticleSkeleton({ hasImage = true }: { hasImage?: boolean }) {
@@ -31,18 +31,18 @@ export function ArticleSkeleton({ hasImage = true }: { hasImage?: boolean }) {
 
 export function QuizSkeleton() {
   return (
-    <Space direction="vertical" size={14} style={{ width: '100%' }}>
-      <Card style={{ borderRadius: 12, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: 18 } }}>
+    <div>
+      <div style={{ padding: '16px 0', marginBottom: 8, borderBottom: '1px solid var(--color-border)' }}>
         <AntSkeleton active paragraph={{ rows: 1 }} title={{ width: '40%' }} />
-      </Card>
+      </div>
       {[1, 2, 3].map((i) => (
-        <Card key={i} style={{ borderRadius: 12, background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} styles={{ body: { padding: 20 } }}>
+        <div key={i} style={{ padding: '18px 0', borderBottom: '1px solid var(--color-border)' }}>
           <AntSkeleton active paragraph={{ rows: 1 }} title={{ width: '30%' }} />
           <div style={{ marginTop: 16 }}>
             <AntSkeleton active paragraph={{ rows: 4 }} title={false} />
           </div>
-        </Card>
+        </div>
       ))}
-    </Space>
+    </div>
   )
 }

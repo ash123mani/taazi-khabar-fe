@@ -61,124 +61,130 @@ export default function PublicLayoutClient({ children }: { children: React.React
     setDrawerOpen(false)
   }
 
+  const today = new Date()
+  const dateStr = today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
+
   return (
     <Layout style={{ minHeight: '100vh', background: 'var(--color-bg)' }}>
-      <Header
-        style={{
+      {/* Masthead */}
+      <div style={{ flexShrink: 0 }}>
+        {/* Date line */}
+        <div style={{
           display: 'flex',
-          alignItems: 'center',
           justifyContent: 'space-between',
-          padding: isMobile ? '0 8px' : '0 16px',
-          height: 40,
-          position: 'sticky',
-          top: 0,
-          zIndex: 100,
-          background: 'var(--color-glass-bg)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-          borderBottom: '1px solid var(--color-glass-border)',
-        }}
-      >
-        <Space
-          size={4}
-          style={{ cursor: 'pointer', flexShrink: 0 }}
-          onClick={() => router.push('/')}
-        >
-          <div style={{
-            width: isMobile ? 22 : 26,
-            height: isMobile ? 22 : 26,
-            borderRadius: 6,
-            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+          alignItems: 'center',
+          padding: isMobile ? '6px 12px' : '8px 20px',
+          borderBottom: '1px solid var(--color-border-light)',
+        }}>
+          <Text style={{ fontSize: isMobile ? 10 : 11, color: 'var(--color-text-tertiary)' }}>
+            {dateStr}
+          </Text>
+          <Text style={{ fontSize: isMobile ? 9 : 10, color: 'var(--color-text-tertiary)', letterSpacing: '1px' }}>
+            Edition 1.0
+          </Text>
+        </div>
+
+        {/* Nameplate */}
+        <div style={{
+          textAlign: 'center',
+          padding: isMobile ? '10px 12px 8px' : '18px 20px 12px',
+          borderBottom: '1px solid var(--color-border)',
+        }}>
+          <div onClick={() => router.push('/')} style={{ cursor: 'pointer' }}>
+            <div className="newspaper-heading" style={{
+              fontWeight: 900,
+              fontSize: isMobile ? 26 : 42,
+              letterSpacing: isMobile ? '-0.5px' : '-1px',
+              color: 'var(--color-text)',
+              lineHeight: 1.05,
+            }}>
+              Taazi Khabar
+            </div>
+            <div style={{
+              fontSize: isMobile ? 8 : 10,
+              fontWeight: 500,
+              letterSpacing: isMobile ? '2px' : '4px',
+              textTransform: 'uppercase',
+              color: 'var(--color-text-tertiary)',
+              marginTop: isMobile ? 2 : 4,
+            }}>
+              UPSC Current Affairs Digest
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <Header
+          style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            color: '#fff',
-            fontSize: isMobile ? 9 : 11,
-            fontWeight: 800,
-            letterSpacing: -1,
-            boxShadow: '0 2px 8px rgba(99, 102, 241, 0.3)',
-          }}>
-            TK
-          </div>
-          {!isMobile && (
-            <Text strong style={{ fontSize: 14, letterSpacing: '-0.5px', color: 'var(--color-text)', fontWeight: 700 }}>
-              Taazi Khabar
-            </Text>
-          )}
-        </Space>
-
-        {isMobile ? (
-          <div style={{ flex: 1 }} />
-        ) : (
-          <div style={{ flex: 1, overflow: 'hidden', margin: '0 8px' }}>
-            <Menu
-              mode="horizontal"
-              selectedKeys={[selectedKey(pathname)]}
-              items={nav}
-              onClick={({ key }) => router.push(key)}
-              style={{
-                borderBottom: 'none',
-                background: 'transparent',
-                justifyContent: 'center',
-                display: 'flex',
-                minWidth: 0,
-                lineHeight: '40px',
-              }}
-            />
-          </div>
-        )}
-
-        <Space style={{ flexShrink: 0 }} size={isMobile ? 2 : 4}>
-          <Button
-            type="text"
-            size={isMobile ? 'small' : 'small'}
-            icon={isDark ? <SunOutlined /> : <MoonOutlined />}
-            onClick={toggle}
-            style={{ color: 'var(--color-text-secondary)' }}
-          />
-          {session ? (
-            isMobile ? null : (
-              <Button
-                type="text"
-                size="small"
-                icon={<LogoutOutlined />}
-                onClick={() => signOut()}
-                style={{ color: 'var(--color-text-secondary)' }}
-              >
-                Logout
-              </Button>
-            )
+            justifyContent: 'space-between',
+            padding: isMobile ? '0 12px' : '0 20px',
+            height: isMobile ? 40 : 44,
+            background: 'var(--color-glass-bg)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            borderBottom: '1px solid var(--color-glass-border)',
+          }}
+        >
+          {isMobile ? (
+            <div style={{ flex: 1 }} />
           ) : (
-            isMobile ? null : (
-              <Button type="primary" ghost size="small" icon={<LoginOutlined />} onClick={() => router.push('/login')}>
-                Login
-              </Button>
-            )
+            <div style={{ flex: 1, overflow: 'hidden', margin: '0 auto', maxWidth: 680 }}>
+              <Menu
+                mode="horizontal"
+                selectedKeys={[selectedKey(pathname)]}
+                items={nav}
+                onClick={({ key }) => router.push(key)}
+                style={{
+                  borderBottom: 'none',
+                  background: 'transparent',
+                  justifyContent: 'center',
+                  display: 'flex',
+                  minWidth: 0,
+                  lineHeight: '44px',
+                  fontSize: 13,
+                  fontWeight: 500,
+                  letterSpacing: '1px',
+                  textTransform: 'uppercase',
+                }}
+              />
+            </div>
           )}
-          {isMobile && (
-            <Button
-              type="text"
-              size="small"
-              icon={<MenuOutlined style={{ fontSize: 16 }} />}
-              onClick={() => setDrawerOpen(true)}
-              style={{ color: 'var(--color-text-secondary)' }}
-            />
-          )}
-        </Space>
-      </Header>
 
-      <Drawer
-        title={
-          <Space>
-            <div style={{
-              width: 24, height: 24, borderRadius: 6,
-              background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#fff', fontSize: 10, fontWeight: 800,
-            }}>TK</div>
-            <span style={{ fontSize: 15, fontWeight: 600 }}>Taazi Khabar</span>
+          <Space style={{ flexShrink: 0 }} size={isMobile ? 2 : 8}>
+            <Button
+              type="text" size="small"
+              icon={isDark ? <SunOutlined /> : <MoonOutlined />}
+              onClick={toggle}
+              style={{ color: 'var(--color-text-secondary)', fontSize: 14 }}
+            />
+            {session ? (
+              isMobile ? null : (
+                <Button type="text" size="small" icon={<LogoutOutlined />} onClick={() => signOut()}
+                  style={{ color: 'var(--color-text-secondary)', fontSize: 12 }}>
+                  Logout
+                </Button>
+              )
+            ) : (
+              isMobile ? null : (
+                <Button type="primary" ghost size="small" icon={<LoginOutlined />} onClick={() => router.push('/login')}
+                  style={{ fontSize: 12, height: 30, border: '1px solid var(--color-border)' }}>
+                  Login
+                </Button>
+              )
+            )}
+            {isMobile && (
+              <Button type="text" size="small" icon={<MenuOutlined />} onClick={() => setDrawerOpen(true)}
+                style={{ color: 'var(--color-text-secondary)' }} />
+            )}
           </Space>
-        }
+        </Header>
+      </div>
+
+      {/* Mobile Drawer */}
+      <Drawer
+        title={<span className="newspaper-heading" style={{ fontSize: 18, fontWeight: 700 }}>Taazi Khabar</span>}
         placement="left"
         onClose={() => setDrawerOpen(false)}
         open={drawerOpen}
@@ -200,17 +206,18 @@ export default function PublicLayoutClient({ children }: { children: React.React
             if (key === '__logout__') { signOut(); setDrawerOpen(false) }
             else handleNav(key)
           }}
-          style={{ borderInlineEnd: 'none' }}
+          style={{ borderInlineEnd: 'none', fontSize: 13, fontWeight: 500, letterSpacing: '0.5px', textTransform: 'uppercase' }}
         />
       </Drawer>
 
+      {/* Content */}
       <Content
         style={{
           flex: 1,
           width: '100%',
           maxWidth: 1200,
           margin: '0 auto',
-          padding: isMobile ? '16px 12px' : '32px 24px',
+          padding: isMobile ? '16px 12px' : '28px 24px',
           boxSizing: 'border-box',
           display: 'flex',
           flexDirection: 'column',
@@ -219,22 +226,72 @@ export default function PublicLayoutClient({ children }: { children: React.React
         {children}
       </Content>
 
+      {/* Footer */}
       <Footer
         style={{
-          background: 'var(--gradient-footer)',
-          padding: isMobile ? '16px 12px' : '24px',
-          textAlign: 'center',
-          borderTop: '1px solid var(--color-footer-border)',
+          background: 'var(--color-bg)',
+          padding: isMobile ? '20px 12px 16px' : '32px 24px 24px',
+          borderTop: '1px solid var(--color-border-light)',
         }}
       >
-        <Text style={{ color: 'var(--color-text-tertiary)', fontSize: isMobile ? 11 : 13, fontWeight: 500 }}>
-          &copy; {new Date().getFullYear()} Taazi Khabar
-        </Text>
-        {!isMobile && (
-          <div style={{ marginTop: 4 }}>
-            <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12, opacity: 0.6 }}>
-              Built with Next.js, FastAPI &middot; NVIDIA NIM
+        {isMobile ? (
+          <div style={{ textAlign: 'center' }}>
+            <div className="newspaper-heading" style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-text-secondary)', marginBottom: 6 }}>
+              Taazi Khabar
+            </div>
+            <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 10, display: 'block', marginBottom: 4 }}>
+              UPSC Current Affairs &bull; Daily Quiz
             </Text>
+            <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 10, display: 'block' }}>
+              &copy; {new Date().getFullYear()}
+            </Text>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: 48 }}>
+            <div>
+              <div className="newspaper-heading" style={{ fontSize: 20, fontWeight: 700, color: 'var(--color-text)', marginBottom: 8, letterSpacing: '-0.3px' }}>
+                Taazi Khabar
+              </div>
+              <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 13, lineHeight: 1.6, display: 'block' }}>
+                An AI-powered current affairs platform for UPSC preparation. Daily curated news, summaries, and quizzes to help you stay ahead.
+              </Text>
+            </div>
+            <div>
+              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--color-text-secondary)', marginBottom: 12 }}>
+                Sections
+              </div>
+              {['Articles', 'Quiz', 'Bookmarks', 'Analytics', 'History'].map((label) => (
+                <div key={label} style={{ marginBottom: 6 }}>
+                  <Text
+                    onClick={() => router.push(`/${label.toLowerCase()}`)}
+                    style={{ color: 'var(--color-text-tertiary)', fontSize: 13, cursor: 'pointer', transition: 'color 0.15s' }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-text)'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-text-tertiary)'}
+                  >
+                    {label}
+                  </Text>
+                </div>
+              ))}
+            </div>
+            <div>
+              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--color-text-secondary)', marginBottom: 12 }}>
+                Built With
+              </div>
+              <div style={{ color: 'var(--color-text-tertiary)', fontSize: 13, lineHeight: 1.7 }}>
+                <div>Next.js</div>
+                <div>FastAPI</div>
+                <div>NVIDIA NIM</div>
+                <div>Ant Design</div>
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--color-text-secondary)', marginBottom: 12 }}>
+                Info
+              </div>
+              <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 13, display: 'block' }}>
+                &copy; {new Date().getFullYear()} Taazi Khabar
+              </Text>
+            </div>
           </div>
         )}
       </Footer>

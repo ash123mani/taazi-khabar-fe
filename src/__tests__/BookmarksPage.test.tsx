@@ -40,15 +40,15 @@ describe('BookmarksPage', () => {
 
   it('shows loading state', () => {
     mockGetBookmarkedArticles.mockReturnValue(new Promise(() => {}));
-    render(<BookmarksPage />);
-    expect(screen.getByText('Loading bookmarks...')).toBeInTheDocument();
+    const { container } = render(<BookmarksPage />);
+    expect(container.querySelector('.ant-spin')).toBeInTheDocument();
   });
 
   it('shows empty state', async () => {
     mockGetBookmarkedArticles.mockResolvedValue([]);
     render(<BookmarksPage />);
     await waitFor(() => {
-      expect(screen.getByText('No bookmarks yet. Start reading and bookmark articles!')).toBeInTheDocument();
+      expect(screen.getByText('No bookmarks yet')).toBeInTheDocument();
     });
   });
 
@@ -58,7 +58,7 @@ describe('BookmarksPage', () => {
     ]);
     render(<BookmarksPage />);
     await waitFor(() => {
-      expect(screen.getByText('Bookmarks')).toBeInTheDocument();
+      expect(screen.getByText('Clippings')).toBeInTheDocument();
     });
   });
 });
