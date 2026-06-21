@@ -179,22 +179,22 @@ function SectionBlock({ section }: { section: Section }) {
   }
 
   const collapsible = cfg.collapsible
-  const bodySize = isMobile ? 13 : 14
+  const bodySize = isMobile ? 15 : 16.5
   const content = (
-    <div style={{ fontSize: bodySize, lineHeight: 1.7, color: 'var(--color-text-secondary)' }}>
+    <div className="newspaper-body" style={{ fontSize: bodySize, lineHeight: 1.8, color: 'var(--color-text-secondary)', maxWidth: 680 }}>
       <ReactMarkdown remarkPlugins={[remarkGfm]}
         components={{
           p: ({ children }) => {
             const txt = extractText(children)
             if (!txt.trim()) return null
-            return <p style={{ margin: '4px 0' }}>{children}</p>
+            return <p style={{ margin: '10px 0' }}>{children}</p>
           },
             strong: ({ children }) => <strong style={{ fontWeight: 600, color: 'var(--color-text)', opacity: 0.85 }}>{children}</strong>,
-            ul: ({ children }) => <ul style={{ paddingLeft: isMobile ? 12 : 16, margin: '2px 0', listStyle: 'none' }}>{children}</ul>,
+            ul: ({ children }) => <ul style={{ paddingLeft: isMobile ? 16 : 20, margin: '6px 0', listStyle: 'none' }}>{children}</ul>,
             li: ({ children }) => (
               <li style={{
-                marginBottom: 3,
-                lineHeight: 1.7,
+                marginBottom: 4,
+                lineHeight: 1.8,
                 fontSize: bodySize,
                 padding: '2px 0',
               }}>
