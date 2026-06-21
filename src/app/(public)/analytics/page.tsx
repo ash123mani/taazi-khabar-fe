@@ -70,49 +70,56 @@ export default function AnalyticsPage() {
 
   return (
     <div>
-      <div style={{
-        borderBottom: '1px solid var(--color-border)',
-        paddingBottom: isMobile ? 8 : 12,
-        marginBottom: isMobile ? 10 : 16,
+      <Text style={{
+        fontSize: 10,
+        fontWeight: 700,
+        letterSpacing: '2px',
+        textTransform: 'uppercase',
+        color: 'var(--color-text-tertiary)',
+        marginBottom: 6,
+        display: 'block',
       }}>
-        <div className="newspaper-heading" style={{
-          fontWeight: 800,
-          fontSize: isMobile ? 20 : 26,
-          letterSpacing: '-0.3px',
-          color: 'var(--color-text)',
-          lineHeight: 1.15,
-        }}>
-          Your Performance
-        </div>
+        Analytics
+      </Text>
+      <div className="newspaper-heading" style={{
+        fontWeight: 800,
+        fontSize: isMobile ? 20 : 26,
+        letterSpacing: '-0.3px',
+        color: 'var(--color-text)',
+        lineHeight: 1.15,
+        marginBottom: isMobile ? 20 : 28,
+      }}>
+        Your Performance
       </div>
 
       <div style={{
         display: 'grid',
         gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)',
-        gap: 0,
-        borderBottom: '1px solid var(--color-border)',
-        marginBottom: isMobile ? 10 : 16,
+        gap: 12,
+        marginBottom: isMobile ? 20 : 28,
       }}>
-        {statCards.map((stat, idx) => (
+        {statCards.map((stat) => (
           <div key={stat.label} style={{
-            padding: isMobile ? '12px 10px' : '16px 14px',
-            borderRight: !isMobile && idx < statCards.length - 1 ? '1px solid var(--color-border)' : 'none',
-            borderBottom: isMobile && idx < 2 ? '1px solid var(--color-border)' : 'none',
+            background: 'var(--color-surface)',
+            borderRadius: 12,
+            padding: isMobile ? '14px 10px' : '18px 14px',
+            textAlign: 'center',
+            border: '1px solid var(--color-border)',
           }}>
             <Text style={{
-              fontSize: 8,
+              fontSize: 9,
               fontWeight: 600,
               textTransform: 'uppercase',
-              letterSpacing: '0.8px',
+              letterSpacing: '0.5px',
               color: 'var(--color-text-tertiary)',
               display: 'block',
-              marginBottom: 4,
+              marginBottom: 6,
             }}>
               {stat.label}
             </Text>
-            <div className="newspaper-heading" style={{
+            <div style={{
               fontWeight: 700,
-              fontSize: isMobile ? 20 : 24,
+              fontSize: isMobile ? 22 : 26,
               color: stat.color,
               lineHeight: 1,
             }}>
@@ -123,46 +130,37 @@ export default function AnalyticsPage() {
       </div>
 
       {stats?.topics && stats.topics.length > 0 && (
-        <div style={{
-          borderBottom: '1px solid var(--color-border)',
-          paddingBottom: isMobile ? 10 : 14,
-          marginBottom: isMobile ? 10 : 16,
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            marginBottom: isMobile ? 10 : 14,
+        <div style={{ marginBottom: isMobile ? 20 : 28 }}>
+          <Text style={{
+            fontSize: 13,
+            fontWeight: 600,
+            color: 'var(--color-text)',
+            display: 'block',
+            marginBottom: 12,
           }}>
-            <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
-            <Text style={{
-              fontSize: 9,
-              fontWeight: 600,
-              letterSpacing: '1.5px',
-              textTransform: 'uppercase',
-              color: 'var(--color-text-tertiary)',
-              whiteSpace: 'nowrap',
-            }}>
-              Topic Breakdown
-            </Text>
-            <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
-          </div>
+            Topic Breakdown
+          </Text>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? 6 : 10 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {stats.topics.map((topic: any) => {
               const pct = topic.accuracy
               return (
-                <div key={topic.topic}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-                    <Text style={{ fontSize: isMobile ? 11 : 12, color: 'var(--color-text-secondary)' }}>
+                <div key={topic.topic} style={{
+                  background: 'var(--color-surface)',
+                  borderRadius: 10,
+                  padding: isMobile ? '12px 14px' : '14px 16px',
+                  border: '1px solid var(--color-border)',
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                    <Text style={{ fontSize: isMobile ? 13 : 14, fontWeight: 500, color: 'var(--color-text)' }}>
                       {topic.topic}
                     </Text>
-                    <Text style={{ fontSize: isMobile ? 10 : 11, color: 'var(--color-text-tertiary)' }}>
+                    <Text style={{ fontSize: isMobile ? 11 : 12, color: 'var(--color-text-tertiary)', fontWeight: 600 }}>
                       {topic.correct}/{topic.total} ({pct}%)
                     </Text>
                   </div>
-                  <div style={{ height: 3, background: 'var(--color-border)', overflow: 'hidden' }}>
-                    <div style={{ width: `${pct}%`, height: '100%', background: getColor(pct), transition: 'width 0.3s' }} />
+                  <div style={{ height: 4, background: 'var(--color-border)', borderRadius: 2, overflow: 'hidden' }}>
+                    <div style={{ width: `${pct}%`, height: '100%', background: getColor(pct), borderRadius: 2, transition: 'width 0.3s' }} />
                   </div>
                 </div>
               )
@@ -173,27 +171,17 @@ export default function AnalyticsPage() {
 
       {history.length > 0 && (
         <div>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            marginBottom: isMobile ? 8 : 12,
+          <Text style={{
+            fontSize: 13,
+            fontWeight: 600,
+            color: 'var(--color-text)',
+            display: 'block',
+            marginBottom: 12,
           }}>
-            <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
-            <Text style={{
-              fontSize: 9,
-              fontWeight: 600,
-              letterSpacing: '1.5px',
-              textTransform: 'uppercase',
-              color: 'var(--color-text-tertiary)',
-              whiteSpace: 'nowrap',
-            }}>
-              Recent Quizzes
-            </Text>
-            <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
-          </div>
+            Recent Quizzes
+          </Text>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {history.slice(0, 5).map((quiz: any) => {
               const pct = quiz.total_questions ? Math.round((quiz.score || 0) / quiz.total_questions * 100) : 0
               return (
@@ -201,22 +189,24 @@ export default function AnalyticsPage() {
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  padding: isMobile ? '8px 0' : '10px 0',
-                  borderBottom: '1px solid var(--color-border)',
+                  background: 'var(--color-surface)',
+                  borderRadius: 10,
+                  padding: isMobile ? '12px 14px' : '14px 16px',
+                  border: '1px solid var(--color-border)',
                 }}>
                   <div>
-                    <div className="newspaper-heading" style={{
-                      fontSize: isMobile ? 13 : 14,
+                    <div style={{
+                      fontSize: isMobile ? 14 : 15,
                       fontWeight: 600,
                       color: 'var(--color-text)',
                     }}>{pct}% Score</div>
-                    <Text style={{ fontSize: isMobile ? 9 : 10, color: 'var(--color-text-tertiary)', display: 'block', marginTop: 1 }}>
+                    <Text style={{ fontSize: isMobile ? 11 : 12, color: 'var(--color-text-tertiary)', marginTop: 2, display: 'block' }}>
                       {quiz.score || 0}/{quiz.total_questions} questions
                     </Text>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <Text style={{ fontSize: isMobile ? 12 : 14, color: getColor(pct), fontWeight: 700 }}>{pct}%</Text>
-                    <Text style={{ fontSize: isMobile ? 9 : 9, color: 'var(--color-text-tertiary)', display: 'block', marginTop: 1 }}>
+                    <Text style={{ fontSize: isMobile ? 14 : 16, color: getColor(pct), fontWeight: 700 }}>{pct}%</Text>
+                    <Text style={{ fontSize: isMobile ? 10 : 11, color: 'var(--color-text-tertiary)', display: 'block', marginTop: 2 }}>
                       {quiz.created_at ? dayjs(quiz.created_at).format('DD-MM-YYYY') : '-'}
                     </Text>
                   </div>

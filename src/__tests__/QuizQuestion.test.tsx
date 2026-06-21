@@ -12,14 +12,13 @@ const question: QuizQuestionType = {
 };
 
 describe('QuizQuestion', () => {
-  it('renders question text and index', () => {
-    render(<QuizQuestion question={question} index={0} selected={null} onSelect={() => {}} showResults={false} />);
-    expect(screen.getByText('Question 1')).toBeInTheDocument();
+  it('renders question text', () => {
+    render(<QuizQuestion question={question} selected={null} onSelect={() => {}} showResults={false} />);
     expect(screen.getByText('What is the capital of France?')).toBeInTheDocument();
   });
 
   it('renders all options', () => {
-    render(<QuizQuestion question={question} index={0} selected={null} onSelect={() => {}} showResults={false} />);
+    render(<QuizQuestion question={question} selected={null} onSelect={() => {}} showResults={false} />);
     expect(screen.getByText('London')).toBeInTheDocument();
     expect(screen.getByText('Paris')).toBeInTheDocument();
     expect(screen.getByText('Berlin')).toBeInTheDocument();
@@ -28,46 +27,46 @@ describe('QuizQuestion', () => {
 
   it('calls onSelect when option clicked', () => {
     const onSelect = vi.fn();
-    render(<QuizQuestion question={question} index={0} selected={null} onSelect={onSelect} showResults={false} />);
+    render(<QuizQuestion question={question} selected={null} onSelect={onSelect} showResults={false} />);
     fireEvent.click(screen.getByText('Paris'));
     expect(onSelect).toHaveBeenCalledWith('B');
   });
 
   it('shows selected state', () => {
-    render(<QuizQuestion question={question} index={0} selected="B" onSelect={() => {}} showResults={false} />);
+    render(<QuizQuestion question={question} selected="B" onSelect={() => {}} showResults={false} />);
     expect(screen.getByText('Paris')).toBeInTheDocument();
   });
 
   it('shows correct answer indicator after submission', () => {
-    render(<QuizQuestion question={question} index={0} selected="B" onSelect={() => {}} showResults={true} />);
-    expect(screen.getByText('✓ Correct')).toBeInTheDocument();
+    render(<QuizQuestion question={question} selected="B" onSelect={() => {}} showResults={true} />);
+    expect(screen.getByText('Correct')).toBeInTheDocument();
     expect(screen.getByText('Paris is the capital of France.')).toBeInTheDocument();
   });
 
   it('shows incorrect answer indicator after submission', () => {
-    render(<QuizQuestion question={question} index={0} selected="A" onSelect={() => {}} showResults={true} />);
-    expect(screen.getByText('✗ Incorrect')).toBeInTheDocument();
+    render(<QuizQuestion question={question} selected="A" onSelect={() => {}} showResults={true} />);
+    expect(screen.getByText('Incorrect')).toBeInTheDocument();
   });
 
   it('does not allow clicking during results', () => {
     const onSelect = vi.fn();
-    render(<QuizQuestion question={question} index={0} selected="B" onSelect={onSelect} showResults={true} />);
+    render(<QuizQuestion question={question} selected="B" onSelect={onSelect} showResults={true} />);
     fireEvent.click(screen.getByText('London'));
     expect(onSelect).not.toHaveBeenCalled();
   });
 
   it('shows checkmark for correct answer', () => {
-    render(<QuizQuestion question={question} index={0} selected="B" onSelect={() => {}} showResults={true} />);
-    expect(screen.getByText('✓')).toBeInTheDocument();
+    render(<QuizQuestion question={question} selected="B" onSelect={() => {}} showResults={true} />);
+    expect(screen.getByLabelText('check-circle')).toBeInTheDocument();
   });
 
   it('shows cross for wrong answer', () => {
-    render(<QuizQuestion question={question} index={0} selected="A" onSelect={() => {}} showResults={true} />);
-    expect(screen.getByText('✗')).toBeInTheDocument();
+    render(<QuizQuestion question={question} selected="A" onSelect={() => {}} showResults={true} />);
+    expect(screen.getByLabelText('close-circle')).toBeInTheDocument();
   });
 
   it('hides explanation when showResults is false', () => {
-    render(<QuizQuestion question={question} index={0} selected={null} onSelect={() => {}} showResults={false} />);
+    render(<QuizQuestion question={question} selected={null} onSelect={() => {}} showResults={false} />);
     expect(screen.queryByText('Paris is the capital of France.')).not.toBeInTheDocument();
   });
 });

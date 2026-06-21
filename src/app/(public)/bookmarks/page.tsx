@@ -58,67 +58,67 @@ export default function BookmarksPage() {
 
   return (
     <div>
-      <div style={{
-        borderBottom: '1px solid var(--color-border)',
-        paddingBottom: isMobile ? 8 : 12,
-        marginBottom: isMobile ? 10 : 14,
+      <Text style={{
+        fontSize: 10,
+        fontWeight: 700,
+        letterSpacing: '2px',
+        textTransform: 'uppercase',
+        color: 'var(--color-text-tertiary)',
+        marginBottom: 6,
+        display: 'block',
       }}>
-        <div className="newspaper-heading" style={{
-          fontWeight: 800,
-          fontSize: isMobile ? 20 : 26,
-          letterSpacing: '-0.3px',
-          color: 'var(--color-text)',
-          lineHeight: 1.15,
-        }}>
-          Clippings
-        </div>
+        Reading List
+      </Text>
+      <div className="newspaper-heading" style={{
+        fontWeight: 800,
+        fontSize: isMobile ? 20 : 26,
+        letterSpacing: '-0.3px',
+        color: 'var(--color-text)',
+        lineHeight: 1.15,
+        marginBottom: isMobile ? 16 : 24,
+      }}>
+        Clippings
       </div>
       {articles.length === 0 ? (
-        <div style={{ padding: isMobile ? '32px 12px' : '48px 16px', textAlign: 'center', borderBottom: '1px solid var(--color-border)' }}>
+        <div style={{
+          background: 'var(--color-surface)',
+          borderRadius: 12,
+          padding: isMobile ? '32px 20px' : '48px 32px',
+          textAlign: 'center',
+          border: '1px solid var(--color-border)',
+        }}>
           <div className="newspaper-heading" style={{ fontSize: isMobile ? 16 : 20, fontWeight: 600, color: 'var(--color-text-secondary)', marginBottom: 6 }}>
             No bookmarks yet
           </div>
-          <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12, display: 'block', marginBottom: 16 }}>
+          <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 13, display: 'block', marginBottom: 20 }}>
             Start reading and bookmark articles to save them here
           </Text>
           <Link href="/">
-            <Button type="primary" style={{ fontWeight: 600, borderRadius: 2, letterSpacing: '0.5px', fontSize: 12, height: 36, padding: '0 24px' }}>
+            <Button type="primary" style={{ fontWeight: 600, borderRadius: 8, height: 38, padding: '0 24px', fontSize: 13 }}>
               Browse Articles
             </Button>
           </Link>
         </div>
       ) : (
-        <div>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            marginBottom: isMobile ? 4 : 8,
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <Text style={{
+            fontSize: 12,
+            fontWeight: 600,
+            color: 'var(--color-text-tertiary)',
+            marginBottom: 2,
           }}>
-            <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
-            <Text style={{
-              fontSize: 9,
-              fontWeight: 600,
-              letterSpacing: '1.5px',
-              textTransform: 'uppercase',
-              color: 'var(--color-text-tertiary)',
-              whiteSpace: 'nowrap',
+            {articles.length} Saved Article{articles.length !== 1 ? 's' : ''}
+          </Text>
+          {articles.map((article) => (
+            <div key={article.id} style={{
+              background: 'var(--color-surface)',
+              borderRadius: 12,
+              padding: isMobile ? '12px 14px' : '14px 18px',
+              border: '1px solid var(--color-border)',
             }}>
-              {articles.length} Saved Article{articles.length !== 1 ? 's' : ''}
-            </Text>
-            <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-            {articles.map((article) => (
-              <div key={article.id} style={{
-                borderBottom: '1px solid var(--color-border)',
-                padding: isMobile ? '8px 0' : '12px 0',
-              }}>
-                <ArticleCard article={article} />
-              </div>
-            ))}
-          </div>
+              <ArticleCard article={article} />
+            </div>
+          ))}
         </div>
       )}
     </div>

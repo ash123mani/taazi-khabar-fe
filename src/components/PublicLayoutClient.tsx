@@ -61,29 +61,10 @@ export default function PublicLayoutClient({ children }: { children: React.React
     setDrawerOpen(false)
   }
 
-  const today = new Date()
-  const dateStr = today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
-
   return (
     <Layout style={{ minHeight: '100vh', background: 'var(--color-bg)' }}>
       {/* Masthead */}
       <div style={{ flexShrink: 0 }}>
-        {/* Date line */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: isMobile ? '6px 12px' : '8px 20px',
-          borderBottom: '1px solid var(--color-border-light)',
-        }}>
-          <Text style={{ fontSize: isMobile ? 10 : 11, color: 'var(--color-text-tertiary)' }}>
-            {dateStr}
-          </Text>
-          <Text style={{ fontSize: isMobile ? 9 : 10, color: 'var(--color-text-tertiary)', letterSpacing: '1px' }}>
-            Edition 1.0
-          </Text>
-        </div>
-
         {/* Nameplate */}
         <div style={{
           textAlign: 'center',
@@ -215,9 +196,9 @@ export default function PublicLayoutClient({ children }: { children: React.React
         style={{
           flex: 1,
           width: '100%',
-          maxWidth: pathname === '/' ? 1200 : 720,
+          maxWidth: pathname === '/' ? 1200 : 820,
           margin: '0 auto',
-          padding: isMobile ? '16px 12px' : '28px 32px',
+          padding: isMobile ? '16px 20px' : '32px 48px',
           boxSizing: 'border-box',
           display: 'flex',
           flexDirection: 'column',

@@ -4,11 +4,13 @@ import { Typography, Tag } from 'antd'
 import Link from 'next/link'
 import { RightOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
+import { useIsMobile } from '@/hooks/useIsMobile'
 import type { Quiz } from '@/lib/types'
 
 const { Text } = Typography
 
 export default function HistoryCard({ quiz }: { quiz: Quiz }) {
+  const isMobile = useIsMobile()
   const percentage = quiz.score !== null
     ? Math.round((quiz.score / quiz.total_questions) * 100)
     : null
@@ -20,17 +22,19 @@ export default function HistoryCard({ quiz }: { quiz: Quiz }) {
   return (
     <Link href={`/history/${quiz.id}`} style={{ textDecoration: 'none', display: 'block' }}>
       <div style={{
-        padding: '14px 16px',
-        borderBottom: '1px solid var(--color-border)',
+        padding: isMobile ? '14px 16px' : '14px 18px',
+        background: 'var(--color-surface)',
+        borderRadius: 10,
+        border: '1px solid var(--color-border)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 12,
         cursor: 'pointer',
-        transition: 'background 0.15s',
+        transition: 'all 0.15s',
       }}
-        onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--color-hover)')}
-        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+        onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--color-text-tertiary)' }}
+        onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--color-border)' }}
       >
         <div style={{ flex: 1, minWidth: 0 }}>
           <div className="newspaper-heading" style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-text)' }}>
@@ -60,7 +64,7 @@ export default function HistoryCard({ quiz }: { quiz: Quiz }) {
             <Tag style={{
               fontSize: 12,
               fontWeight: 700,
-              borderRadius: 0,
+              borderRadius: 6,
               margin: 0,
               padding: '1px 8px',
               color,

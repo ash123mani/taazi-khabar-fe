@@ -42,69 +42,75 @@ export default function HistoryPage() {
 
   return (
     <div>
-      <div style={{
-        borderBottom: '1px solid var(--color-border)',
-        paddingBottom: isMobile ? 8 : 12,
-        marginBottom: isMobile ? 10 : 16,
+      <Text style={{
+        fontSize: 10,
+        fontWeight: 700,
+        letterSpacing: '2px',
+        textTransform: 'uppercase',
+        color: 'var(--color-text-tertiary)',
+        marginBottom: 6,
+        display: 'block',
       }}>
-        <div className="newspaper-heading" style={{
-          fontWeight: 800,
-          fontSize: isMobile ? 20 : 26,
-          letterSpacing: '-0.3px',
-          color: 'var(--color-text)',
-          lineHeight: 1.15,
-        }}>
-          Archives
-        </div>
+        Quiz History
+      </Text>
+      <div className="newspaper-heading" style={{
+        fontWeight: 800,
+        fontSize: isMobile ? 20 : 26,
+        letterSpacing: '-0.3px',
+        color: 'var(--color-text)',
+        lineHeight: 1.15,
+        marginBottom: isMobile ? 16 : 24,
+      }}>
+        Archives
       </div>
 
       {quizzes.length > 0 && (
         <div style={{
           display: 'flex',
-          gap: isMobile ? 12 : 20,
-          marginBottom: isMobile ? 14 : 20,
-          paddingBottom: isMobile ? 10 : 14,
-          borderBottom: '1px solid var(--color-border)',
-          flexWrap: 'wrap',
+          gap: 12,
+          marginBottom: isMobile ? 20 : 28,
         }}>
-          <div>
+          <div style={{
+            background: 'var(--color-surface)',
+            borderRadius: 10,
+            padding: isMobile ? '12px 16px' : '14px 20px',
+            border: '1px solid var(--color-border)',
+            flex: 1,
+          }}>
             <Text style={{
-              fontSize: 8,
+              fontSize: 9,
               fontWeight: 600,
               textTransform: 'uppercase',
-              letterSpacing: '0.8px',
+              letterSpacing: '0.5px',
               color: 'var(--color-text-tertiary)',
               display: 'block',
-              marginBottom: 2,
+              marginBottom: 4,
             }}>
               Total Quizzes
             </Text>
-            <div className="newspaper-heading" style={{
-              fontWeight: 700,
-              fontSize: 16,
-              color: 'var(--color-text)',
-            }}>
+            <div style={{ fontWeight: 700, fontSize: 18, color: 'var(--color-text)' }}>
               {quizzes.length}
             </div>
           </div>
-          <div style={{ width: 1, background: 'var(--color-border)', alignSelf: 'stretch' }} />
-          <div>
+          <div style={{
+            background: 'var(--color-surface)',
+            borderRadius: 10,
+            padding: isMobile ? '12px 16px' : '14px 20px',
+            border: '1px solid var(--color-border)',
+            flex: 1,
+          }}>
             <Text style={{
-              fontSize: 8,
+              fontSize: 9,
               fontWeight: 600,
               textTransform: 'uppercase',
-              letterSpacing: '0.8px',
+              letterSpacing: '0.5px',
               color: 'var(--color-text-tertiary)',
               display: 'block',
-              marginBottom: 2,
+              marginBottom: 4,
             }}>
               Avg Score
             </Text>
-            <div className="newspaper-heading" style={{
-              fontWeight: 700,
-              fontSize: 16,
-              color: getScoreColor(avgScore),
-            }}>
+            <div style={{ fontWeight: 700, fontSize: 18, color: getScoreColor(avgScore) }}>
               {avgScore}%
             </div>
           </div>
@@ -116,15 +122,21 @@ export default function HistoryPage() {
           <Spin size="large" />
         </div>
       ) : !token ? (
-        <div style={{ padding: isMobile ? '32px 12px' : '48px 16px', textAlign: 'center', borderBottom: '1px solid var(--color-border)' }}>
+        <div style={{
+          background: 'var(--color-surface)',
+          borderRadius: 12,
+          padding: isMobile ? '32px 20px' : '48px 32px',
+          textAlign: 'center',
+          border: '1px solid var(--color-border)',
+        }}>
           <div className="newspaper-heading" style={{ fontSize: isMobile ? 16 : 20, fontWeight: 600, color: 'var(--color-text-secondary)', marginBottom: 6 }}>
             Please login to view your quiz history
           </div>
-          <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12, display: 'block', marginBottom: 16 }}>
+          <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 13, display: 'block', marginBottom: 20 }}>
             Track your progress and improve your scores
           </Text>
           <Link href="/login">
-            <Button type="primary" size="middle" style={{ fontWeight: 600, borderRadius: 2, letterSpacing: '0.5px', height: 36, padding: '0 24px', fontSize: 12 }}>
+            <Button type="primary" size="middle" style={{ fontWeight: 600, borderRadius: 8, height: 38, padding: '0 24px', fontSize: 13 }}>
               Login
             </Button>
           </Link>
@@ -134,48 +146,38 @@ export default function HistoryPage() {
           {error}
         </div>
       ) : quizzes.length === 0 ? (
-        <div style={{ padding: isMobile ? '32px 12px' : '48px 16px', textAlign: 'center', borderBottom: '1px solid var(--color-border)' }}>
+        <div style={{
+          background: 'var(--color-surface)',
+          borderRadius: 12,
+          padding: isMobile ? '32px 20px' : '48px 32px',
+          textAlign: 'center',
+          border: '1px solid var(--color-border)',
+        }}>
           <div className="newspaper-heading" style={{ fontSize: isMobile ? 16 : 20, fontWeight: 600, color: 'var(--color-text-secondary)', marginBottom: 6 }}>
             No quizzes attempted yet
           </div>
-          <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 12, display: 'block', marginBottom: 16 }}>
+          <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 13, display: 'block', marginBottom: 20 }}>
             Start your first quiz to track your progress
           </Text>
           <Link href="/quiz">
-            <Button type="primary" size="middle" style={{ fontWeight: 600, borderRadius: 2, letterSpacing: '0.5px', height: 36, padding: '0 24px', fontSize: 12 }}>
+            <Button type="primary" size="middle" style={{ fontWeight: 600, borderRadius: 8, height: 38, padding: '0 24px', fontSize: 13 }}>
               Take your first quiz
             </Button>
           </Link>
         </div>
       ) : (
-        <div>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            marginBottom: isMobile ? 4 : 8,
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <Text style={{
+            fontSize: 12,
+            fontWeight: 600,
+            color: 'var(--color-text-tertiary)',
+            marginBottom: 2,
           }}>
-            <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
-            <Text style={{
-              fontSize: 9,
-              fontWeight: 600,
-              letterSpacing: '1.5px',
-              textTransform: 'uppercase',
-              color: 'var(--color-text-tertiary)',
-              whiteSpace: 'nowrap',
-            }}>
-              {quizzes.length} Quiz{quizzes.length !== 1 ? 'zes' : ''}
-            </Text>
-            <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-            {quizzes.map((quiz) => (
-              <div key={quiz.id} style={{ borderBottom: '1px solid var(--color-border)' }}>
-                <HistoryCard quiz={quiz} />
-              </div>
-            ))}
-          </div>
+            {quizzes.length} Quiz{quizzes.length !== 1 ? 'zes' : ''}
+          </Text>
+          {quizzes.map((quiz) => (
+            <HistoryCard key={quiz.id} quiz={quiz} />
+          ))}
         </div>
       )}
     </div>

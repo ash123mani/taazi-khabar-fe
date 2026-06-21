@@ -124,20 +124,34 @@ export default function TakeQuizPage() {
       <div>
         <QuizResult quiz={quiz} />
         {quiz.questions?.map((question, i) => (
-          <div key={question.id} style={{
-            background: 'var(--color-surface)',
-            borderRadius: 12,
-            padding: isMobile ? 16 : 20,
-            marginBottom: 14,
-            border: '1px solid var(--color-border)',
-          }}>
-            <QuizQuestionComponent
-              question={question}
-              index={i}
-              selected={answers[question.id] || null}
-              onSelect={() => {}}
-              showResults
-            />
+          <div key={question.id} style={{ display: 'flex', gap: 12, marginBottom: 14 }}>
+            <div style={{
+              width: 32,
+              height: 32,
+              borderRadius: '50%',
+              background: 'var(--color-accent)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              marginTop: 2,
+            }}>
+              <Text style={{ color: '#fff', fontSize: 14, fontWeight: 700 }}>{i + 1}</Text>
+            </div>
+            <div style={{
+              flex: 1,
+              background: 'var(--color-surface)',
+              borderRadius: 12,
+              padding: isMobile ? 16 : 20,
+              border: '1px solid var(--color-border)',
+            }}>
+              <QuizQuestionComponent
+                question={question}
+                selected={answers[question.id] || null}
+                onSelect={() => {}}
+                showResults
+              />
+            </div>
           </div>
         ))}
       </div>
@@ -212,23 +226,37 @@ export default function TakeQuizPage() {
 
       {/* Questions */}
       {quiz.questions?.map((question, i) => (
-        <div key={question.id} style={{
-          background: 'var(--color-surface)',
-          borderRadius: 12,
-          padding: isMobile ? 16 : 20,
-          marginBottom: 14,
-          border: '1px solid var(--color-border)',
-        }}>
-          <QuizQuestionComponent
-            question={question}
-            index={i}
-            selected={answers[question.id] || null}
-            onSelect={(optionKey) => {
-              if (submitted) return
-              setAnswers((prev) => ({ ...prev, [question.id]: optionKey }))
-            }}
-            showResults={false}
-          />
+        <div key={question.id} style={{ display: 'flex', gap: 12, marginBottom: 14 }}>
+          <div style={{
+            width: 32,
+            height: 32,
+            borderRadius: '50%',
+            background: 'var(--color-accent)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+            marginTop: 2,
+          }}>
+            <Text style={{ color: '#fff', fontSize: 14, fontWeight: 700 }}>{i + 1}</Text>
+          </div>
+          <div style={{
+            flex: 1,
+            background: 'var(--color-surface)',
+            borderRadius: 12,
+            padding: isMobile ? 16 : 20,
+            border: '1px solid var(--color-border)',
+          }}>
+            <QuizQuestionComponent
+              question={question}
+              selected={answers[question.id] || null}
+              onSelect={(optionKey) => {
+                if (submitted) return
+                setAnswers((prev) => ({ ...prev, [question.id]: optionKey }))
+              }}
+              showResults={false}
+            />
+          </div>
         </div>
       ))}
 

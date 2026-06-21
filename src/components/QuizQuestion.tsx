@@ -8,7 +8,6 @@ const OPTION_LABELS = ['A', 'B', 'C', 'D']
 
 interface QuizQuestionProps {
   question: QuizQuestionType
-  index: number
   selected: string | null
   onSelect: (optionKey: string) => void
   showResults: boolean
@@ -16,39 +15,21 @@ interface QuizQuestionProps {
 
 export default function QuizQuestion({
   question,
-  index,
   selected,
   onSelect,
   showResults,
 }: QuizQuestionProps) {
   return (
     <div style={{ marginBottom: 0 }}>
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
+      <div className="newspaper-heading" style={{
+        fontWeight: 600,
+        fontSize: 17,
+        lineHeight: 1.4,
+        color: 'var(--color-text)',
+        whiteSpace: 'pre-line',
         marginBottom: 14,
       }}>
-        <div style={{
-          width: 28,
-          height: 28,
-          borderRadius: '50%',
-          background: 'var(--color-accent)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
-        }}>
-          <Text style={{ color: '#fff', fontSize: 12, fontWeight: 700 }}>{index + 1}</Text>
-        </div>
-        <div className="newspaper-heading" style={{
-          fontWeight: 600,
-          fontSize: 17,
-          lineHeight: 1.4,
-          color: 'var(--color-text)',
-        }}>
-          {question.question_text}
-        </div>
+        {question.question_text}
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>

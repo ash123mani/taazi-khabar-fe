@@ -213,18 +213,7 @@ export default function NewsFeedPage() {
         </div>
       </div>
 
-      {/* Article count */}
-      {!loading && !error && articles.length > 0 && (
-        <div className="newspaper-body" style={{
-          marginBottom: isMobile ? 6 : 10,
-          textAlign: 'right',
-          fontSize: 11,
-          fontStyle: 'italic',
-          color: 'var(--color-text-tertiary)',
-        }}>
-          {total} article{total !== 1 ? 's' : ''} in this edition
-        </div>
-      )}
+
 
       {/* Content */}
       {loading ? (

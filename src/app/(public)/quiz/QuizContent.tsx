@@ -145,16 +145,16 @@ export default function QuizContent() {
             </div>
           </div>
 
-          {/* Section divider */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: isMobile ? 6 : 12 }}>
-            <div style={{ flex: 1, height: 1, background: 'var(--color-border-light)' }} />
-            <Text style={{ fontSize: 9, fontWeight: 600, letterSpacing: '1.5px', color: 'var(--color-text-tertiary)', whiteSpace: 'nowrap' }}>
-              Category-wise Quiz
-            </Text>
-            <div style={{ flex: 1, height: 1, background: 'var(--color-border-light)' }} />
-          </div>
-
           {/* Category grid */}
+          <Text style={{
+            fontSize: 11,
+            fontWeight: 600,
+            color: 'var(--color-text-tertiary)',
+            marginBottom: 10,
+            display: 'block',
+          }}>
+            Category-wise Quiz
+          </Text>
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: 12 }}>
             {summary.categories.map((cat: DailyQuizCategory) => (
               <div key={cat.id} style={{

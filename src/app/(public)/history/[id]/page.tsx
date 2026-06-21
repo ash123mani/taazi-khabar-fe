@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { Typography, Spin, Button, Collapse } from 'antd'
+import { Typography, Spin, Button } from 'antd'
 
 import dayjs from 'dayjs'
 import { api } from '@/lib/api'
@@ -81,20 +81,26 @@ export default function HistoryDetailPage() {
 
   return (
     <div>
-      <div style={{
-        borderBottom: '1px solid var(--color-border)',
-        paddingBottom: isMobile ? 8 : 12,
-        marginBottom: isMobile ? 10 : 16,
+      <Text style={{
+        fontSize: 10,
+        fontWeight: 700,
+        letterSpacing: '2px',
+        textTransform: 'uppercase',
+        color: 'var(--color-text-tertiary)',
+        marginBottom: 6,
+        display: 'block',
       }}>
-        <div className="newspaper-heading" style={{
-          fontWeight: 800,
-          fontSize: isMobile ? 18 : 24,
-          letterSpacing: '-0.3px',
-          color: 'var(--color-text)',
-          lineHeight: 1.15,
-        }}>
-          {quiz.title || 'Quiz Details'}
-        </div>
+        Quiz Result
+      </Text>
+      <div className="newspaper-heading" style={{
+        fontWeight: 800,
+        fontSize: isMobile ? 18 : 24,
+        letterSpacing: '-0.3px',
+        color: 'var(--color-text)',
+        lineHeight: 1.15,
+        marginBottom: isMobile ? 20 : 28,
+      }}>
+        {quiz.title || 'Quiz Details'}
       </div>
 
       <div style={{
@@ -135,82 +141,65 @@ export default function HistoryDetailPage() {
 
       {quiz.articles && quiz.articles.length > 0 && (
         <div style={{ marginBottom: isMobile ? 14 : 20 }}>
-          <Collapse
-            ghost
-            style={{ margin: 0, padding: 0, borderBottom: '1px solid var(--color-border)' }}
-            styles={{ header: { padding: '6px 0' }, body: { padding: '0 0 10px' } }}
-            items={[{
-              key: 'articles',
-              label: (
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                }}>
-                  <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
-                  <Text style={{
-                    fontSize: 9,
-                    fontWeight: 600,
-                    letterSpacing: '1.5px',
-                    textTransform: 'uppercase',
-                    color: 'var(--color-text-tertiary)',
-                    whiteSpace: 'nowrap',
-                  }}>
-                    Linked Articles ({quiz.articles.length})
-                  </Text>
-                  <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
-                </div>
-              ),
-              children: (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-                  {quiz.articles.map((article) => (
-                    <div key={article.id} style={{ borderTop: '1px solid var(--color-border)', padding: isMobile ? '6px 0' : '10px 0' }}>
-                      <ArticleCard article={article} />
-                    </div>
-                  ))}
-                </div>
-              ),
-            }]}
-          />
+          <Text style={{
+            fontSize: 11,
+            fontWeight: 600,
+            color: 'var(--color-text-tertiary)',
+            marginBottom: 8,
+            display: 'block',
+          }}>
+            Linked Articles ({quiz.articles.length})
+          </Text>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+            {quiz.articles.map((article) => (
+              <div key={article.id} style={{ borderTop: '1px solid var(--color-border)', padding: isMobile ? '6px 0' : '10px 0' }}>
+                <ArticleCard article={article} />
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
-      <div style={{ marginTop: isMobile ? 10 : 14 }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 8,
-          marginBottom: isMobile ? 8 : 12,
+      <div style={{ marginTop: isMobile ? 14 : 20 }}>
+        <Text style={{
+          fontSize: 11,
+          fontWeight: 600,
+          color: 'var(--color-text-tertiary)',
+          marginBottom: 10,
+          display: 'block',
         }}>
-          <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
-          <Text style={{
-            fontSize: 9,
-            fontWeight: 600,
-            letterSpacing: '1.5px',
-            textTransform: 'uppercase',
-            color: 'var(--color-text-tertiary)',
-            whiteSpace: 'nowrap',
-          }}>
-            Questions &amp; Answers
-          </Text>
-          <div style={{ flex: 1, height: 1, background: 'var(--color-border)' }} />
-        </div>
+          Questions & Answers
+        </Text>
 
         {quiz.questions?.map((question, i) => (
-          <div key={question.id} style={{
-            background: 'var(--color-surface)',
-            borderRadius: 12,
-            padding: isMobile ? 14 : 18,
-            marginBottom: 12,
-            border: '1px solid var(--color-border)',
-          }}>
-            <QuizQuestionComponent
-              question={question}
-              index={i}
-              selected={question.selected_answer || null}
-              onSelect={() => {}}
-              showResults
-            />
+          <div key={question.id} style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
+            <div style={{
+              width: 32,
+              height: 32,
+              borderRadius: '50%',
+              background: 'var(--color-accent)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              marginTop: 2,
+            }}>
+              <Text style={{ color: '#fff', fontSize: 14, fontWeight: 700 }}>{i + 1}</Text>
+            </div>
+            <div style={{
+              flex: 1,
+              background: 'var(--color-surface)',
+              borderRadius: 12,
+              padding: isMobile ? 14 : 18,
+              border: '1px solid var(--color-border)',
+            }}>
+              <QuizQuestionComponent
+                question={question}
+                selected={question.selected_answer || null}
+                onSelect={() => {}}
+                showResults
+              />
+            </div>
           </div>
         ))}
       </div>
