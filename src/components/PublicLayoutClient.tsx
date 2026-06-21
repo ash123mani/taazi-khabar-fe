@@ -252,9 +252,9 @@ export default function PublicLayoutClient({ children }: { children: React.React
               <div className="newspaper-heading" style={{ fontSize: 20, fontWeight: 700, color: 'var(--color-text)', marginBottom: 8, letterSpacing: '-0.3px' }}>
                 Taazi Khabar
               </div>
-              <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 13, lineHeight: 1.6, display: 'block' }}>
+              <div className="newspaper-body" style={{ color: 'var(--color-text-tertiary)', fontSize: 13, lineHeight: 1.7 }}>
                 An AI-powered current affairs platform for UPSC preparation. Daily curated news, summaries, and quizzes to help you stay ahead.
-              </Text>
+              </div>
             </div>
             <div>
               <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--color-text-secondary)', marginBottom: 12 }}>

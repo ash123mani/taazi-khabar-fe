@@ -33,9 +33,9 @@ export default function HistoryCard({ quiz }: { quiz: Quiz }) {
         onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
       >
         <div style={{ flex: 1, minWidth: 0 }}>
-          <Text strong style={{ fontSize: 15, display: 'block', color: 'var(--color-text)' }}>
+          <div className="newspaper-heading" style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-text)' }}>
             {quiz.title || 'Quiz'}
-          </Text>
+          </div>
           <div style={{ display: 'flex', gap: 8, marginTop: 4, alignItems: 'center', flexWrap: 'wrap' }}>
             <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               {dayjs(quiz.created_at).format('DD-MM-YYYY')}

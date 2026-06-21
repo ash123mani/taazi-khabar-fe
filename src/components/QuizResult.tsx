@@ -23,7 +23,7 @@ export default function QuizResult({ quiz }: { quiz: Quiz }) {
 
   return (
     <div style={{ marginBottom: 28, textAlign: 'center', borderBottom: '2px solid var(--color-border)', paddingBottom: 28 }}>
-      <div style={{
+      <div className="newspaper-heading" style={{
         fontSize: 64,
         fontWeight: 800,
         marginBottom: 2,
