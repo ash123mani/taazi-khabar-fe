@@ -172,25 +172,49 @@ export default function HistoryDetailPage() {
         </Text>
 
         {quiz.questions?.map((question, i) => (
-          <div key={question.id} style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
+          <div key={question.id} style={{ marginBottom: isMobile ? 14 : 12 }}>
+            {isMobile ? (
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                marginBottom: 8,
+              }}>
+                <div style={{
+                  width: 24,
+                  height: 24,
+                  borderRadius: '50%',
+                  border: '1px solid var(--color-border)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}>
+                  <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 11, fontWeight: 700 }}>{i + 1}</Text>
+                </div>
+                <Text style={{ fontSize: 11, color: 'var(--color-text-tertiary)', fontWeight: 600 }}>
+                  Question
+                </Text>
+              </div>
+            ) : (
+              <div style={{
+                width: 32,
+                height: 32,
+                borderRadius: '50%',
+                border: '1px solid var(--color-border)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+                marginBottom: 8,
+              }}>
+                <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 14, fontWeight: 700 }}>{i + 1}</Text>
+              </div>
+            )}
             <div style={{
-              width: 32,
-              height: 32,
-              borderRadius: '50%',
-              border: '1px solid var(--color-border)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-              marginTop: 2,
-            }}>
-              <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 14, fontWeight: 700 }}>{i + 1}</Text>
-            </div>
-            <div style={{
-              flex: 1,
               background: 'var(--color-surface)',
               borderRadius: 12,
-              padding: isMobile ? 14 : 18,
+              padding: isMobile ? 18 : 18,
               border: '1px solid var(--color-border)',
             }}>
               <QuizQuestionComponent
@@ -198,6 +222,7 @@ export default function HistoryDetailPage() {
                 selected={question.selected_answer || null}
                 onSelect={() => {}}
                 showResults
+                isMobile={isMobile}
               />
             </div>
           </div>

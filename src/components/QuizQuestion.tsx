@@ -11,6 +11,7 @@ interface QuizQuestionProps {
   selected: string | null
   onSelect: (optionKey: string) => void
   showResults: boolean
+  isMobile?: boolean
 }
 
 export default function QuizQuestion({
@@ -18,21 +19,22 @@ export default function QuizQuestion({
   selected,
   onSelect,
   showResults,
+  isMobile,
 }: QuizQuestionProps) {
   return (
     <div style={{ marginBottom: 0 }}>
       <div className="newspaper-heading" style={{
         fontWeight: 600,
-        fontSize: 17,
+        fontSize: isMobile ? 16 : 17,
         lineHeight: 1.4,
         color: 'var(--color-text)',
         whiteSpace: 'pre-line',
-        marginBottom: 14,
+        marginBottom: isMobile ? 12 : 14,
       }}>
         {question.question_text}
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? 8 : 10 }}>
         {Object.entries(question.options).map(([key, value], i) => {
           const isCorrectAnswer = showResults && key === question.correct_answer
           const isWrongAnswer = showResults && key === selected && selected !== question.correct_answer
@@ -78,7 +80,7 @@ export default function QuizQuestion({
                 display: 'flex',
                 alignItems: 'center',
                 gap: 14,
-                padding: '14px 16px',
+                padding: isMobile ? '12px 14px' : '14px 16px',
                 border,
                 borderRadius: 10,
                 cursor: showResults ? 'default' : 'pointer',
@@ -100,14 +102,14 @@ export default function QuizQuestion({
             >
               <div
                 style={{
-                  width: 32,
-                  height: 32,
+                  width: isMobile ? 28 : 32,
+                  height: isMobile ? 28 : 32,
                   borderRadius: '50%',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontWeight: 700,
-                  fontSize: 12,
+                  fontSize: isMobile ? 11 : 12,
                   flexShrink: 0,
                   background: circleBg,
                   border: circleBorder,
@@ -117,7 +119,7 @@ export default function QuizQuestion({
               >
                 {OPTION_LABELS[i]}
               </div>
-              <Text style={{ fontSize: 15, flex: 1, color: textColor, lineHeight: 1.4 }}>
+              <Text style={{ fontSize: isMobile ? 14 : 15, flex: 1, color: textColor, lineHeight: 1.4 }}>
                 {value}
               </Text>
               {isCorrectAnswer && <CheckCircleFilled style={{ color: '#22c55e', fontSize: 18 }} />}
@@ -130,10 +132,10 @@ export default function QuizQuestion({
       {showResults && (
         <div
           style={{
-            marginTop: 14,
-            padding: '14px 16px',
+            marginTop: isMobile ? 12 : 14,
+            padding: isMobile ? '12px 14px' : '14px 16px',
             borderRadius: 10,
-            fontSize: 14,
+            fontSize: isMobile ? 13 : 14,
             background: selected === question.correct_answer
               ? 'rgba(34, 197, 94, 0.06)'
               : 'rgba(234, 179, 8, 0.06)',
@@ -146,12 +148,12 @@ export default function QuizQuestion({
             display: 'block',
             marginBottom: 6,
             color: 'var(--color-text)',
-            fontSize: 13,
+            fontSize: isMobile ? 13 : 13,
           }}>
             {selected === question.correct_answer ? 'Correct' : 'Incorrect'}
           </Text>
           {question.explanation && (
-            <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 13, lineHeight: 1.6, display: 'block' }}>
+            <Text style={{ color: 'var(--color-text-tertiary)', fontSize: isMobile ? 12 : 13, lineHeight: 1.6, display: 'block' }}>
               {question.explanation}
             </Text>
           )}

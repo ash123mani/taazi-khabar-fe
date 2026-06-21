@@ -124,25 +124,49 @@ export default function TakeQuizPage() {
       <div>
         <QuizResult quiz={quiz} />
         {quiz.questions?.map((question, i) => (
-          <div key={question.id} style={{ display: 'flex', gap: 12, marginBottom: 14 }}>
+          <div key={question.id} style={{ marginBottom: isMobile ? 16 : 14 }}>
+            {isMobile ? (
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                marginBottom: 8,
+              }}>
+                <div style={{
+                  width: 24,
+                  height: 24,
+                  borderRadius: '50%',
+                  border: '1px solid var(--color-border)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}>
+                  <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 11, fontWeight: 700 }}>{i + 1}</Text>
+                </div>
+                <Text style={{ fontSize: 11, color: 'var(--color-text-tertiary)', fontWeight: 600 }}>
+                  Question
+                </Text>
+              </div>
+            ) : (
+              <div style={{
+                width: 32,
+                height: 32,
+                borderRadius: '50%',
+                border: '1px solid var(--color-border)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+                marginBottom: 8,
+              }}>
+                <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 14, fontWeight: 700 }}>{i + 1}</Text>
+              </div>
+            )}
             <div style={{
-              width: 32,
-              height: 32,
-              borderRadius: '50%',
-              border: '1px solid var(--color-border)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-              marginTop: 2,
-            }}>
-              <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 14, fontWeight: 700 }}>{i + 1}</Text>
-            </div>
-            <div style={{
-              flex: 1,
               background: 'var(--color-surface)',
               borderRadius: 12,
-              padding: isMobile ? 16 : 20,
+              padding: isMobile ? 18 : 20,
               border: '1px solid var(--color-border)',
             }}>
               <QuizQuestionComponent
@@ -150,6 +174,7 @@ export default function TakeQuizPage() {
                 selected={answers[question.id] || null}
                 onSelect={() => {}}
                 showResults
+                isMobile={isMobile}
               />
             </div>
           </div>
@@ -162,89 +187,180 @@ export default function TakeQuizPage() {
     <div>
       {/* Timer + Progress header */}
       <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 24,
-        paddingBottom: 16,
+        marginBottom: 20,
+        paddingBottom: isMobile ? 12 : 16,
         borderBottom: '1px solid var(--color-border)',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            padding: '6px 12px',
-            borderRadius: 8,
-            background: timeLeft < 60 ? 'rgba(239,68,68,0.1)' : timeLeft < 180 ? 'rgba(234,179,8,0.1)' : 'var(--color-surface)',
-            border: '1px solid',
-            borderColor: timeLeft < 60 ? 'rgba(239,68,68,0.2)' : timeLeft < 180 ? 'rgba(234,179,8,0.2)' : 'var(--color-border)',
-          }}>
-            <ClockCircleOutlined style={{ fontSize: 13, color: timeLeft < 60 ? '#ef4444' : timeLeft < 180 ? '#eab308' : 'var(--color-text-tertiary)' }} />
-            <Text style={{
-              fontSize: 14,
-              fontWeight: 700,
-              color: timeLeft < 60 ? '#ef4444' : timeLeft < 180 ? '#eab308' : 'var(--color-text)',
-              fontVariantNumeric: 'tabular-nums',
+        {isMobile ? (
+          <>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: 8,
             }}>
-              {formatTime(timeLeft)}
-            </Text>
-          </div>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            padding: '6px 12px',
-            borderRadius: 8,
-            background: 'var(--color-surface)',
-            border: '1px solid var(--color-border)',
-          }}>
-            <CheckCircleFilled style={{ fontSize: 13, color: answered === total ? '#22c55e' : 'var(--color-text-tertiary)' }} />
-            <Text style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-text)' }}>
-              {answered}/{total}
-            </Text>
-          </div>
-        </div>
-        <div className="newspaper-heading" style={{
-          fontSize: isMobile ? 15 : 17,
-          fontWeight: 700,
-          color: 'var(--color-text)',
-        }}>
-          {quiz.title || 'Quiz'}
-        </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 5,
+                  padding: '5px 10px',
+                  borderRadius: 8,
+                  background: timeLeft < 60 ? 'rgba(239,68,68,0.1)' : timeLeft < 180 ? 'rgba(234,179,8,0.1)' : 'var(--color-surface)',
+                  border: '1px solid',
+                  borderColor: timeLeft < 60 ? 'rgba(239,68,68,0.2)' : timeLeft < 180 ? 'rgba(234,179,8,0.2)' : 'var(--color-border)',
+                }}>
+                  <ClockCircleOutlined style={{ fontSize: 12, color: timeLeft < 60 ? '#ef4444' : timeLeft < 180 ? '#eab308' : 'var(--color-text-tertiary)' }} />
+                  <Text style={{
+                    fontSize: 13,
+                    fontWeight: 700,
+                    color: timeLeft < 60 ? '#ef4444' : timeLeft < 180 ? '#eab308' : 'var(--color-text)',
+                    fontVariantNumeric: 'tabular-nums',
+                  }}>
+                    {formatTime(timeLeft)}
+                  </Text>
+                </div>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 5,
+                  padding: '5px 10px',
+                  borderRadius: 8,
+                  background: 'var(--color-surface)',
+                  border: '1px solid var(--color-border)',
+                }}>
+                  <CheckCircleFilled style={{ fontSize: 12, color: answered === total ? '#22c55e' : 'var(--color-text-tertiary)' }} />
+                  <Text style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-text)' }}>
+                    {answered}/{total}
+                  </Text>
+                </div>
+              </div>
+              <div style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: 'var(--color-text-tertiary)',
+                textAlign: 'right',
+                lineHeight: 1.2,
+              }}>
+                {quiz.title || 'Quiz'}
+              </div>
+            </div>
+            <Progress
+              percent={pct}
+              showInfo={false}
+              strokeColor={answered === total ? '#22c55e' : '#6366f1'}
+              trailColor="var(--color-border)"
+              size="small"
+            />
+          </>
+        ) : (
+          <>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '6px 12px',
+                  borderRadius: 8,
+                  background: timeLeft < 60 ? 'rgba(239,68,68,0.1)' : timeLeft < 180 ? 'rgba(234,179,8,0.1)' : 'var(--color-surface)',
+                  border: '1px solid',
+                  borderColor: timeLeft < 60 ? 'rgba(239,68,68,0.2)' : timeLeft < 180 ? 'rgba(234,179,8,0.2)' : 'var(--color-border)',
+                }}>
+                  <ClockCircleOutlined style={{ fontSize: 13, color: timeLeft < 60 ? '#ef4444' : timeLeft < 180 ? '#eab308' : 'var(--color-text-tertiary)' }} />
+                  <Text style={{
+                    fontSize: 14,
+                    fontWeight: 700,
+                    color: timeLeft < 60 ? '#ef4444' : timeLeft < 180 ? '#eab308' : 'var(--color-text)',
+                    fontVariantNumeric: 'tabular-nums',
+                  }}>
+                    {formatTime(timeLeft)}
+                  </Text>
+                </div>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '6px 12px',
+                  borderRadius: 8,
+                  background: 'var(--color-surface)',
+                  border: '1px solid var(--color-border)',
+                }}>
+                  <CheckCircleFilled style={{ fontSize: 13, color: answered === total ? '#22c55e' : 'var(--color-text-tertiary)' }} />
+                  <Text style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-text)' }}>
+                    {answered}/{total}
+                  </Text>
+                </div>
+              </div>
+              <div className="newspaper-heading" style={{
+                fontSize: 17,
+                fontWeight: 700,
+                color: 'var(--color-text)',
+              }}>
+                {quiz.title || 'Quiz'}
+              </div>
+            </div>
+            <Progress
+              percent={pct}
+              showInfo={false}
+              strokeColor={answered === total ? '#22c55e' : '#6366f1'}
+              trailColor="var(--color-border)"
+              size="small"
+              style={{ marginTop: 16 }}
+            />
+          </>
+        )}
       </div>
-
-      {/* Progress bar */}
-      <Progress
-        percent={pct}
-        showInfo={false}
-        strokeColor={answered === total ? '#22c55e' : '#6366f1'}
-        trailColor="var(--color-border)"
-        size="small"
-        style={{ marginBottom: 24 }}
-      />
 
       {/* Questions */}
       {quiz.questions?.map((question, i) => (
-        <div key={question.id} style={{ display: 'flex', gap: 12, marginBottom: 14 }}>
+        <div key={question.id} style={{ marginBottom: isMobile ? 16 : 14 }}>
+          {isMobile ? (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              marginBottom: 8,
+            }}>
+              <div style={{
+                width: 24,
+                height: 24,
+                borderRadius: '50%',
+                border: '1px solid var(--color-border)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}>
+                <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 11, fontWeight: 700 }}>{i + 1}</Text>
+              </div>
+              <Text style={{ fontSize: 11, color: 'var(--color-text-tertiary)', fontWeight: 600 }}>
+                Question
+              </Text>
+            </div>
+          ) : (
+            <div style={{
+              width: 32,
+              height: 32,
+              borderRadius: '50%',
+              border: '1px solid var(--color-border)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              marginBottom: 8,
+            }}>
+              <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 14, fontWeight: 700 }}>{i + 1}</Text>
+            </div>
+          )}
           <div style={{
-            width: 32,
-            height: 32,
-            borderRadius: '50%',
-            border: '1px solid var(--color-border)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-            marginTop: 2,
-          }}>
-            <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 14, fontWeight: 700 }}>{i + 1}</Text>
-          </div>
-          <div style={{
-            flex: 1,
             background: 'var(--color-surface)',
             borderRadius: 12,
-            padding: isMobile ? 16 : 20,
+            padding: isMobile ? 18 : 20,
             border: '1px solid var(--color-border)',
           }}>
             <QuizQuestionComponent
@@ -255,6 +371,7 @@ export default function TakeQuizPage() {
                 setAnswers((prev) => ({ ...prev, [question.id]: optionKey }))
               }}
               showResults={false}
+              isMobile={isMobile}
             />
           </div>
         </div>
