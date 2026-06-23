@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useCallback, useTransition } from 'react';
+import { useState, useCallback, useEffect, useTransition } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { api } from '@/lib/api';
 import type { Article } from '@/lib/types';
 import NewsMasthead from '@/components/NewsMasthead';
 import FilterBar from '@/components/FilterBar';
 import ArticleContent from '@/components/ArticleContent';
+import { ArticleSkeleton } from '@/components/Skeletons';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 const PAGE_SIZE = 10;
 
@@ -20,6 +22,26 @@ interface NewsFeedClientProps {
   source: string;
   category: string;
   search: string;
+}
+
+function GridSkeleton() {
+  const isMobile = useIsMobile();
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 0 }}>
+      {[1, 2, 3, 4].map((i) => (
+        <div
+          key={i}
+          style={{
+            borderBottom: '1px solid var(--color-border-light)',
+            borderRight: !isMobile && i % 2 === 1 ? '1px solid var(--color-border-light)' : 'none',
+            padding: isMobile ? '8px 0' : '10px 12px',
+          }}
+        >
+          <ArticleSkeleton hasImage={isMobile ? true : i % 2 === 0} />
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export default function NewsFeedClient({
@@ -36,6 +58,14 @@ export default function NewsFeedClient({
   const router = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
+
+  const [activeSource, setActiveSource] = useState(source);
+  const [activeCategory, setActiveCategory] = useState(category);
+
+  useEffect(() => {
+    setActiveSource(source);
+    setActiveCategory(category);
+  }, [source, category]);
 
   const [articles, setArticles] = useState<Article[]>(initialArticles);
   const [searchInput, setSearchInput] = useState(search);
@@ -61,20 +91,18 @@ export default function NewsFeedClient({
     [pathname, router, date, source, category, search],
   );
 
-  const handleSourceChange = useCallback(
-    (key: string) => navigate({ source: key, category: 'all' }),
-    [navigate],
-  );
+  const handleSourceChange = useCallback((key: string) => {
+    setActiveSource(key);
+    setActiveCategory('all');
+    navigate({ source: key, category: 'all' });
+  }, [navigate]);
 
-  const handleCategoryChange = useCallback(
-    (key: string) => navigate({ category: key }),
-    [navigate],
-  );
+  const handleCategoryChange = useCallback((key: string) => {
+    setActiveCategory(key);
+    navigate({ category: key });
+  }, [navigate]);
 
-  const handleDateChange = useCallback(
-    (newDate: string) => navigate({ date: newDate }),
-    [navigate],
-  );
+  const handleDateChange = useCallback((newDate: string) => navigate({ date: newDate }), [navigate]);
 
   const handleSearch = useCallback(() => {
     navigate({ search: searchInput });
@@ -111,10 +139,7 @@ export default function NewsFeedClient({
   }, [date, source, category, search, skip]);
 
   const catTotal = filteredCounts?.categories
-    ? Object.values(filteredCounts.categories).reduce(
-        (a: number, b: any) => a + (b as number),
-        0,
-      )
+    ? Object.values(filteredCounts.categories).reduce((a: number, b: any) => a + (b as number), 0)
     : 0;
 
   return (
@@ -123,8 +148,8 @@ export default function NewsFeedClient({
 
       <FilterBar
         date={date}
-        source={source}
-        category={category}
+        source={activeSource}
+        category={activeCategory}
         search={search}
         categories={categories}
         counts={counts}
@@ -137,17 +162,22 @@ export default function NewsFeedClient({
         onSourceChange={handleSourceChange}
         onCategoryChange={handleCategoryChange}
       />
+      {isPending ? (
+        <GridSkeleton />
+      ) : (
+        <ArticleContent
+          loading={false}
+          error={loadError}
+          articles={articles}
+          total={total}
+          search={search}
+          date={date}
+          loadingMore={loadingMore}
+          onLoadMore={handleLoadMore}
+        />
+      )}
 
-      <ArticleContent
-        loading={false}
-        error={loadError}
-        articles={articles}
-        total={total}
-        search={search}
-        date={date}
-        loadingMore={loadingMore}
-        onLoadMore={handleLoadMore}
-      />
+
     </div>
   );
 }
