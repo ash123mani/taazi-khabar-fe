@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Input } from 'antd';
+import { Input, Tabs } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
@@ -41,6 +41,8 @@ interface FilterBarProps {
   onSearchInputChange: (val: string) => void;
   onSearch: () => void;
   onClear: () => void;
+  onSourceChange: (key: string) => void;
+  onCategoryChange: (key: string) => void;
 }
 
 export default function FilterBar({
@@ -56,27 +58,26 @@ export default function FilterBar({
   onSearchInputChange,
   onSearch,
   onClear,
+  onSourceChange,
+  onCategoryChange,
 }: FilterBarProps) {
   const isMobile = useIsMobile();
   const pathname = usePathname();
-  const linkStyle: React.CSSProperties = {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: 4,
-    padding: '4px 12px',
-    fontSize: isMobile ? 12 : 13,
-    fontWeight: 400,
-    color: 'var(--color-text-tertiary)',
-    textDecoration: 'none',
-    borderBottom: '2px solid transparent',
-    transition: 'all 0.15s',
-  };
-  const activeLinkStyle: React.CSSProperties = {
-    ...linkStyle,
-    color: 'var(--color-text)',
-    fontWeight: 700,
-    borderBottomColor: 'var(--color-accent)',
-  };
+
+  const PrefetchLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
+    <Link href={href} prefetch={true} onClick={(e) => e.preventDefault()} style={{ color: 'inherit', textDecoration: 'none' }}>
+      {children}
+    </Link>
+  );
+
+  const tabLabel = (label: string, count: React.ReactNode) => (
+    <span style={{ fontSize: isMobile ? 12 : 13 }}>
+      {label}
+      {count != null && (
+        <span style={{ marginLeft: 4, fontSize: 10, color: 'var(--color-text-tertiary)' }}>{count}</span>
+      )}
+    </span>
+  );
 
   return (
     <div
@@ -89,62 +90,50 @@ export default function FilterBar({
         marginBottom: isMobile ? 6 : 10,
       }}
     >
-      {/* Source links */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', padding: '0 4px' }}>
-        {SOURCE_KEYS.map((key) => {
-          const active = source === key;
-          return (
-            <Link
-              key={key}
-              href={buildUrl(pathname, { date, source: key, search })}
-              prefetch={true}
-              style={active ? activeLinkStyle : linkStyle}
-            >
-              {SOURCE_META[key].label}
-              {(counts as any)[key] != null && (
-                <span style={{ fontSize: 10, color: 'var(--color-text-tertiary)' }}>
-                  {(counts as any)[key]}
-                </span>
-              )}
-            </Link>
-          );
-        })}
-      </div>
+      {/* Source tabs */}
+      <Tabs
+        activeKey={source}
+        onChange={onSourceChange}
+        items={SOURCE_KEYS.map((key) => ({
+          key,
+          label: (
+            <PrefetchLink href={buildUrl(pathname, { date, source: key, search })}>
+              {tabLabel(SOURCE_META[key].label, (counts as any)[key])}
+            </PrefetchLink>
+          ),
+        }))}
+        size="small"
+        style={{ marginBottom: 0 }}
+        tabBarStyle={{ marginBottom: 0, borderBottom: 'none' }}
+      />
 
-      {/* Category links */}
+      {/* Category tabs */}
       {categories.length > 0 && (
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            padding: '0 4px',
-            borderTop: '1px solid var(--color-border-light)',
-          }}
-        >
-          <Link
-            key="all"
-            href={buildUrl(pathname, { date, source, search })}
-            prefetch={true}
-            style={category === 'all' ? activeLinkStyle : linkStyle}
-          >
-            All
-            <span style={{ fontSize: 10, color: 'var(--color-text-tertiary)' }}>({catTotal})</span>
-          </Link>
-          {categories.map((c) => (
-            <Link
-              key={c.id}
-              href={buildUrl(pathname, { date, source, category: c.id, search })}
-              prefetch={true}
-              style={category === c.id ? activeLinkStyle : linkStyle}
-            >
-              {c.name}
-              <span style={{ fontSize: 10, color: 'var(--color-text-tertiary)' }}>
-                ({filteredCounts?.categories?.[c.id] || 0})
-              </span>
-            </Link>
-          ))}
-        </div>
+        <Tabs
+          activeKey={category}
+          onChange={onCategoryChange}
+          items={[
+            {
+              key: 'all',
+              label: (
+                <PrefetchLink href={buildUrl(pathname, { date, source, search })}>
+                  {tabLabel('All', `(${catTotal})`)}
+                </PrefetchLink>
+              ),
+            },
+            ...categories.map((c) => ({
+              key: c.id,
+              label: (
+                <PrefetchLink href={buildUrl(pathname, { date, source, category: c.id, search })}>
+                  {tabLabel(c.name, `(${filteredCounts?.categories?.[c.id] || 0})`)}
+                </PrefetchLink>
+              ),
+            })),
+          ]}
+          size="small"
+          style={{ marginBottom: 0 }}
+          tabBarStyle={{ marginBottom: 0, borderBottom: 'none' }}
+        />
       )}
 
       {/* Search */}

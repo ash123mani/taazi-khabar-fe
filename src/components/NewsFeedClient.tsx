@@ -61,6 +61,16 @@ export default function NewsFeedClient({
     [pathname, router, date, source, category, search],
   );
 
+  const handleSourceChange = useCallback(
+    (key: string) => navigate({ source: key, category: 'all' }),
+    [navigate],
+  );
+
+  const handleCategoryChange = useCallback(
+    (key: string) => navigate({ category: key }),
+    [navigate],
+  );
+
   const handleDateChange = useCallback(
     (newDate: string) => navigate({ date: newDate }),
     [navigate],
@@ -124,6 +134,8 @@ export default function NewsFeedClient({
         onSearchInputChange={setSearchInput}
         onSearch={handleSearch}
         onClear={handleClearSearch}
+        onSourceChange={handleSourceChange}
+        onCategoryChange={handleCategoryChange}
       />
 
       <ArticleContent
