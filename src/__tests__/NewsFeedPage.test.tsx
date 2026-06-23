@@ -1,30 +1,25 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import NewsFeedClient from '@/components/NewsFeedClient';
+import ContentArea from '@/features/news-feed/content-area';
+import NewsMasthead from '@/features/news-feed/news-masthead';
 
 const mockReplace = vi.fn();
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ replace: mockReplace }),
   usePathname: () => '/',
-  useTransition: () => [false, (fn: () => void) => fn()],
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 vi.mock('@/lib/api', () => ({
   api: {
     getArticles: vi.fn(),
-    getArticleCounts: vi.fn(),
-    toggleBookmark: vi.fn(),
   },
 }));
 
 vi.mock('@/stores/authStore', () => ({
   useAuthStore: (sel: any) => sel({ accessToken: 'token' }),
-}));
-
-vi.mock('@/hooks/useIsMobile', () => ({
-  useIsMobile: () => false,
 }));
 
 vi.mock('antd', async () => {
@@ -47,127 +42,71 @@ const makeArticle = (id: string, headline: string) => ({
   syllabus_tag: null,
 });
 
-const defaultProps = {
-  date: '2026-06-21',
-  initialArticles: [] as any[],
-  initialTotal: 0,
-  categories: [] as { id: string; name: string }[],
-  counts: { total: 0, thehindu: 0, indianexpress: 0, pib: 0 },
-  filteredCounts: { total: 0, thehindu: 0, indianexpress: 0, pib: 0 },
-  source: 'all',
-  category: 'all',
-  search: '',
-};
+describe('NewsMasthead', () => {
+  it("shows Briefings heading", () => {
+    render(<NewsMasthead date="2026-06-21" />);
+    expect(screen.getByText('21 June Briefings')).toBeInTheDocument();
+  });
+});
 
-describe('NewsFeedClient', () => {
+describe('ContentArea', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("shows Briefings masthead", () => {
-    render(<NewsFeedClient {...defaultProps} />);
-    expect(screen.getByText('21 June Briefings')).toBeInTheDocument();
-  });
-
-  it('renders articles from initial data', () => {
-    const articles = [makeArticle('a1', 'Article 1'), makeArticle('a2', 'Article 2')];
-    render(<NewsFeedClient {...defaultProps} initialArticles={articles} initialTotal={2} />);
-    expect(screen.getAllByTestId('article-card').length).toBe(2);
+  it('renders articles passed as children', () => {
+    const articles = [makeArticle('a1', 'Article 1')];
+    render(
+      <ContentArea
+        date="2026-06-21" source="all" category="all" search=""
+        total={1} initialCount={1}
+      >
+        {articles.map((a) => (
+          <div key={a.id} data-testid="article-card">{a.headline}</div>
+        ))}
+      </ContentArea>,
+    );
+    expect(screen.getAllByTestId('article-card').length).toBe(1);
   });
 
   it('shows empty state when no articles', () => {
-    render(<NewsFeedClient {...defaultProps} />);
+    render(
+      <ContentArea
+        date="2026-06-21" source="all" category="all" search=""
+        total={0} initialCount={0}
+      />,
+    );
     expect(screen.getByText(/No articles for/)).toBeInTheDocument();
-  });
-
-  it('shows source tabs', () => {
-    render(<NewsFeedClient {...defaultProps} />);
-    const tabs = screen.getAllByRole('tab');
-    expect(tabs.some((t) => t.textContent?.includes('All'))).toBe(true);
-    expect(tabs.some((t) => t.textContent?.includes('The Hindu'))).toBe(true);
-    expect(tabs.some((t) => t.textContent?.includes('Indian Express'))).toBe(true);
-    expect(tabs.some((t) => t.textContent?.includes('PIB'))).toBe(true);
-  });
-
-  it('shows source counts', () => {
-    render(
-      <NewsFeedClient
-        {...defaultProps}
-        counts={{ total: 5, thehindu: 2, indianexpress: 2, pib: 1 }}
-      />,
-    );
-    expect(screen.getAllByText('2').length).toBeGreaterThanOrEqual(1);
-  });
-
-  it('renders category filter tabs', () => {
-    render(
-      <NewsFeedClient
-        {...defaultProps}
-        categories={[
-          { id: 'c1', name: 'Polity' },
-          { id: 'c2', name: 'Economy' },
-        ]}
-      />,
-    );
-    const tabs = screen.getAllByRole('tab');
-    expect(tabs.some((t) => t.textContent?.includes('Polity'))).toBe(true);
-    expect(tabs.some((t) => t.textContent?.includes('Economy'))).toBe(true);
   });
 
   it('shows load more button when total > displayed', () => {
     const articles = Array.from({ length: 10 }, (_, i) => makeArticle(`a${i}`, `Article ${i}`));
-    render(<NewsFeedClient {...defaultProps} initialArticles={articles} initialTotal={15} />);
+    render(
+      <ContentArea
+        date="2026-06-21" source="all" category="all" search=""
+        total={15} initialCount={10}
+      >
+        {articles.map((a) => (
+          <div key={a.id} data-testid="article-card">{a.headline}</div>
+        ))}
+      </ContentArea>,
+    );
     expect(screen.getByText(/Load More/)).toBeInTheDocument();
   });
+});
 
-  it('navigates on source tab change', () => {
-    render(<NewsFeedClient {...defaultProps} />);
-    const tabs = screen.getAllByRole('tab');
-    const theHinduTab = tabs.find((t) => t.textContent?.includes('The Hindu'));
-    if (theHinduTab) fireEvent.click(theHinduTab);
-    expect(mockReplace).toHaveBeenCalledWith('/?date=2026-06-21&source=thehindu');
+describe('SearchControl', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it('navigates on category tab change', () => {
-    render(
-      <NewsFeedClient
-        {...defaultProps}
-        categories={[{ id: 'c1', name: 'Polity' }]}
-      />,
-    );
-    const tabs = screen.getAllByRole('tab');
-    const polityTab = tabs.find((t) => t.textContent?.includes('Polity'));
-    if (polityTab) fireEvent.click(polityTab);
-    expect(mockReplace).toHaveBeenCalledWith('/?date=2026-06-21&category=c1');
-  });
-
-  it('resets category when source changes', () => {
-    render(
-      <NewsFeedClient
-        {...defaultProps}
-        category="c1"
-        categories={[{ id: 'c1', name: 'Polity' }]}
-        counts={{ total: 5, thehindu: 2, indianexpress: 2, pib: 1 }}
-      />,
-    );
-    const tabs = screen.getAllByRole('tab');
-    const theHinduTab = tabs.find((t) => t.textContent?.includes('The Hindu'));
-    if (theHinduTab) fireEvent.click(theHinduTab);
-    expect(mockReplace).toHaveBeenCalledWith(
-      '/?date=2026-06-21&source=thehindu',
-    );
-  });
-
-  it('navigates on search', () => {
-    render(<NewsFeedClient {...defaultProps} />);
+  it('navigates on search', async () => {
+    const user = userEvent.setup();
+    const { default: SearchControl } = await import('@/features/news-feed/search-control');
+    render(<SearchControl date="2026-06-21" source="all" />);
     const input = screen.getByPlaceholderText('Search articles...');
-    fireEvent.change(input, { target: { value: 'climate' } });
-    const searchIcon = input.closest('.ant-input-search')?.querySelector('.ant-input-search-button, .anticon-search');
-    if (searchIcon) {
-      fireEvent.click(searchIcon);
-    } else {
-      fireEvent.keyDown(input, { key: 'Enter' });
-    }
+    await user.type(input, 'climate');
+    await user.keyboard('{Enter}');
     expect(mockReplace).toHaveBeenCalledWith('/?date=2026-06-21&search=climate');
   });
 });

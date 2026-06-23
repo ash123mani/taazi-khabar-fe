@@ -1,6 +1,6 @@
 import { api } from '@/lib/api';
 import type { Article } from '@/lib/types';
-import NewsFeedClient from '@/components/NewsFeedClient';
+import NewsFeedPageShell from '@/features/news-feed/page-shell';
 
 const PAGE_SIZE = 10;
 
@@ -21,47 +21,27 @@ export default async function NewsFeedPage({
   const category = getParam(searchParams.category, 'all');
   const search = getParam(searchParams.search, '');
 
-  const articleParams: Record<string, string> = {
-    date,
-    skip: '0',
-    limit: String(PAGE_SIZE),
-  };
-  if (source !== 'all') articleParams.source = source;
-  if (category !== 'all') articleParams.category_id = category;
-  if (search) articleParams.search = search;
-
-  const [categoriesData, allCountsData, filteredCountsData, articlesData] = await Promise.all([
+  const [categoriesData, allCountsData, filteredCountsData] = await Promise.all([
     api.getCategories().catch(() => null),
     api.getArticleCounts({ date }).catch(() => null),
     source !== 'all'
       ? api.getArticleCounts({ date, source }).catch(() => null)
       : Promise.resolve(null),
-    api.getArticles(articleParams).catch(() => null),
   ]);
 
   const categories = categoriesData?.categories || categoriesData || [];
   const counts = allCountsData || {};
   const filteredCounts = filteredCountsData || counts;
 
-  const articles: Article[] = Array.isArray(articlesData)
-    ? articlesData
-    : articlesData?.articles || [];
-  const total = articlesData?.total || articles.length;
-
-  const key = `${date}-${source}-${category}-${search}`;
-
   return (
-    <NewsFeedClient
-      key={key}
+    <NewsFeedPageShell
       date={date}
-      initialArticles={articles}
-      initialTotal={total}
-      categories={categories}
-      counts={counts}
-      filteredCounts={filteredCounts}
       source={source}
       category={category}
       search={search}
+      categories={categories}
+      counts={counts}
+      filteredCounts={filteredCounts}
     />
   );
 }
