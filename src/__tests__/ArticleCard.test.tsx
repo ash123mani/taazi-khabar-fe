@@ -3,6 +3,13 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ArticleCard from '@/components/ArticleCard';
 import type { Article } from '@/lib/types';
 
+vi.mock('next/image', () => ({
+  default: (props: any) => {
+    const { fill, ...rest } = props;
+    return <img {...rest} style={{ ...rest.style, objectFit: 'cover' }} />;
+  },
+}));
+
 const mockToggleBookmark = vi.fn();
 vi.mock('@/lib/api', () => ({
   api: { toggleBookmark: (...args: any[]) => mockToggleBookmark(...args) },

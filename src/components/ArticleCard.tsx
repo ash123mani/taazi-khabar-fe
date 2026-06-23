@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useContext } from 'react';
+import Image from 'next/image';
 import { Tag, Typography, Button, message, Tooltip } from 'antd';
 import { HeartOutlined, HeartFilled } from '@ant-design/icons';
 import dayjs from 'dayjs';
@@ -73,26 +74,30 @@ export default function ArticleCard({ article, onClick }: { article: Article; on
       }}
     >
       <div style={{ display: 'flex', gap: isMobile ? 6 : 12, alignItems: 'flex-start' }}>
-        {article.image_url && (
-          <div
-            style={{
-              flexShrink: 0,
-              width: isMobile ? 48 : 80,
-              height: isMobile ? 36 : 60,
-              overflow: 'hidden',
-              background: 'var(--color-surface)',
-            }}
-          >
-            <img
-              src={article.image_url}
-              alt=""
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
+          {article.image_url && (
+            <div
+              style={{
+                flexShrink: 0,
+                width: isMobile ? 48 : 80,
+                height: isMobile ? 36 : 60,
+                overflow: 'hidden',
+                background: 'var(--color-surface)',
+                position: 'relative',
               }}
-            />
-          </div>
-        )}
+            >
+              <Image
+                src={article.image_url}
+                alt=""
+                fill
+                sizes={isMobile ? '48px' : '80px'}
+                style={{ objectFit: 'cover' }}
+                loading="lazy"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+            </div>
+          )}
         <div style={{ flex: 1, minWidth: 0 }}>
           {/* Source & date */}
           <div style={{ marginBottom: 3, display: 'flex', alignItems: 'center', gap: 6 }}>

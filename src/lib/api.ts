@@ -13,6 +13,7 @@ async function fetchApi(path: string, options?: RequestInit) {
     headers['Authorization'] = `Bearer ${token}`;
   }
   const res = await fetch(`${API_BASE}${path}`, {
+    next: { revalidate: 60 },
     ...options,
     headers,
   });

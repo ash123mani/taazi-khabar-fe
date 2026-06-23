@@ -4,10 +4,12 @@ import userEvent from '@testing-library/user-event';
 import NewsFeedClient from '@/components/NewsFeedClient';
 
 const mockReplace = vi.fn();
+const mockPrefetch = vi.fn();
 
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ replace: mockReplace }),
+  useRouter: () => ({ replace: mockReplace, prefetch: mockPrefetch }),
   usePathname: () => '/',
+  useSearchParams: () => new URLSearchParams(),
   useTransition: () => [false, (fn: () => void) => fn()],
 }));
 
@@ -80,13 +82,12 @@ describe('NewsFeedClient', () => {
     expect(screen.getByText(/No articles for/)).toBeInTheDocument();
   });
 
-  it('shows source links', () => {
+  it('shows source tabs', () => {
     render(<NewsFeedClient {...defaultProps} />);
-    const links = screen.getAllByRole('link');
-    expect(links.some((l) => l.textContent?.includes('All'))).toBe(true);
-    expect(links.some((l) => l.textContent?.includes('The Hindu'))).toBe(true);
-    expect(links.some((l) => l.textContent?.includes('Indian Express'))).toBe(true);
-    expect(links.some((l) => l.textContent?.includes('PIB'))).toBe(true);
+    expect(screen.getByText('All')).toBeInTheDocument();
+    expect(screen.getByText('The Hindu')).toBeInTheDocument();
+    expect(screen.getByText('Indian Express')).toBeInTheDocument();
+    expect(screen.getByText('PIB')).toBeInTheDocument();
   });
 
   it('shows source counts', () => {
@@ -99,7 +100,7 @@ describe('NewsFeedClient', () => {
     expect(screen.getAllByText('2').length).toBeGreaterThanOrEqual(1);
   });
 
-  it('renders category filter links', () => {
+  it('renders category filter tabs', () => {
     render(
       <NewsFeedClient
         {...defaultProps}
@@ -109,9 +110,8 @@ describe('NewsFeedClient', () => {
         ]}
       />,
     );
-    const links = screen.getAllByRole('link');
-    expect(links.some((l) => l.textContent?.includes('Polity'))).toBe(true);
-    expect(links.some((l) => l.textContent?.includes('Economy'))).toBe(true);
+    expect(screen.getByText('Polity')).toBeInTheDocument();
+    expect(screen.getByText('Economy')).toBeInTheDocument();
   });
 
   it('shows load more button when total > displayed', () => {
@@ -120,59 +120,12 @@ describe('NewsFeedClient', () => {
     expect(screen.getByText(/Load More/)).toBeInTheDocument();
   });
 
-  it('source links have correct hrefs (category reset to all)', () => {
-    render(
-      <NewsFeedClient
-        {...defaultProps}
-        category="c1"
-        counts={{ total: 5, thehindu: 2, indianexpress: 2, pib: 1 }}
-      />,
-    );
-    const links = screen.getAllByRole<HTMLLinkElement>('link');
-    const theHinduLink = links.find((l) => l.textContent?.includes('The Hindu'));
-    expect(theHinduLink).toBeDefined();
-    expect(theHinduLink!.href).toContain('/?date=2026-06-21&source=thehindu');
-  });
-
-  it('category links have correct hrefs', () => {
-    render(
-      <NewsFeedClient
-        {...defaultProps}
-        categories={[{ id: 'c1', name: 'Polity' }]}
-      />,
-    );
-    const links = screen.getAllByRole<HTMLLinkElement>('link');
-    const polityLink = links.find((l) => l.textContent?.includes('Polity'));
-    expect(polityLink).toBeDefined();
-    expect(polityLink!.href).toContain('/?date=2026-06-21&category=c1');
-  });
-
-  it('source link does not include category param', () => {
-    render(
-      <NewsFeedClient
-        {...defaultProps}
-        category="c1"
-        categories={[{ id: 'c1', name: 'Polity' }]}
-        counts={{ total: 5, thehindu: 2, indianexpress: 2, pib: 1 }}
-      />,
-    );
-    const links = screen.getAllByRole<HTMLLinkElement>('link');
-    const theHinduLink = links.find((l) => l.textContent?.includes('The Hindu'));
-    expect(theHinduLink).toBeDefined();
-    expect(theHinduLink!.href).toContain('/?date=2026-06-21&source=thehindu');
-    expect(theHinduLink!.href).not.toContain('category');
-  });
-
-  it('navigates on search', () => {
+  it('navigates on search', async () => {
+    const user = userEvent.setup();
     render(<NewsFeedClient {...defaultProps} />);
     const input = screen.getByPlaceholderText('Search articles...');
-    fireEvent.change(input, { target: { value: 'climate' } });
-    const searchIcon = input.closest('.ant-input-search')?.querySelector('.ant-input-search-button, .anticon-search');
-    if (searchIcon) {
-      fireEvent.click(searchIcon);
-    } else {
-      fireEvent.keyDown(input, { key: 'Enter' });
-    }
+    await user.type(input, 'climate');
+    await user.keyboard('{Enter}');
     expect(mockReplace).toHaveBeenCalledWith('/?date=2026-06-21&search=climate');
   });
 });

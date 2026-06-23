@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Layout, Menu, Button, Space, Typography, Drawer } from 'antd';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import {
@@ -24,11 +25,11 @@ const { Header, Content, Footer } = Layout;
 const { Text } = Typography;
 
 const publicMenuItems = [
-  { key: '/', icon: <BookOutlined />, label: 'Articles' },
-  { key: '/quiz', icon: <QuestionCircleOutlined />, label: 'Quiz' },
-  { key: '/bookmarks', icon: <HeartOutlined />, label: 'Bookmarks' },
-  { key: '/analytics', icon: <TrophyOutlined />, label: 'Analytics' },
-  { key: '/history', icon: <HistoryOutlined />, label: 'History' },
+  { key: '/', icon: <BookOutlined />, label: <Link href="/">Articles</Link> },
+  { key: '/quiz', icon: <QuestionCircleOutlined />, label: <Link href="/quiz">Quiz</Link> },
+  { key: '/bookmarks', icon: <HeartOutlined />, label: <Link href="/bookmarks">Bookmarks</Link> },
+  { key: '/analytics', icon: <TrophyOutlined />, label: <Link href="/analytics">Analytics</Link> },
+  { key: '/history', icon: <HistoryOutlined />, label: <Link href="/history">History</Link> },
 ];
 
 function selectedKey(pathname: string): string {
@@ -53,13 +54,12 @@ export default function PublicLayoutClient({ children }: { children: React.React
 
   const nav = [
     ...publicMenuItems,
-    ...(isAdmin ? [{ key: '/admin' as const, icon: <ThunderboltOutlined />, label: 'Admin' }] : []),
+    ...(isAdmin ? [{ key: '/admin' as const, icon: <ThunderboltOutlined />, label: <Link href="/admin">Admin</Link> }] : []),
   ];
 
-  const handleNav = (key: string) => {
-    router.push(key);
+  useEffect(() => {
     setDrawerOpen(false);
-  };
+  }, [pathname]);
 
   return (
     <Layout style={{ minHeight: '100vh', background: 'var(--color-bg)' }}>
@@ -73,7 +73,7 @@ export default function PublicLayoutClient({ children }: { children: React.React
             borderBottom: '1px solid var(--color-border)',
           }}
         >
-          <div onClick={() => router.push('/')} style={{ cursor: 'pointer' }}>
+          <Link href="/" style={{ display: 'block', textDecoration: 'none' }}>
             <div
               className="newspaper-heading"
               style={{
@@ -98,7 +98,7 @@ export default function PublicLayoutClient({ children }: { children: React.React
             >
               UPSC Current Affairs Digest
             </div>
-          </div>
+          </Link>
         </div>
 
         {/* Navigation */}
@@ -123,7 +123,6 @@ export default function PublicLayoutClient({ children }: { children: React.React
                 mode="horizontal"
                 selectedKeys={[selectedKey(pathname)]}
                 items={nav}
-                onClick={({ key }) => router.push(key)}
                 style={{
                   borderBottom: 'none',
                   background: 'transparent',
@@ -206,13 +205,13 @@ export default function PublicLayoutClient({ children }: { children: React.React
             { type: 'divider' },
             ...(session
               ? [{ key: '__logout__', icon: <LogoutOutlined />, label: 'Logout', danger: true }]
-              : [{ key: '/login', icon: <LoginOutlined />, label: 'Login' }]),
+              : [{ key: '/login', icon: <LoginOutlined />, label: <Link href="/login">Login</Link> }]),
           ]}
           onClick={({ key }) => {
             if (key === '__logout__') {
               signOut();
               setDrawerOpen(false);
-            } else handleNav(key);
+            }
           }}
           style={{
             borderInlineEnd: 'none',
@@ -301,19 +300,19 @@ export default function PublicLayoutClient({ children }: { children: React.React
               </div>
               {['Articles', 'Quiz', 'Bookmarks', 'Analytics', 'History'].map((label) => (
                 <div key={label} style={{ marginBottom: 6 }}>
-                  <Text
-                    onClick={() => router.push(`/${label.toLowerCase()}`)}
+                  <Link
+                    href={`/${label.toLowerCase()}`}
                     style={{
                       color: 'var(--color-text-tertiary)',
                       fontSize: 13,
-                      cursor: 'pointer',
+                      textDecoration: 'none',
                       transition: 'color 0.15s',
                     }}
                     onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-text)')}
                     onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-tertiary)')}
                   >
                     {label}
-                  </Text>
+                  </Link>
                 </div>
               ))}
             </div>

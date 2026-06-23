@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useCallback } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { Input, Tabs } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { useIsMobile } from '@/hooks/useIsMobile';
@@ -63,11 +63,13 @@ export default function FilterBar({
 }: FilterBarProps) {
   const isMobile = useIsMobile();
   const pathname = usePathname();
+  const router = useRouter();
 
-  const PrefetchLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <Link href={href} prefetch={true} onClick={(e) => e.preventDefault()} style={{ color: 'inherit', textDecoration: 'none' }}>
-      {children}
-    </Link>
+  const prefetchOnHover = useCallback(
+    (overrides: { source?: string; category?: string }) => {
+      router.prefetch(buildUrl(pathname, { date, source, search, ...overrides }));
+    },
+    [router, pathname, date, source, search],
   );
 
   const tabLabel = (label: string, count: React.ReactNode) => (
@@ -97,9 +99,9 @@ export default function FilterBar({
         items={SOURCE_KEYS.map((key) => ({
           key,
           label: (
-            <PrefetchLink href={buildUrl(pathname, { date, source: key, search })}>
+            <span onMouseEnter={() => prefetchOnHover({ source: key })}>
               {tabLabel(SOURCE_META[key].label, (counts as any)[key])}
-            </PrefetchLink>
+            </span>
           ),
         }))}
         size="small"
@@ -116,17 +118,17 @@ export default function FilterBar({
             {
               key: 'all',
               label: (
-                <PrefetchLink href={buildUrl(pathname, { date, source, search })}>
+                <span onMouseEnter={() => prefetchOnHover({})}>
                   {tabLabel('All', `(${catTotal})`)}
-                </PrefetchLink>
+                </span>
               ),
             },
             ...categories.map((c) => ({
               key: c.id,
               label: (
-                <PrefetchLink href={buildUrl(pathname, { date, source, category: c.id, search })}>
+                <span onMouseEnter={() => prefetchOnHover({ category: c.id })}>
                   {tabLabel(c.name, `(${filteredCounts?.categories?.[c.id] || 0})`)}
-                </PrefetchLink>
+                </span>
               ),
             })),
           ]}
