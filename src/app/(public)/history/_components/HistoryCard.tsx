@@ -1,16 +1,8 @@
-'use client';
-
-import { Typography, Tag } from 'antd';
 import Link from 'next/link';
-import { RightOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import { useIsMobile } from '@/hooks/useIsMobile';
 import type { Quiz } from '@/lib/types';
 
-const { Text } = Typography;
-
 export default function HistoryCard({ quiz }: { quiz: Quiz }) {
-  const isMobile = useIsMobile();
   const percentage = quiz.score !== null ? Math.round((quiz.score / quiz.total_questions) * 100) : null;
 
   const color =
@@ -19,8 +11,9 @@ export default function HistoryCard({ quiz }: { quiz: Quiz }) {
   return (
     <Link href={`/history/${quiz.id}`} style={{ textDecoration: 'none', display: 'block' }}>
       <div
+        className="history-card"
         style={{
-          padding: isMobile ? '14px 16px' : '14px 18px',
+          padding: '14px 16px',
           background: 'var(--color-surface)',
           borderRadius: 10,
           border: '1px solid var(--color-border)',
@@ -29,13 +22,7 @@ export default function HistoryCard({ quiz }: { quiz: Quiz }) {
           justifyContent: 'space-between',
           gap: 12,
           cursor: 'pointer',
-          transition: 'all 0.15s',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = 'var(--color-text-tertiary)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = 'var(--color-border)';
+          transition: 'border-color 0.15s',
         }}
       >
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -43,7 +30,7 @@ export default function HistoryCard({ quiz }: { quiz: Quiz }) {
             {quiz.title || 'Quiz'}
           </div>
           <div style={{ display: 'flex', gap: 8, marginTop: 4, alignItems: 'center', flexWrap: 'wrap' }}>
-            <Text
+            <span
               style={{
                 color: 'var(--color-text-tertiary)',
                 fontSize: 11,
@@ -52,7 +39,7 @@ export default function HistoryCard({ quiz }: { quiz: Quiz }) {
               }}
             >
               {dayjs(quiz.created_at).format('DD-MM-YYYY')}
-            </Text>
+            </span>
             <span
               style={{
                 width: 3,
@@ -62,7 +49,7 @@ export default function HistoryCard({ quiz }: { quiz: Quiz }) {
                 display: 'inline-block',
               }}
             />
-            <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 11 }}>{quiz.total_questions} questions</Text>
+            <span style={{ color: 'var(--color-text-tertiary)', fontSize: 11 }}>{quiz.total_questions} questions</span>
             {quiz.articles?.length ? (
               <>
                 <span
@@ -74,9 +61,9 @@ export default function HistoryCard({ quiz }: { quiz: Quiz }) {
                     display: 'inline-block',
                   }}
                 />
-                <Text style={{ color: 'var(--color-text-tertiary)', fontSize: 11 }}>
+                <span style={{ color: 'var(--color-text-tertiary)', fontSize: 11 }}>
                   {quiz.articles.length} articles
-                </Text>
+                </span>
               </>
             ) : null}
           </div>
@@ -84,7 +71,7 @@ export default function HistoryCard({ quiz }: { quiz: Quiz }) {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           {percentage !== null && (
-            <Tag
+            <span
               style={{
                 fontSize: 12,
                 fontWeight: 700,
@@ -97,9 +84,9 @@ export default function HistoryCard({ quiz }: { quiz: Quiz }) {
               }}
             >
               {percentage}%
-            </Tag>
+            </span>
           )}
-          <RightOutlined style={{ color: 'var(--color-text-tertiary)', fontSize: 11 }} />
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-tertiary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
         </div>
       </div>
     </Link>

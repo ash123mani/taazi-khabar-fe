@@ -1,17 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
-import BookmarksPage from '@/app/(public)/bookmarks/page';
-
-const mockGetBookmarkedArticles = vi.fn();
-const mockUseAuthStore = vi.fn();
-
-vi.mock('@/lib/api', () => ({
-  api: { getBookmarkedArticles: (...args: any[]) => mockGetBookmarkedArticles(...args) },
-}));
-
-vi.mock('@/stores/authStore', () => ({
-  useAuthStore: (sel: any) => mockUseAuthStore(sel),
-}));
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import React from 'react';
 
 vi.mock('antd', async () => {
   const actual = await vi.importActual<typeof import('antd')>('antd');
@@ -26,34 +15,16 @@ vi.mock('@/app/(public)/_components/ArticleCard', () => ({
   default: ({ article }: any) => <div data-testid="article-card">{article.headline}</div>,
 }));
 
-describe('BookmarksPage', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockUseAuthStore.mockImplementation((sel: any) => sel({ accessToken: 'token' }));
-  });
-
-  it('shows login prompt when not authenticated', () => {
-    mockUseAuthStore.mockImplementation((sel: any) => sel({ accessToken: null }));
-    render(<BookmarksPage />);
-    expect(screen.getByText('Please login to view bookmarks')).toBeInTheDocument();
-  });
-
-  it('shows loading state', () => {
-    mockGetBookmarkedArticles.mockReturnValue(new Promise(() => {}));
-    const { container } = render(<BookmarksPage />);
-    expect(container.querySelector('.ant-spin')).toBeInTheDocument();
-  });
-
+describe('BookmarksList', () => {
   it('shows empty state', async () => {
-    mockGetBookmarkedArticles.mockResolvedValue([]);
-    render(<BookmarksPage />);
-    await waitFor(() => {
-      expect(screen.getByText('No bookmarks yet')).toBeInTheDocument();
-    });
+    const { default: BookmarksList } = await import('@/app/(public)/bookmarks/_components/BookmarksList');
+    render(<BookmarksList articles={[]} />);
+    expect(screen.getByText('No bookmarks yet')).toBeInTheDocument();
   });
 
   it('renders bookmarked articles', async () => {
-    mockGetBookmarkedArticles.mockResolvedValue([
+    const { default: BookmarksList } = await import('@/app/(public)/bookmarks/_components/BookmarksList');
+    const articles = [
       {
         id: 'a1',
         headline: 'Bookmarked Article',
@@ -64,10 +35,9 @@ describe('BookmarksPage', () => {
         key_terms: [],
         syllabus_tag: null,
       },
-    ]);
-    render(<BookmarksPage />);
-    await waitFor(() => {
-      expect(screen.getByText('Clippings')).toBeInTheDocument();
-    });
+    ];
+    render(<BookmarksList articles={articles} />);
+    expect(screen.getByText('Clippings')).toBeInTheDocument();
+    expect(screen.getByText('Bookmarked Article')).toBeInTheDocument();
   });
 });

@@ -1,73 +1,118 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import { Typography, Button, message, Spin } from 'antd';
+import Link from 'next/link';
 import dayjs from 'dayjs';
-import { api } from '@/lib/api';
-import { useAuthStore } from '@/stores/authStore';
-import { useIsMobile } from '@/hooks/useIsMobile';
+import { serverFetch } from '@/lib/server-fetch';
+import { Suspense } from 'react';
+import { redirect } from 'next/navigation';
+import { authOptions } from '@/lib/auth';
+import { getServerSession } from 'next-auth';
 
-const { Text } = Typography;
+function AnalyticsSkeleton() {
+  return (
+    <div>
+      <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--color-text-tertiary)', marginBottom: 6, display: 'block' }}>
+        Analytics
+      </span>
+      <div
+        className="newspaper-heading"
+        style={{
+          fontWeight: 800,
+          fontSize: 20,
+          letterSpacing: '-0.3px',
+          color: 'var(--color-text)',
+          lineHeight: 1.15,
+          marginBottom: 20,
+        }}
+      >
+        Your Performance
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 12 }}>
+        {[1, 2, 3, 4].map((i) => (
+          <div
+            key={i}
+            style={{
+              background: 'var(--color-surface)',
+              borderRadius: 12,
+              padding: 18,
+              textAlign: 'center',
+              border: '1px solid var(--color-border)',
+            }}
+          >
+            <div
+              style={{
+                width: '60%',
+                height: 10,
+                background: 'var(--color-border)',
+                margin: '0 auto 8px',
+                borderRadius: 2,
+              }}
+            />
+            <div
+              style={{
+                width: '40%',
+                height: 24,
+                background: 'var(--color-border)',
+                margin: '0 auto',
+                borderRadius: 2,
+              }}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
-export default function AnalyticsPage() {
-  const token = useAuthStore((s) => s.accessToken);
-  const [stats, setStats] = useState<any>(null);
-  const [history, setHistory] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const isMobile = useIsMobile();
+const getColor = (acc: number) => {
+  if (acc >= 70) return '#22c55e';
+  if (acc >= 50) return '#eab308';
+  return '#ef4444';
+};
 
-  useEffect(() => {
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-    Promise.all([api.getPerformance(), api.getHistory()])
-      .then(([statsData, historyData]) => {
-        setStats(statsData);
-        const list = Array.isArray(historyData) ? historyData : historyData.quizzes || [];
-        setHistory(list);
-      })
-      .catch(() => message.error('Failed to load analytics'))
-      .finally(() => setLoading(false));
-  }, [token]);
+async function AnalyticsContent() {
+  const session = await getServerSession(authOptions);
+  if (!session) redirect('/login?callbackUrl=/analytics');
 
-  const getColor = (acc: number) => {
-    if (acc >= 70) return '#22c55e';
-    if (acc >= 50) return '#eab308';
-    return '#ef4444';
-  };
+  const [stats, historyData] = await Promise.all([
+    serverFetch<any>('/analytics/performance').catch(() => null),
+    serverFetch<any[]>('/history').catch(() => [] as any[]),
+  ]);
 
-  if (!token) {
+  const history = Array.isArray(historyData) ? historyData : (historyData as any)?.quizzes || [];
+
+  if (!stats && history.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: 60 }}>
+      <div>
         <div
           className="newspaper-heading"
-          style={{ fontSize: 20, fontWeight: 600, color: 'var(--color-text-secondary)', marginBottom: 12 }}
-        >
-          Please login to view analytics
-        </div>
-        <Button
-          type="primary"
-          href="/login"
           style={{
-            fontWeight: 600,
-            borderRadius: 2,
-            letterSpacing: '0.5px',
-            fontSize: 12,
-            height: 36,
-            padding: '0 24px',
+            fontWeight: 800,
+            fontSize: 20,
+            letterSpacing: '-0.3px',
+            color: 'var(--color-text)',
+            lineHeight: 1.15,
+            marginBottom: 20,
           }}
         >
-          Login
-        </Button>
-      </div>
-    );
-  }
-
-  if (loading) {
-    return (
-      <div style={{ textAlign: 'center', padding: 60 }}>
-        <Spin size="large" />
+          Your Performance
+        </div>
+        <Link href="/quiz">
+          <span
+            style={{
+              fontWeight: 600,
+              borderRadius: 8,
+              height: 38,
+              padding: '0 24px',
+              fontSize: 13,
+              display: 'inline-flex',
+              alignItems: 'center',
+              background: 'var(--color-primary)',
+              color: '#fff',
+              cursor: 'pointer',
+            }}
+          >
+            Take your first quiz
+          </span>
+        </Link>
       </div>
     );
   }
@@ -85,7 +130,7 @@ export default function AnalyticsPage() {
 
   return (
     <div>
-      <Text
+      <span
         style={{
           fontSize: 10,
           fontWeight: 700,
@@ -97,16 +142,16 @@ export default function AnalyticsPage() {
         }}
       >
         Analytics
-      </Text>
+      </span>
       <div
         className="newspaper-heading"
         style={{
           fontWeight: 800,
-          fontSize: isMobile ? 20 : 26,
+          fontSize: 20,
           letterSpacing: '-0.3px',
           color: 'var(--color-text)',
           lineHeight: 1.15,
-          marginBottom: isMobile ? 20 : 28,
+          marginBottom: 20,
         }}
       >
         Your Performance
@@ -115,9 +160,9 @@ export default function AnalyticsPage() {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
           gap: 12,
-          marginBottom: isMobile ? 20 : 28,
+          marginBottom: 28,
         }}
       >
         {statCards.map((stat) => (
@@ -126,12 +171,12 @@ export default function AnalyticsPage() {
             style={{
               background: 'var(--color-surface)',
               borderRadius: 12,
-              padding: isMobile ? '14px 10px' : '18px 14px',
+              padding: 18,
               textAlign: 'center',
               border: '1px solid var(--color-border)',
             }}
           >
-            <Text
+            <span
               style={{
                 fontSize: 9,
                 fontWeight: 600,
@@ -143,11 +188,11 @@ export default function AnalyticsPage() {
               }}
             >
               {stat.label}
-            </Text>
+            </span>
             <div
               style={{
                 fontWeight: 700,
-                fontSize: isMobile ? 22 : 26,
+                fontSize: 22,
                 color: stat.color,
                 lineHeight: 1,
               }}
@@ -159,8 +204,8 @@ export default function AnalyticsPage() {
       </div>
 
       {stats?.topics && stats.topics.length > 0 && (
-        <div style={{ marginBottom: isMobile ? 20 : 28 }}>
-          <Text
+        <div style={{ marginBottom: 28 }}>
+          <span
             style={{
               fontSize: 13,
               fontWeight: 600,
@@ -170,7 +215,7 @@ export default function AnalyticsPage() {
             }}
           >
             Topic Breakdown
-          </Text>
+          </span>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {stats.topics.map((topic: any) => {
@@ -181,19 +226,17 @@ export default function AnalyticsPage() {
                   style={{
                     background: 'var(--color-surface)',
                     borderRadius: 10,
-                    padding: isMobile ? '12px 14px' : '14px 16px',
+                    padding: 14,
                     border: '1px solid var(--color-border)',
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                    <Text style={{ fontSize: isMobile ? 13 : 14, fontWeight: 500, color: 'var(--color-text)' }}>
+                    <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--color-text)' }}>
                       {topic.topic}
-                    </Text>
-                    <Text
-                      style={{ fontSize: isMobile ? 11 : 12, color: 'var(--color-text-tertiary)', fontWeight: 600 }}
-                    >
+                    </span>
+                    <span style={{ fontSize: 12, color: 'var(--color-text-tertiary)', fontWeight: 600 }}>
                       {topic.correct}/{topic.total} ({pct}%)
-                    </Text>
+                    </span>
                   </div>
                   <div style={{ height: 4, background: 'var(--color-border)', borderRadius: 2, overflow: 'hidden' }}>
                     <div
@@ -202,7 +245,6 @@ export default function AnalyticsPage() {
                         height: '100%',
                         background: getColor(pct),
                         borderRadius: 2,
-                        transition: 'width 0.3s',
                       }}
                     />
                   </div>
@@ -215,7 +257,7 @@ export default function AnalyticsPage() {
 
       {history.length > 0 && (
         <div>
-          <Text
+          <span
             style={{
               fontSize: 13,
               fontWeight: 600,
@@ -225,7 +267,7 @@ export default function AnalyticsPage() {
             }}
           >
             Recent Quizzes
-          </Text>
+          </span>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {history.slice(0, 5).map((quiz: any) => {
@@ -239,43 +281,30 @@ export default function AnalyticsPage() {
                     alignItems: 'center',
                     background: 'var(--color-surface)',
                     borderRadius: 10,
-                    padding: isMobile ? '12px 14px' : '14px 16px',
+                    padding: 14,
                     border: '1px solid var(--color-border)',
                   }}
                 >
                   <div>
-                    <div
-                      style={{
-                        fontSize: isMobile ? 14 : 15,
-                        fontWeight: 600,
-                        color: 'var(--color-text)',
-                      }}
-                    >
+                    <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-text)' }}>
                       {pct}% Score
                     </div>
-                    <Text
-                      style={{
-                        fontSize: isMobile ? 11 : 12,
-                        color: 'var(--color-text-tertiary)',
-                        marginTop: 2,
-                        display: 'block',
-                      }}
-                    >
+                    <span style={{ fontSize: 12, color: 'var(--color-text-tertiary)', marginTop: 2, display: 'block' }}>
                       {quiz.score || 0}/{quiz.total_questions} questions
-                    </Text>
+                    </span>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <Text style={{ fontSize: isMobile ? 14 : 16, color: getColor(pct), fontWeight: 700 }}>{pct}%</Text>
-                    <Text
+                    <span style={{ fontSize: 16, color: getColor(pct), fontWeight: 700 }}>{pct}%</span>
+                    <span
                       style={{
-                        fontSize: isMobile ? 10 : 11,
+                        fontSize: 11,
                         color: 'var(--color-text-tertiary)',
                         display: 'block',
                         marginTop: 2,
                       }}
                     >
                       {quiz.created_at ? dayjs(quiz.created_at).format('DD-MM-YYYY') : '-'}
-                    </Text>
+                    </span>
                   </div>
                 </div>
               );
@@ -284,5 +313,13 @@ export default function AnalyticsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function AnalyticsPage() {
+  return (
+    <Suspense fallback={<AnalyticsSkeleton />}>
+      <AnalyticsContent />
+    </Suspense>
   );
 }

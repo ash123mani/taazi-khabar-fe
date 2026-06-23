@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Typography, Button, Spin, DatePicker, Tag, Empty, Modal, List, Avatar } from 'antd';
 import {
   CalendarOutlined,
@@ -12,25 +12,50 @@ import {
   LinkOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import { useDailyQuizSummary, useStartDailyQuiz } from '../_hooks/useQuizzes';
+import { api } from '@/lib/api';
 import { useAuthStore } from '@/stores/authStore';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import type { DailyQuizCategory } from '@/lib/types';
 
 const { Text } = Typography;
 
-export default function QuizContent() {
+const catColors: Record<string, string> = {
+  Polity: '#6366f1',
+  Economy: '#22c55e',
+  'International Relations': '#3b82f6',
+  'Science & Tech': '#a855f7',
+  Environment: '#14b8a6',
+  Geography: '#f59e0b',
+  History: '#ef4444',
+  Security: '#ec4899',
+  'Social Issues': '#f97316',
+};
+
+export default function QuizContent({
+  date,
+  initialSummary,
+}: {
+  date: string;
+  initialSummary: DailyQuizCategory | null;
+}) {
   const router = useRouter();
+  const pathname = usePathname();
   const token = useAuthStore((s) => s.accessToken);
   const isMobile = useIsMobile();
 
-  const today = new Date().toISOString().slice(0, 10);
-  const [date, setDate] = useState<string>(today);
+  const [summary, setSummary] = useState(initialSummary);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [modalCat, setModalCat] = useState<DailyQuizCategory | null>(null);
+  const [startingId, setStartingId] = useState<string | null>(null);
 
-  const { data: summary, isLoading } = useDailyQuizSummary(date);
-  const startQuiz = useStartDailyQuiz();
+  const handleDateChange = async (d: dayjs.Dayjs | null) => {
+    if (!d) return;
+    const newDate = d.format('YYYY-MM-DD');
+    const params = new URLSearchParams();
+    params.set('date', newDate);
+    router.replace(`${pathname}?${params.toString()}`);
+  };
 
   const handleStartQuiz = async (category_id?: string) => {
     if (!token) {
@@ -38,29 +63,18 @@ export default function QuizContent() {
       return;
     }
     setError('');
+    setStartingId(category_id || '__all__');
     try {
-      const result = await startQuiz.mutateAsync({ date, category_id });
+      const result = await api.startDailyQuiz(date, category_id);
       router.push(`/quiz/${result.quiz_id}`);
     } catch (err: any) {
       setError(err.message || 'Failed to start quiz');
+      setStartingId(null);
     }
-  };
-
-  const catColors: Record<string, string> = {
-    Polity: '#6366f1',
-    Economy: '#22c55e',
-    'International Relations': '#3b82f6',
-    'Science & Tech': '#a855f7',
-    Environment: '#14b8a6',
-    Geography: '#f59e0b',
-    History: '#ef4444',
-    Security: '#ec4899',
-    'Social Issues': '#f97316',
   };
 
   return (
     <div>
-      {/* Masthead */}
       <div
         style={{
           borderBottom: '1px solid var(--color-border-light)',
@@ -83,12 +97,7 @@ export default function QuizContent() {
           </div>
           <DatePicker
             value={dayjs(date)}
-            onChange={(d) => {
-              if (d) {
-                setDate(d.format('YYYY-MM-DD'));
-                setError('');
-              }
-            }}
+            onChange={handleDateChange}
             allowClear={false}
             format="DD-MM-YYYY"
             disabledDate={(current) => {
@@ -99,12 +108,7 @@ export default function QuizContent() {
               <CalendarOutlined style={{ fontSize: isMobile ? 10 : 12, color: 'var(--color-text-tertiary)' }} />
             }
             size="small"
-            style={{
-              background: 'transparent',
-              border: '1px solid var(--color-border)',
-              borderRadius: 2,
-              fontSize: 11,
-            }}
+            style={{ background: 'transparent', border: '1px solid var(--color-border)', borderRadius: 2, fontSize: 11 }}
           />
         </div>
       </div>
@@ -124,11 +128,11 @@ export default function QuizContent() {
         </div>
       )}
 
-      {isLoading ? (
+      {loading ? (
         <div style={{ textAlign: 'center', padding: 60 }}>
           <Spin size="large" />
         </div>
-      ) : !summary || summary.categories.length === 0 ? (
+      ) : !summary || (summary as any).categories?.length === 0 ? (
         <div style={{ padding: isMobile ? '32px 12px' : '48px 16px', textAlign: 'center' }}>
           <Empty
             description={
@@ -146,7 +150,6 @@ export default function QuizContent() {
         </div>
       ) : (
         <>
-          {/* Stats row */}
           <div
             style={{
               display: 'grid',
@@ -156,9 +159,9 @@ export default function QuizContent() {
             }}
           >
             {[
-              { label: 'Articles', value: summary.total_articles },
-              { label: 'Questions', value: summary.total_questions },
-              { label: 'Categories', value: summary.categories.length },
+              { label: 'Articles', value: (summary as any).total_articles },
+              { label: 'Questions', value: (summary as any).total_questions },
+              { label: 'Categories', value: (summary as any).categories?.length },
             ].map((stat) => (
               <div
                 key={stat.label}
@@ -218,12 +221,11 @@ export default function QuizContent() {
                   letterSpacing: '0.5px',
                 }}
               >
-                Take All
+                {startingId === '__all__' ? 'Starting...' : 'Take All'}
               </Text>
             </div>
           </div>
 
-          {/* Category grid */}
           <Text
             style={{
               fontSize: 11,
@@ -236,7 +238,7 @@ export default function QuizContent() {
             Category-wise Quiz
           </Text>
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: 12 }}>
-            {summary.categories.map((cat: DailyQuizCategory) => (
+            {(summary as any).categories?.map((cat: DailyQuizCategory) => (
               <div
                 key={cat.id}
                 style={{
@@ -306,6 +308,7 @@ export default function QuizContent() {
                     type="primary"
                     size="small"
                     icon={<ThunderboltOutlined />}
+                    loading={startingId === cat.id}
                     onClick={() => handleStartQuiz(cat.id)}
                     style={{ borderRadius: 8, fontSize: 11, height: 30 }}
                   >
@@ -318,7 +321,6 @@ export default function QuizContent() {
         </>
       )}
 
-      {/* Articles modal */}
       <Modal
         title={<span>{modalCat?.name} — Articles</span>}
         open={!!modalCat}
@@ -349,9 +351,7 @@ export default function QuizContent() {
                     )
                   }
                   title={
-                    <Text style={{ fontSize: 13, fontWeight: 500, color: 'var(--color-text)' }}>
-                      {article.headline}
-                    </Text>
+                    <Text style={{ fontSize: 13, fontWeight: 500, color: 'var(--color-text)' }}>{article.headline}</Text>
                   }
                   description={
                     <Tag style={{ borderRadius: 0, margin: 0, fontSize: 9 }}>

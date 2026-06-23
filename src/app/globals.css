@@ -134,3 +134,13 @@ p {
 .fade-in {
   animation: fadeIn 0.3s ease-out;
 }
+
+.history-card:hover {
+  border-color: var(--color-text-tertiary) !important;
+}
+
+@media (max-width: 768px) {
+  .resp-pad {
+    padding: 12px 14px;
+  }
+}
