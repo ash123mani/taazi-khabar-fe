@@ -80,13 +80,13 @@ describe('NewsFeedClient', () => {
     expect(screen.getByText(/No articles for/)).toBeInTheDocument();
   });
 
-  it('shows source tabs', () => {
+  it('shows source links', () => {
     render(<NewsFeedClient {...defaultProps} />);
-    const tabs = screen.getAllByRole('tab');
-    expect(tabs.some((t) => t.textContent?.includes('All'))).toBe(true);
-    expect(tabs.some((t) => t.textContent?.includes('The Hindu'))).toBe(true);
-    expect(tabs.some((t) => t.textContent?.includes('Indian Express'))).toBe(true);
-    expect(tabs.some((t) => t.textContent?.includes('PIB'))).toBe(true);
+    const links = screen.getAllByRole('link');
+    expect(links.some((l) => l.textContent?.includes('All'))).toBe(true);
+    expect(links.some((l) => l.textContent?.includes('The Hindu'))).toBe(true);
+    expect(links.some((l) => l.textContent?.includes('Indian Express'))).toBe(true);
+    expect(links.some((l) => l.textContent?.includes('PIB'))).toBe(true);
   });
 
   it('shows source counts', () => {
@@ -99,7 +99,7 @@ describe('NewsFeedClient', () => {
     expect(screen.getAllByText('2').length).toBeGreaterThanOrEqual(1);
   });
 
-  it('renders category filter tabs', () => {
+  it('renders category filter links', () => {
     render(
       <NewsFeedClient
         {...defaultProps}
@@ -109,9 +109,9 @@ describe('NewsFeedClient', () => {
         ]}
       />,
     );
-    const tabs = screen.getAllByRole('tab');
-    expect(tabs.some((t) => t.textContent?.includes('Polity'))).toBe(true);
-    expect(tabs.some((t) => t.textContent?.includes('Economy'))).toBe(true);
+    const links = screen.getAllByRole('link');
+    expect(links.some((l) => l.textContent?.includes('Polity'))).toBe(true);
+    expect(links.some((l) => l.textContent?.includes('Economy'))).toBe(true);
   });
 
   it('shows load more button when total > displayed', () => {
@@ -120,28 +120,34 @@ describe('NewsFeedClient', () => {
     expect(screen.getByText(/Load More/)).toBeInTheDocument();
   });
 
-  it('navigates on source tab change', () => {
-    render(<NewsFeedClient {...defaultProps} />);
-    const tabs = screen.getAllByRole('tab');
-    const theHinduTab = tabs.find((t) => t.textContent?.includes('The Hindu'));
-    if (theHinduTab) fireEvent.click(theHinduTab);
-    expect(mockReplace).toHaveBeenCalledWith('/?date=2026-06-21&source=thehindu');
+  it('source links have correct hrefs (category reset to all)', () => {
+    render(
+      <NewsFeedClient
+        {...defaultProps}
+        category="c1"
+        counts={{ total: 5, thehindu: 2, indianexpress: 2, pib: 1 }}
+      />,
+    );
+    const links = screen.getAllByRole<HTMLLinkElement>('link');
+    const theHinduLink = links.find((l) => l.textContent?.includes('The Hindu'));
+    expect(theHinduLink).toBeDefined();
+    expect(theHinduLink!.href).toContain('/?date=2026-06-21&source=thehindu');
   });
 
-  it('navigates on category tab change', () => {
+  it('category links have correct hrefs', () => {
     render(
       <NewsFeedClient
         {...defaultProps}
         categories={[{ id: 'c1', name: 'Polity' }]}
       />,
     );
-    const tabs = screen.getAllByRole('tab');
-    const polityTab = tabs.find((t) => t.textContent?.includes('Polity'));
-    if (polityTab) fireEvent.click(polityTab);
-    expect(mockReplace).toHaveBeenCalledWith('/?date=2026-06-21&category=c1');
+    const links = screen.getAllByRole<HTMLLinkElement>('link');
+    const polityLink = links.find((l) => l.textContent?.includes('Polity'));
+    expect(polityLink).toBeDefined();
+    expect(polityLink!.href).toContain('/?date=2026-06-21&category=c1');
   });
 
-  it('resets category when source changes', () => {
+  it('source link does not include category param', () => {
     render(
       <NewsFeedClient
         {...defaultProps}
@@ -150,12 +156,11 @@ describe('NewsFeedClient', () => {
         counts={{ total: 5, thehindu: 2, indianexpress: 2, pib: 1 }}
       />,
     );
-    const tabs = screen.getAllByRole('tab');
-    const theHinduTab = tabs.find((t) => t.textContent?.includes('The Hindu'));
-    if (theHinduTab) fireEvent.click(theHinduTab);
-    expect(mockReplace).toHaveBeenCalledWith(
-      '/?date=2026-06-21&source=thehindu',
-    );
+    const links = screen.getAllByRole<HTMLLinkElement>('link');
+    const theHinduLink = links.find((l) => l.textContent?.includes('The Hindu'));
+    expect(theHinduLink).toBeDefined();
+    expect(theHinduLink!.href).toContain('/?date=2026-06-21&source=thehindu');
+    expect(theHinduLink!.href).not.toContain('category');
   });
 
   it('navigates on search', () => {

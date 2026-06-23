@@ -1,6 +1,8 @@
 'use client';
 
-import { Input, Tabs } from 'antd';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
@@ -11,12 +13,27 @@ const SOURCE_META: Record<string, { label: string; color: string }> = {
   pib: { label: 'PIB', color: '#22c55e' },
 };
 
+const SOURCE_KEYS = ['all', 'thehindu', 'indianexpress', 'pib'] as const;
+
+function buildUrl(
+  pathname: string,
+  overrides: { date?: string; source?: string; category?: string; search?: string },
+) {
+  const params = new URLSearchParams();
+  if (overrides.date) params.set('date', overrides.date);
+  if (overrides.source && overrides.source !== 'all') params.set('source', overrides.source);
+  if (overrides.category && overrides.category !== 'all') params.set('category', overrides.category);
+  if (overrides.search) params.set('search', overrides.search);
+  const qs = params.toString();
+  return qs ? `${pathname}?${qs}` : pathname;
+}
+
 interface FilterBarProps {
-  sourceFilter: string;
-  onSourceChange: (key: string) => void;
+  date: string;
+  source: string;
+  category: string;
+  search: string;
   categories: { id: string; name: string }[];
-  categoryFilter: string;
-  onCategoryChange: (key: string) => void;
   counts: Record<string, any>;
   catTotal: number;
   filteredCounts: Record<string, any>;
@@ -27,11 +44,11 @@ interface FilterBarProps {
 }
 
 export default function FilterBar({
-  sourceFilter,
-  onSourceChange,
+  date,
+  source,
+  category,
+  search,
   categories,
-  categoryFilter,
-  onCategoryChange,
   counts,
   catTotal,
   filteredCounts,
@@ -41,29 +58,25 @@ export default function FilterBar({
   onClear,
 }: FilterBarProps) {
   const isMobile = useIsMobile();
-
-  const tabItems = [
-    {
-      key: 'all',
-      label: (
-        <span style={{ fontSize: isMobile ? 12 : 13, fontWeight: categoryFilter === 'all' ? 700 : 400 }}>
-          All
-          <span style={{ marginLeft: 4, fontSize: 10, color: 'var(--color-text-tertiary)' }}>({catTotal})</span>
-        </span>
-      ),
-    },
-    ...categories.map((c) => ({
-      key: c.id,
-      label: (
-        <span style={{ fontSize: isMobile ? 12 : 13, fontWeight: categoryFilter === c.id ? 700 : 400 }}>
-          {c.name}
-          <span style={{ marginLeft: 4, fontSize: 10, color: 'var(--color-text-tertiary)' }}>
-            ({filteredCounts?.categories?.[c.id] || 0})
-          </span>
-        </span>
-      ),
-    })),
-  ];
+  const pathname = usePathname();
+  const linkStyle: React.CSSProperties = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 4,
+    padding: '4px 12px',
+    fontSize: isMobile ? 12 : 13,
+    fontWeight: 400,
+    color: 'var(--color-text-tertiary)',
+    textDecoration: 'none',
+    borderBottom: '2px solid transparent',
+    transition: 'all 0.15s',
+  };
+  const activeLinkStyle: React.CSSProperties = {
+    ...linkStyle,
+    color: 'var(--color-text)',
+    fontWeight: 700,
+    borderBottomColor: 'var(--color-accent)',
+  };
 
   return (
     <div
@@ -76,38 +89,62 @@ export default function FilterBar({
         marginBottom: isMobile ? 6 : 10,
       }}
     >
-      {/* Source tabs */}
-      <Tabs
-        activeKey={sourceFilter}
-        onChange={onSourceChange}
-        items={(['all', 'thehindu', 'indianexpress', 'pib'] as const).map((key) => ({
-          key,
-          label: (
-            <span style={{ fontSize: isMobile ? 12 : 13, fontWeight: sourceFilter === key ? 700 : 400 }}>
+      {/* Source links */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', padding: '0 4px' }}>
+        {SOURCE_KEYS.map((key) => {
+          const active = source === key;
+          return (
+            <Link
+              key={key}
+              href={buildUrl(pathname, { date, source: key, search })}
+              prefetch={true}
+              style={active ? activeLinkStyle : linkStyle}
+            >
               {SOURCE_META[key].label}
               {(counts as any)[key] != null && (
-                <span style={{ marginLeft: 4, fontSize: 10, color: 'var(--color-text-tertiary)' }}>
+                <span style={{ fontSize: 10, color: 'var(--color-text-tertiary)' }}>
                   {(counts as any)[key]}
                 </span>
               )}
-            </span>
-          ),
-        }))}
-        size="small"
-        style={{ marginBottom: 0 }}
-        tabBarStyle={{ marginBottom: 0, borderBottom: 'none' }}
-      />
+            </Link>
+          );
+        })}
+      </div>
 
-      {/* Category tabs */}
+      {/* Category links */}
       {categories.length > 0 && (
-        <Tabs
-          activeKey={categoryFilter}
-          onChange={onCategoryChange}
-          items={tabItems}
-          size="small"
-          style={{ marginBottom: 0 }}
-          tabBarStyle={{ marginBottom: 0, borderBottom: 'none' }}
-        />
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            padding: '0 4px',
+            borderTop: '1px solid var(--color-border-light)',
+          }}
+        >
+          <Link
+            key="all"
+            href={buildUrl(pathname, { date, source, search })}
+            prefetch={true}
+            style={category === 'all' ? activeLinkStyle : linkStyle}
+          >
+            All
+            <span style={{ fontSize: 10, color: 'var(--color-text-tertiary)' }}>({catTotal})</span>
+          </Link>
+          {categories.map((c) => (
+            <Link
+              key={c.id}
+              href={buildUrl(pathname, { date, source, category: c.id, search })}
+              prefetch={true}
+              style={category === c.id ? activeLinkStyle : linkStyle}
+            >
+              {c.name}
+              <span style={{ fontSize: 10, color: 'var(--color-text-tertiary)' }}>
+                ({filteredCounts?.categories?.[c.id] || 0})
+              </span>
+            </Link>
+          ))}
+        </div>
       )}
 
       {/* Search */}

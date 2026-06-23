@@ -66,16 +66,6 @@ export default function NewsFeedClient({
     [navigate],
   );
 
-  const handleSourceChange = useCallback(
-    (key: string) => navigate({ source: key, category: 'all' }),
-    [navigate],
-  );
-
-  const handleCategoryChange = useCallback(
-    (key: string) => navigate({ category: key }),
-    [navigate],
-  );
-
   const handleSearch = useCallback(() => {
     navigate({ search: searchInput });
   }, [navigate, searchInput]);
@@ -122,11 +112,11 @@ export default function NewsFeedClient({
       <NewsMasthead date={date} onDateChange={handleDateChange} />
 
       <FilterBar
-        sourceFilter={source}
-        onSourceChange={handleSourceChange}
+        date={date}
+        source={source}
+        category={category}
+        search={search}
         categories={categories}
-        categoryFilter={category}
-        onCategoryChange={handleCategoryChange}
         counts={counts}
         catTotal={catTotal}
         filteredCounts={filteredCounts}
