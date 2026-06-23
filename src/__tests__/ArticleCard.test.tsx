@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import ArticleCard from '@/components/ArticleCard';
+import ArticleCard from '@/app/(public)/_components/ArticleCard';
 import type { Article } from '@/lib/types';
 
 vi.mock('next/image', () => ({

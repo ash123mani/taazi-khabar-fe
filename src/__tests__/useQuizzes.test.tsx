@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useGenerateQuiz, useQuiz, useDailyQuizSummary, useStartDailyQuiz, useSubmitQuiz } from '@/hooks/useQuizzes';
+import { useGenerateQuiz, useQuiz, useDailyQuizSummary, useStartDailyQuiz, useSubmitQuiz } from '@/app/(public)/quiz/_hooks/useQuizzes';
 import type { ReactNode } from 'react';
 
 const mockGenerateQuiz = vi.fn();

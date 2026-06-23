@@ -12,7 +12,7 @@ import {
   LinkOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import { useDailyQuizSummary, useStartDailyQuiz } from '@/hooks/useQuizzes';
+import { useDailyQuizSummary, useStartDailyQuiz } from '../_hooks/useQuizzes';
 import { useAuthStore } from '@/stores/authStore';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import type { DailyQuizCategory } from '@/lib/types';

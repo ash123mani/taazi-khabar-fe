@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Input, Checkbox, Empty, Space } from 'antd';
-import ArticleCard from './ArticleCard';
+import ArticleCard from '@/app/(public)/_components/ArticleCard';
 import type { Article } from '@/lib/types';
 
 interface ArticleSelectorProps {

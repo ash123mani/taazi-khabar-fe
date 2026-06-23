@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { ArticleSkeleton, QuizSkeleton } from '@/components/Skeletons';
+import { ArticleSkeleton, QuizSkeleton } from '@/app/(public)/_components/Skeletons';
 
 describe('Skeletons', () => {
   it('ArticleSkeleton renders', () => {

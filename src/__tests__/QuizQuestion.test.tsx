@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import QuizQuestion from '@/components/QuizQuestion';
+import QuizQuestion from '@/app/(public)/quiz/_components/QuizQuestion';
 import type { QuizQuestion as QuizQuestionType } from '@/lib/types';
 
 const question: QuizQuestionType = {

@@ -1,6 +1,6 @@
 import { api } from '@/lib/api';
 import type { Article } from '@/lib/types';
-import NewsFeedClient from '@/components/NewsFeedClient';
+import NewsFeedClient from '@/app/(public)/_components/NewsFeedClient';
 
 const PAGE_SIZE = 10;
 

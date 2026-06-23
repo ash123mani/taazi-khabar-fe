@@ -4,8 +4,8 @@ import { Typography } from 'antd';
 import dayjs from 'dayjs';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import type { Article } from '@/lib/types';
-import ArticleCard from '@/components/ArticleCard';
-import { ArticleSkeleton } from '@/components/Skeletons';
+import ArticleCard from './ArticleCard';
+import { ArticleSkeleton } from './Skeletons';
 
 const { Text } = Typography;
 

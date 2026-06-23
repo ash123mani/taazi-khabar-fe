@@ -4,10 +4,10 @@ import { useState, useCallback, useEffect, useTransition } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { api } from '@/lib/api';
 import type { Article } from '@/lib/types';
-import NewsMasthead from '@/components/NewsMasthead';
-import FilterBar from '@/components/FilterBar';
-import ArticleContent from '@/components/ArticleContent';
-import { ArticleSkeleton } from '@/components/Skeletons';
+import NewsMasthead from './NewsMasthead';
+import FilterBar from './FilterBar';
+import ArticleContent from './ArticleContent';
+import { ArticleSkeleton } from './Skeletons';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
 const PAGE_SIZE = 10;

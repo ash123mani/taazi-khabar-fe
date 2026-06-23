@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import QuizContent from '@/app/(public)/quiz/QuizContent';
+import QuizContent from '@/app/(public)/quiz/_components/QuizContent';
 
 const mockPush = vi.fn();
 const mockUseAuthStore = vi.fn();
@@ -15,7 +15,7 @@ vi.mock('@/stores/authStore', () => ({
   useAuthStore: (sel: any) => mockUseAuthStore(sel),
 }));
 
-vi.mock('@/hooks/useQuizzes', () => ({
+vi.mock('@/app/(public)/quiz/_hooks/useQuizzes', () => ({
   useDailyQuizSummary: (...args: any[]) => mockUseDailyQuizSummary(...args),
   useStartDailyQuiz: (...args: any[]) => mockUseStartDailyQuiz(...args),
 }));

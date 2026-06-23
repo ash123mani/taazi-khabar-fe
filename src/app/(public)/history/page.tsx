@@ -7,7 +7,7 @@ import { api } from '@/lib/api';
 import { useAuthStore } from '@/stores/authStore';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import type { Quiz } from '@/lib/types';
-import HistoryCard from '@/components/HistoryCard';
+import HistoryCard from './_components/HistoryCard';
 
 const { Text } = Typography;
 

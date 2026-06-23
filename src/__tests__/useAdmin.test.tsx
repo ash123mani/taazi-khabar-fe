@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useInteractions, useBuildDataset, useModels, useUpdateModels } from '@/hooks/useAdmin';
+import { useInteractions, useBuildDataset, useModels, useUpdateModels } from '@/app/admin/_hooks/useAdmin';
 import type { ReactNode } from 'react';
 
 const mockGetInteractions = vi.fn();

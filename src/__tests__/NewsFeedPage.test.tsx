@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import NewsFeedClient from '@/components/NewsFeedClient';
+import NewsFeedClient from '@/app/(public)/_components/NewsFeedClient';
 
 const mockReplace = vi.fn();
 const mockPrefetch = vi.fn();
@@ -34,7 +34,7 @@ vi.mock('antd', async () => {
   return { ...actual };
 });
 
-vi.mock('@/components/ArticleCard', () => ({
+vi.mock('@/app/(public)/_components/ArticleCard', () => ({
   default: ({ article }: any) => <div data-testid="article-card">{article.headline}</div>,
 }));
 

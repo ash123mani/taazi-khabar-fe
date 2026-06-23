@@ -22,7 +22,7 @@ vi.mock('next/link', () => ({
   default: ({ children, href }: any) => <a href={href}>{children}</a>,
 }));
 
-vi.mock('@/components/ArticleCard', () => ({
+vi.mock('@/app/(public)/_components/ArticleCard', () => ({
   default: ({ article }: any) => <div data-testid="article-card">{article.headline}</div>,
 }));
 

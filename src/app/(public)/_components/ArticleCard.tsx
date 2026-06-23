@@ -8,7 +8,7 @@ import dayjs from 'dayjs';
 import { api } from '@/lib/api';
 import { useAuthStore } from '@/stores/authStore';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { ArticleModalContext } from './ArticleModalContext';
+import { ArticleModalContext } from '@/components/ArticleModalContext';
 import SyllabusTag from './SyllabusTag';
 import type { Article } from '@/lib/types';
 

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import SyllabusTag from '@/components/SyllabusTag';
+import SyllabusTag from '@/app/(public)/_components/SyllabusTag';
 
 vi.mock('antd', async () => {
   const actual = await vi.importActual<typeof import('antd')>('antd');

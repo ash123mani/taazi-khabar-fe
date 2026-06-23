@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import ArticleSelector from '@/components/ArticleSelector';
+import ArticleSelector from '@/app/admin/_components/ArticleSelector';
 import type { Article } from '@/lib/types';
 
 vi.mock('@/lib/api', () => ({

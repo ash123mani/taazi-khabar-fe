@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import QuizResult from '@/components/QuizResult';
+import QuizResult from '@/app/(public)/quiz/_components/QuizResult';
 import type { Quiz } from '@/lib/types';
 
 vi.mock('antd', async () => {

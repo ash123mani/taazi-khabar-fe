@@ -7,9 +7,9 @@ import { ClockCircleOutlined, CheckCircleFilled } from '@ant-design/icons';
 import { api } from '@/lib/api';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import type { Quiz } from '@/lib/types';
-import QuizQuestionComponent from '@/components/QuizQuestion';
-import QuizResult from '@/components/QuizResult';
-import { QuizSkeleton } from '@/components/Skeletons';
+import QuizQuestionComponent from '../_components/QuizQuestion';
+import QuizResult from '../_components/QuizResult';
+import { QuizSkeleton } from '@/app/(public)/_components/Skeletons';
 
 const { Text } = Typography;
 

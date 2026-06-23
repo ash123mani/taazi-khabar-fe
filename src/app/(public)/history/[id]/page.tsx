@@ -10,8 +10,8 @@ import { api } from '@/lib/api';
 import { useAuthStore } from '@/stores/authStore';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import type { Quiz } from '@/lib/types';
-import ArticleCard from '@/components/ArticleCard';
-import QuizQuestionComponent from '@/components/QuizQuestion';
+import ArticleCard from '@/app/(public)/_components/ArticleCard';
+import QuizQuestionComponent from '../../quiz/_components/QuizQuestion';
 
 const { Text } = Typography;
 

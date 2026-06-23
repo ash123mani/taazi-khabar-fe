@@ -5,7 +5,7 @@ import { Typography, Spin, Button } from 'antd';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 import { useAuthStore } from '@/stores/authStore';
-import ArticleCard from '@/components/ArticleCard';
+import ArticleCard from '@/app/(public)/_components/ArticleCard';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
 const { Text } = Typography;

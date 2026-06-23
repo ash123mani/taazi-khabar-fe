@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useArticles, useArticle } from '@/hooks/useArticles';
+import { useArticles, useArticle } from '@/app/(public)/_hooks/useArticles';
 import type { ReactNode } from 'react';
 
 const mockGetArticles = vi.fn();

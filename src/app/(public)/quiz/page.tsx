@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { Spin } from 'antd';
-import QuizContent from './QuizContent';
+import QuizContent from './_components/QuizContent';
 
 export default function QuizPage() {
   return (

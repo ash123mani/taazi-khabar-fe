@@ -22,7 +22,7 @@ vi.mock('antd', async () => {
   return { ...actual };
 });
 
-vi.mock('@/components/HistoryCard', () => ({
+vi.mock('@/app/(public)/history/_components/HistoryCard', () => ({
   default: ({ quiz }: any) => <div data-testid="history-card">{quiz.title}</div>,
 }));
 

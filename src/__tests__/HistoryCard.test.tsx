@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import HistoryCard from '@/components/HistoryCard';
+import HistoryCard from '@/app/(public)/history/_components/HistoryCard';
 import type { Quiz } from '@/lib/types';
 
 vi.mock('antd', async () => {
