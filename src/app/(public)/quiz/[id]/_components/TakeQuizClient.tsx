@@ -28,6 +28,11 @@ export default function TakeQuizClient({
   const isMobile = useIsMobile();
 
   const [quiz, setQuiz] = useState<Quiz | null>(initialQuiz);
+
+  useEffect(() => {
+    if (initialQuiz) setQuiz(initialQuiz);
+  }, [initialQuiz]);
+
   const [answers, setAnswers] = useState<Record<string, string>>(() => {
     if (!initialQuiz?.questions) return {};
     const initial: Record<string, string> = {};

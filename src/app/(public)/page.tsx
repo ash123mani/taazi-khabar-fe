@@ -1,3 +1,5 @@
+'use client';
+
 import { api } from '@/lib/api';
 import type { Article } from '@/lib/types';
 import NewsFeedClient from '@/app/(public)/_components/NewsFeedClient';
@@ -33,9 +35,7 @@ export default async function NewsFeedPage({
   const [categoriesData, allCountsData, filteredCountsData, articlesData] = await Promise.all([
     api.getCategories().catch(() => null),
     api.getArticleCounts({ date }).catch(() => null),
-    source !== 'all'
-      ? api.getArticleCounts({ date, source }).catch(() => null)
-      : Promise.resolve(null),
+    source !== 'all' ? api.getArticleCounts({ date, source }).catch(() => null) : Promise.resolve(null),
     api.getArticles(articleParams).catch(() => null),
   ]);
 
@@ -43,9 +43,7 @@ export default async function NewsFeedPage({
   const counts = allCountsData || {};
   const filteredCounts = filteredCountsData || counts;
 
-  const articles: Article[] = Array.isArray(articlesData)
-    ? articlesData
-    : articlesData?.articles || [];
+  const articles: Article[] = Array.isArray(articlesData) ? articlesData : articlesData?.articles || [];
   const total = articlesData?.total || articles.length;
 
   const key = `${date}-${source}-${category}-${search}`;
