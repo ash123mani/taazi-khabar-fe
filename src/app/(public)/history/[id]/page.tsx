@@ -183,7 +183,6 @@ export default function HistoryDetailPage() {
           <Collapse
             ghost
             size="small"
-            defaultActiveKey={['articles']}
             items={[
               {
                 key: 'articles',
