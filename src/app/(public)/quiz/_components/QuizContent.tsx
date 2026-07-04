@@ -2,12 +2,14 @@
 
 import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { Typography, Button, Spin, DatePicker, Tag, Empty, List, Avatar, Collapse } from 'antd';
+import { Typography, Button, Spin, DatePicker, Tag, Empty, Modal, List, Avatar } from 'antd';
 import {
   CalendarOutlined,
   ThunderboltOutlined,
   BookOutlined,
   FileTextOutlined,
+  EyeOutlined,
+  LinkOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { api } from '@/lib/api';
@@ -44,6 +46,7 @@ export default function QuizContent({
   const [summary, setSummary] = useState(initialSummary);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [modalCat, setModalCat] = useState<DailyQuizCategory | null>(null);
   const [startingId, setStartingId] = useState<string | null>(null);
 
   const handleDateChange = async (d: dayjs.Dayjs | null) => {
@@ -284,7 +287,23 @@ export default function QuizContent({
                     </Text>
                   </div>
                 </div>
-                <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end', marginBottom: 8 }}>
+                <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
+                  <Button
+                    type="default"
+                    size="small"
+                    icon={<EyeOutlined />}
+                    onClick={() => setModalCat(cat)}
+                    style={{
+                      borderRadius: 8,
+                      fontSize: 11,
+                      height: 30,
+                      border: '1px solid var(--color-border)',
+                      color: 'var(--color-text-tertiary)',
+                      background: 'transparent',
+                    }}
+                  >
+                    Articles
+                  </Button>
                   <Button
                     type="primary"
                     size="small"
@@ -296,67 +315,60 @@ export default function QuizContent({
                     Start Quiz
                   </Button>
                 </div>
-                <Collapse
-                  ghost
-                  size="small"
-                  items={[
-                    {
-                      key: 'articles',
-                      label: (
-                        <Text style={{ fontSize: 11, color: 'var(--color-text-tertiary)' }}>
-                          Articles ({cat.article_count})
-                        </Text>
-                      ),
-                      children: (
-                        <List
-                          dataSource={cat.articles}
-                          renderItem={(article) => (
-                            <List.Item
-                              style={{ padding: '8px 0', borderBottom: '1px solid var(--color-border)', cursor: 'pointer' }}
-                              onClick={() => window.open(article.url, '_blank')}
-                            >
-                              <List.Item.Meta
-                                avatar={
-                                  article.image_url ? (
-                                    <Avatar shape="square" size={36} src={article.image_url} style={{ borderRadius: 2 }} />
-                                  ) : (
-                                    <Avatar
-                                      shape="square"
-                                      size={36}
-                                      icon={<FileTextOutlined />}
-                                      style={{ borderRadius: 2, background: 'transparent', color: '#6366f1' }}
-                                    />
-                                  )
-                                }
-                                title={
-                                  <Text style={{ fontSize: 12, fontWeight: 500, color: 'var(--color-text)' }}>
-                                    {article.headline}
-                                  </Text>
-                                }
-                                description={
-                                  <Tag style={{ borderRadius: 0, margin: 0, fontSize: 9 }}>
-                                    {article.source === 'thehindu'
-                                      ? 'The Hindu'
-                                      : article.source === 'indianexpress'
-                                        ? 'Indian Express'
-                                        : 'PIB'}
-                                  </Tag>
-                                }
-                              />
-                            </List.Item>
-                          )}
-                        />
-                      ),
-                    },
-                  ]}
-                />
               </div>
             ))}
           </div>
         </>
       )}
 
-
+      <Modal
+        title={<span>{modalCat?.name} — Articles</span>}
+        open={!!modalCat}
+        onCancel={() => setModalCat(null)}
+        footer={null}
+        width={640}
+        styles={{ body: { padding: '8px 0', maxHeight: 480, overflowY: 'auto' } }}
+      >
+        {modalCat && (
+          <List
+            dataSource={modalCat.articles}
+            renderItem={(article) => (
+              <List.Item
+                style={{ padding: '10px 16px', cursor: 'pointer', borderBottom: '1px solid var(--color-border)' }}
+                onClick={() => window.open(article.url, '_blank')}
+              >
+                <List.Item.Meta
+                  avatar={
+                    article.image_url ? (
+                      <Avatar shape="square" size={44} src={article.image_url} style={{ borderRadius: 2 }} />
+                    ) : (
+                      <Avatar
+                        shape="square"
+                        size={44}
+                        icon={<FileTextOutlined />}
+                        style={{ borderRadius: 2, background: 'var(--color-surface)', color: '#6366f1' }}
+                      />
+                    )
+                  }
+                  title={
+                    <Text style={{ fontSize: 13, fontWeight: 500, color: 'var(--color-text)' }}>{article.headline}</Text>
+                  }
+                  description={
+                    <Tag style={{ borderRadius: 0, margin: 0, fontSize: 9 }}>
+                      {article.source === 'thehindu'
+                        ? 'The Hindu'
+                        : article.source === 'indianexpress'
+                          ? 'Indian Express'
+                          : 'PIB'}
+                    </Tag>
+                  }
+                />
+                <LinkOutlined style={{ color: 'var(--color-text-tertiary)', fontSize: 12 }} />
+              </List.Item>
+            )}
+          />
+        )}
+      </Modal>
     </div>
   );
 }

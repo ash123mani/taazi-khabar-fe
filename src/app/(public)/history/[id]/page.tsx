@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { Typography, Spin, Button } from 'antd';
+import { Typography, Spin, Button, Collapse } from 'antd';
 
 import dayjs from 'dayjs';
 import { api } from '@/lib/api';
@@ -180,27 +180,33 @@ export default function HistoryDetailPage() {
 
       {quiz.articles && quiz.articles.length > 0 && (
         <div style={{ marginBottom: isMobile ? 14 : 20 }}>
-          <Text
-            style={{
-              fontSize: 11,
-              fontWeight: 600,
-              color: 'var(--color-text-tertiary)',
-              marginBottom: 8,
-              display: 'block',
-            }}
-          >
-            Linked Articles ({quiz.articles.length})
-          </Text>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-            {quiz.articles.map((article) => (
-              <div
-                key={article.id}
-                style={{ borderTop: '1px solid var(--color-border)', padding: isMobile ? '6px 0' : '10px 0' }}
-              >
-                <ArticleCard article={article} />
-              </div>
-            ))}
-          </div>
+          <Collapse
+            ghost
+            size="small"
+            defaultActiveKey={['articles']}
+            items={[
+              {
+                key: 'articles',
+                label: (
+                  <Text style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-text-tertiary)' }}>
+                    Linked Articles ({quiz.articles.length})
+                  </Text>
+                ),
+                children: (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                    {quiz.articles.map((article) => (
+                      <div
+                        key={article.id}
+                        style={{ borderTop: '1px solid var(--color-border)', padding: isMobile ? '6px 0' : '10px 0' }}
+                      >
+                        <ArticleCard article={article} />
+                      </div>
+                    ))}
+                  </div>
+                ),
+              },
+            ]}
+          />
         </div>
       )}
 
