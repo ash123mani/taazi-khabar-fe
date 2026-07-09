@@ -13,13 +13,10 @@ import {
   LogoutOutlined,
   LoginOutlined,
   ThunderboltOutlined,
-  SunOutlined,
-  MoonOutlined,
   MenuOutlined,
 } from '@ant-design/icons';
 import { useRouter, usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
-import { useThemeStore } from '@/stores/themeStore';
 
 const { Header, Content, Footer } = Layout;
 const { Text } = Typography;
@@ -45,8 +42,6 @@ export default function PublicLayoutClient({ children }: { children: React.React
   const router = useRouter();
   const pathname = usePathname();
   const { data: session } = useSession();
-  const isDark = useThemeStore((s) => s.isDark);
-  const toggle = useThemeStore((s) => s.toggle);
   const isMobile = useIsMobile();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -71,6 +66,7 @@ export default function PublicLayoutClient({ children }: { children: React.React
             textAlign: 'center',
             padding: isMobile ? '10px 12px 8px' : '18px 20px 12px',
             borderBottom: '1px solid var(--color-border)',
+            background: '#ffffff',
           }}
         >
           <Link href="/" style={{ display: 'block', textDecoration: 'none' }}>
@@ -80,7 +76,7 @@ export default function PublicLayoutClient({ children }: { children: React.React
                 fontWeight: 900,
                 fontSize: isMobile ? 26 : 42,
                 letterSpacing: isMobile ? '-0.5px' : '-1px',
-                color: 'var(--color-text)',
+                color: 'var(--color-accent)',
                 lineHeight: 1.05,
               }}
             >
@@ -92,7 +88,7 @@ export default function PublicLayoutClient({ children }: { children: React.React
                 fontWeight: 500,
                 letterSpacing: isMobile ? '2px' : '4px',
                 textTransform: 'uppercase',
-                color: 'var(--color-text-tertiary)',
+                color: 'var(--color-accent)',
                 marginTop: isMobile ? 2 : 4,
               }}
             >
@@ -140,13 +136,6 @@ export default function PublicLayoutClient({ children }: { children: React.React
           )}
 
           <Space style={{ flexShrink: 0 }} size={isMobile ? 2 : 8}>
-            <Button
-              type="text"
-              size="small"
-              icon={isDark ? <SunOutlined /> : <MoonOutlined />}
-              onClick={toggle}
-              style={{ color: 'var(--color-text-secondary)', fontSize: 14 }}
-            />
             {session ? (
               isMobile ? null : (
                 <Button

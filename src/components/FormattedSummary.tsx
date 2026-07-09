@@ -41,13 +41,13 @@ const SECTION_ALIASES: [string[], string][] = [
   [['key terms', 'terms'], 'terms'],
 ];
 
-const SECTION_DISPLAY: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
-  summary: { label: 'Summary', icon: <BulbOutlined />, color: '#6366f1' },
-  pointers: { label: 'Key Facts', icon: <BranchesOutlined />, color: '#22c55e' },
-  law: { label: 'Analysis', icon: <ExperimentOutlined />, color: '#eab308' },
-  syllabus: { label: 'Syllabus', icon: <BookOutlined />, color: '#a855f7' },
-  interview: { label: 'Interview Angle', icon: <BulbOutlined />, color: '#06b6d4' },
-  terms: { label: 'Key Terms', icon: <TagsOutlined />, color: '#ef4444' },
+const SECTION_DISPLAY: Record<string, { label: string; icon: React.ReactNode; color: string; bgColor: string }> = {
+  summary: { label: 'Summary', icon: <BulbOutlined />, color: '#4f46e5', bgColor: 'rgba(79,70,229,0.04)' },
+  pointers: { label: 'Key Facts', icon: <BranchesOutlined />, color: '#d97706', bgColor: 'rgba(217,119,6,0.04)' },
+  law: { label: 'Analysis', icon: <ExperimentOutlined />, color: '#0d9488', bgColor: 'rgba(13,148,136,0.04)' },
+  syllabus: { label: 'Syllabus', icon: <BookOutlined />, color: '#2563eb', bgColor: 'rgba(37,99,235,0.04)' },
+  interview: { label: 'Interview Angle', icon: <BulbOutlined />, color: '#7c3aed', bgColor: 'rgba(124,58,237,0.04)' },
+  terms: { label: 'Key Terms', icon: <TagsOutlined />, color: '#ef4444', bgColor: 'rgba(239,68,68,0.04)' },
 };
 
 function normalizeHeader(text: string): string {
@@ -142,7 +142,7 @@ function parseSections(md: string): Section[] {
 
 const SECTION_CONFIG: Record<string, { collapsible: boolean; defaultExpanded: boolean }> = {
   summary: { collapsible: true, defaultExpanded: true },
-  pointers: { collapsible: true, defaultExpanded: false },
+  pointers: { collapsible: true, defaultExpanded: true },
   law: { collapsible: true, defaultExpanded: false },
   interview: { collapsible: true, defaultExpanded: false },
   syllabus: { collapsible: true, defaultExpanded: false },
@@ -192,15 +192,15 @@ function SectionBlock({ section }: { section: Section }) {
 
   if (section.key === 'terms') {
     return (
-      <div style={{ borderLeft: '1px solid var(--color-border)', paddingLeft: isMobile ? 8 : 12, marginTop: 8 }}>
+      <div style={{ borderLeft: `3px solid ${display.color}`, paddingLeft: isMobile ? 8 : 12, marginTop: 8, background: display.bgColor, padding: isMobile ? '6px 8px' : '8px 12px' }}>
         {display && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 6 }}>
-            <span style={{ color: '#6366f1', fontSize: isMobile ? 10 : 12 }}>{display.icon}</span>
+            <span style={{ color: display.color, fontSize: isMobile ? 10 : 12 }}>{display.icon}</span>
             <span
               style={{
                 fontSize: isMobile ? 10 : 11,
                 fontWeight: 600,
-                color: '#6366f1',
+                color: display.color,
                 letterSpacing: '0.5px',
                 textTransform: 'uppercase',
               }}
@@ -319,9 +319,11 @@ function SectionBlock({ section }: { section: Section }) {
   return (
     <div
       style={{
-        borderLeft: '1px solid var(--color-border)',
+        borderLeft: `3px solid ${display.color}`,
         paddingLeft: isMobile ? 8 : 12,
         marginTop: isMobile ? 8 : 12,
+        background: display.bgColor,
+        padding: isMobile ? '6px 8px' : '8px 12px',
       }}
     >
       {display && (
@@ -336,12 +338,12 @@ function SectionBlock({ section }: { section: Section }) {
             userSelect: 'none',
           }}
         >
-          <span style={{ color: '#6366f1', fontSize: isMobile ? 10 : 11, lineHeight: 1 }}>{display.icon}</span>
+          <span style={{ color: display.color, fontSize: isMobile ? 10 : 11, lineHeight: 1 }}>{display.icon}</span>
           <span
             style={{
               fontSize: isMobile ? 9 : 10,
               fontWeight: 600,
-              color: '#6366f1',
+              color: display.color,
               letterSpacing: '0.5px',
               textTransform: 'uppercase',
             }}

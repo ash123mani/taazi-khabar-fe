@@ -10,6 +10,7 @@ export interface Article {
   source: string;
   headline: string;
   url: string;
+  body_text: string | null;
   published_at: string;
   gk_summary: string | null;
   key_terms: string[] | null;

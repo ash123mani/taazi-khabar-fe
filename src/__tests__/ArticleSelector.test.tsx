@@ -3,6 +3,10 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import ArticleSelector from '@/app/admin/_components/ArticleSelector';
 import type { Article } from '@/lib/types';
 
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn() }),
+}));
+
 vi.mock('@/lib/api', () => ({
   api: { toggleBookmark: vi.fn() },
 }));
@@ -29,6 +33,7 @@ const articles: Article[] = [
     source: 'thehindu',
     url: 'https://example.com/1',
     image_url: null,
+    body_text: null,
     key_terms: [],
     syllabus_tag: null,
     is_bookmarked: false,
@@ -41,6 +46,7 @@ const articles: Article[] = [
     source: 'indianexpress',
     url: 'https://example.com/2',
     image_url: null,
+    body_text: null,
     key_terms: [],
     syllabus_tag: null,
     is_bookmarked: false,
@@ -53,6 +59,7 @@ const articles: Article[] = [
     source: 'thehindu',
     url: 'https://example.com/3',
     image_url: null,
+    body_text: null,
     key_terms: [],
     syllabus_tag: null,
     is_bookmarked: false,

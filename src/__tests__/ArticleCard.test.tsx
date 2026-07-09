@@ -3,6 +3,10 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ArticleCard from '@/app/(public)/_components/ArticleCard';
 import type { Article } from '@/lib/types';
 
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn() }),
+}));
+
 vi.mock('next/image', () => ({
   default: (props: any) => {
     const { fill, ...rest } = props;
@@ -36,6 +40,7 @@ const article: Article = {
   source: 'thehindu',
   headline: 'Test Article Headline',
   url: 'https://example.com',
+  body_text: null,
   published_at: '2026-06-15T10:00:00Z',
   gk_summary: '### GK Summary\n\nTest summary content',
   key_terms: ['Term1', 'Term2'],
@@ -64,12 +69,12 @@ describe('ArticleCard', () => {
 
   it('shows syllabus tag', () => {
     render(<ArticleCard article={article} />);
-    expect(screen.getByText('P')).toBeInTheDocument();
+    expect(screen.getByText('Polity')).toBeInTheDocument();
   });
 
-  it('shows key terms', () => {
+  it('does not show key terms', () => {
     render(<ArticleCard article={article} />);
-    expect(screen.getByText('Term1')).toBeInTheDocument();
+    expect(screen.queryByText('Term1')).not.toBeInTheDocument();
   });
 
   it('calls toggleBookmark on bookmark click', async () => {

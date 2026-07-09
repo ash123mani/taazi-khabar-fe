@@ -16,19 +16,14 @@ interface ArticleContentProps {
   total: number;
   search: string;
   date: string;
-  loadingMore: boolean;
-  onLoadMore: () => void;
 }
 
 export default function ArticleContent({
   loading,
   error,
   articles,
-  total,
   search,
   date,
-  loadingMore,
-  onLoadMore,
 }: ArticleContentProps) {
   const isMobile = useIsMobile();
 
@@ -36,14 +31,7 @@ export default function ArticleContent({
     return (
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 0 }}>
         {[1, 2, 3, 4].map((i) => (
-          <div
-            key={i}
-            style={{
-              borderBottom: '1px solid var(--color-border-light)',
-              borderRight: !isMobile && i % 2 === 1 ? '1px solid var(--color-border-light)' : 'none',
-              padding: isMobile ? '8px 0' : '12px 12px',
-            }}
-          >
+          <div key={i} style={{ padding: isMobile ? '8px 0' : '12px 12px' }}>
             <ArticleSkeleton hasImage={isMobile ? true : i % 2 === 0} />
           </div>
         ))}
@@ -83,49 +71,19 @@ export default function ArticleContent({
   return (
     <div>
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 0 }}>
-        {articles.map((article, idx) => (
+        {articles.map((article) => (
           <div
             key={article.id}
             style={{
-              borderBottom: '1px solid var(--color-border-light)',
-              borderRight: !isMobile && idx % 2 === 0 ? '1px solid var(--color-border-light)' : 'none',
               padding: isMobile ? '8px 0' : '10px 12px',
+              minWidth: 0,
+              overflow: 'hidden',
             }}
           >
             <ArticleCard article={article} />
           </div>
         ))}
       </div>
-      {total > articles.length && (
-        <div style={{ textAlign: 'center', marginTop: isMobile ? 16 : 20 }}>
-          <button
-            onClick={onLoadMore}
-            disabled={loadingMore}
-            style={{
-              padding: '6px 24px',
-              fontSize: 11,
-              fontWeight: 600,
-              letterSpacing: '1.5px',
-              textTransform: 'uppercase',
-              border: '1px solid var(--color-border)',
-              cursor: loadingMore ? 'not-allowed' : 'pointer',
-              background: 'transparent',
-              color: 'var(--color-text-tertiary)',
-              transition: 'all 0.15s',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'var(--color-surface)';
-              e.currentTarget.style.color = 'var(--color-text)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent';
-              e.currentTarget.style.color = 'var(--color-text-tertiary)';
-            }}
-          >
-            {loadingMore ? 'Loading...' : `Load More (${articles.length}/${total})`}
-          </button>
-        </div>
-      )}
     </div>
   );
 }

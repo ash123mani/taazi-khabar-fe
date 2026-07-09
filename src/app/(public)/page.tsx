@@ -2,8 +2,6 @@ import { api } from '@/lib/api';
 import type { Article } from '@/lib/types';
 import NewsFeedClient from '@/app/(public)/_components/NewsFeedClient';
 
-const PAGE_SIZE = 10;
-
 export default async function NewsFeedPage({
   searchParams,
 }: {
@@ -24,7 +22,7 @@ export default async function NewsFeedPage({
   const articleParams: Record<string, string> = {
     date,
     skip: '0',
-    limit: String(PAGE_SIZE),
+    limit: '20',
   };
   if (source !== 'all') articleParams.source = source;
   if (category !== 'all') articleParams.category_id = category;

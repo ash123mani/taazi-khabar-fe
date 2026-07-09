@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, useTransition } from 'react';
+import { useState, useCallback, useEffect, useTransition, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { api } from '@/lib/api';
 import type { Article } from '@/lib/types';
@@ -10,7 +10,7 @@ import ArticleContent from './ArticleContent';
 import { ArticleSkeleton } from './Skeletons';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 20;
 
 interface NewsFeedClientProps {
   date: string;
@@ -29,14 +29,7 @@ function GridSkeleton() {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 0 }}>
       {[1, 2, 3, 4].map((i) => (
-        <div
-          key={i}
-          style={{
-            borderBottom: '1px solid var(--color-border-light)',
-            borderRight: !isMobile && i % 2 === 1 ? '1px solid var(--color-border-light)' : 'none',
-            padding: isMobile ? '8px 0' : '10px 12px',
-          }}
-        >
+        <div key={i} style={{ padding: isMobile ? '8px 0' : '10px 12px' }}>
           <ArticleSkeleton hasImage={isMobile ? true : i % 2 === 0} />
         </div>
       ))}
@@ -69,10 +62,53 @@ export default function NewsFeedClient({
 
   const [articles, setArticles] = useState<Article[]>(initialArticles);
   const [searchInput, setSearchInput] = useState(search);
-  const [skip, setSkip] = useState(0);
+  const [skip, setSkip] = useState(PAGE_SIZE);
   const [total, setTotal] = useState(initialTotal);
   const [loadingMore, setLoadingMore] = useState(false);
   const [loadError, setLoadError] = useState('');
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  const hasMore = articles.length < total;
+
+  const loadNextPage = useCallback(async () => {
+    if (loadingMore || !hasMore) return;
+    setLoadingMore(true);
+    setLoadError('');
+    try {
+      const params: Record<string, string> = {
+        date,
+        skip: String(skip),
+        limit: String(PAGE_SIZE),
+      };
+      if (source !== 'all') params.source = source;
+      if (category !== 'all') params.category_id = category;
+      if (search) params.search = search;
+      const data = await api.getArticles(params);
+      const list = Array.isArray(data) ? data : data.articles || [];
+      setArticles((prev) => [...prev, ...list]);
+      setTotal(data.total || list.length);
+      setSkip((prev) => prev + PAGE_SIZE);
+    } catch {
+      setLoadError('Failed to load more');
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [date, source, category, search, skip, loadingMore, hasMore]);
+
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore) {
+          loadNextPage();
+        }
+      },
+      { rootMargin: '200px' },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [hasMore, loadingMore, loadNextPage]);
 
   const navigate = useCallback(
     (overrides: Record<string, string>) => {
@@ -113,31 +149,6 @@ export default function NewsFeedClient({
     navigate({ search: '' });
   }, [navigate]);
 
-  const handleLoadMore = useCallback(async () => {
-    const newSkip = skip + PAGE_SIZE;
-    setSkip(newSkip);
-    setLoadingMore(true);
-    setLoadError('');
-    try {
-      const params: Record<string, string> = {
-        date,
-        skip: String(newSkip),
-        limit: String(PAGE_SIZE),
-      };
-      if (source !== 'all') params.source = source;
-      if (category !== 'all') params.category_id = category;
-      if (search) params.search = search;
-      const data = await api.getArticles(params);
-      const list = Array.isArray(data) ? data : data.articles || [];
-      setArticles((prev) => [...prev, ...list]);
-      setTotal(data.total || list.length);
-    } catch {
-      setLoadError('Failed to load more');
-    } finally {
-      setLoadingMore(false);
-    }
-  }, [date, source, category, search, skip]);
-
   const catTotal = filteredCounts?.categories
     ? Object.values(filteredCounts.categories).reduce((a: number, b: any) => a + (b as number), 0)
     : 0;
@@ -165,19 +176,23 @@ export default function NewsFeedClient({
       {isPending ? (
         <GridSkeleton />
       ) : (
-        <ArticleContent
-          loading={false}
-          error={loadError}
-          articles={articles}
-          total={total}
-          search={search}
-          date={date}
-          loadingMore={loadingMore}
-          onLoadMore={handleLoadMore}
-        />
+        <>
+          <ArticleContent
+            loading={false}
+            error={loadError}
+            articles={articles}
+            total={total}
+            search={search}
+            date={date}
+          />
+          {hasMore && <div ref={sentinelRef} style={{ height: 1 }} />}
+          {loadingMore && (
+            <div style={{ textAlign: 'center', padding: '16px 0' }}>
+              <span style={{ color: 'var(--color-text-tertiary)', fontSize: 12, letterSpacing: '1px' }}>Loading More...</span>
+            </div>
+          )}
+        </>
       )}
-
-
     </div>
   );
 }

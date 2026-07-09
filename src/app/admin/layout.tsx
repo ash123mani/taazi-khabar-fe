@@ -17,11 +17,8 @@ import {
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  SunOutlined,
-  MoonOutlined,
 } from '@ant-design/icons';
 import { useAuthStore } from '@/stores/authStore';
-import { useThemeStore } from '@/stores/themeStore';
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
@@ -43,8 +40,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuthStore();
-  const isDark = useThemeStore((s) => s.isDark);
-  const toggleTheme = useThemeStore((s) => s.toggle);
   const {
     token: { colorBgContainer, colorText },
   } = theme.useToken();
@@ -140,12 +135,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             }}
           />
           <Space size={16}>
-            <Button
-              type="text"
-              icon={isDark ? <SunOutlined /> : <MoonOutlined />}
-              onClick={toggleTheme}
-              style={{ fontSize: 16, width: 48, height: 48, color: colorText }}
-            />
             <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
               <Space style={{ cursor: 'pointer' }}>
                 <Avatar style={{ backgroundColor: '#ffffff', color: '#000000' }} icon={<UserOutlined />} />

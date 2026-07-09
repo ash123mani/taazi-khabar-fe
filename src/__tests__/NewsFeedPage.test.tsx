@@ -114,10 +114,10 @@ describe('NewsFeedClient', () => {
     expect(screen.getByText('Economy')).toBeInTheDocument();
   });
 
-  it('shows load more button when total > displayed', () => {
+  it('does not show load more button when all articles are fetched', () => {
     const articles = Array.from({ length: 10 }, (_, i) => makeArticle(`a${i}`, `Article ${i}`));
-    render(<NewsFeedClient {...defaultProps} initialArticles={articles} initialTotal={15} />);
-    expect(screen.getByText(/Load More/)).toBeInTheDocument();
+    render(<NewsFeedClient {...defaultProps} initialArticles={articles} initialTotal={10} />);
+    expect(screen.queryByText(/Load More/)).not.toBeInTheDocument();
   });
 
   it('navigates on search', async () => {

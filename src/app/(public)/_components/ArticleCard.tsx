@@ -1,15 +1,14 @@
 'use client';
 
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Tag, Typography, Button, message, Tooltip } from 'antd';
 import { HeartOutlined, HeartFilled } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { api } from '@/lib/api';
 import { useAuthStore } from '@/stores/authStore';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { ArticleModalContext } from '@/components/ArticleModalContext';
-import SyllabusTag from './SyllabusTag';
 import type { Article } from '@/lib/types';
 
 const { Text } = Typography;
@@ -20,19 +19,15 @@ const SOURCE_LABEL: Record<string, { label: string; color: string }> = {
   pib: { label: 'PIB', color: '#22c55e' },
 };
 
-export default function ArticleCard({ article, onClick }: { article: Article; onClick?: (article: Article) => void }) {
+export default function ArticleCard({ article }: { article: Article }) {
+  const router = useRouter();
   const [bookmarked, setBookmarked] = useState(article.is_bookmarked ?? false);
   const [toggling, setToggling] = useState(false);
   const isLoggedIn = useAuthStore((s) => !!s.accessToken);
   const isMobile = useIsMobile();
-  const modalCtx = useContext(ArticleModalContext);
 
   const handleClick = () => {
-    if (onClick) {
-      onClick(article);
-    } else if (modalCtx) {
-      modalCtx.openArticleModal(article);
-    }
+    router.push(`/article/${article.id}`);
   };
 
   const handleBookmark = async (e: React.MouseEvent) => {
@@ -74,30 +69,30 @@ export default function ArticleCard({ article, onClick }: { article: Article; on
       }}
     >
       <div style={{ display: 'flex', gap: isMobile ? 6 : 12, alignItems: 'flex-start' }}>
-          {article.image_url && (
-            <div
-              style={{
-                flexShrink: 0,
-                width: isMobile ? 48 : 80,
-                height: isMobile ? 36 : 60,
-                overflow: 'hidden',
-                background: 'var(--color-surface)',
-                position: 'relative',
+        {article.image_url && (
+          <div
+            style={{
+              flexShrink: 0,
+              width: isMobile ? 48 : 80,
+              height: isMobile ? 36 : 60,
+              overflow: 'hidden',
+              background: 'var(--color-surface)',
+              position: 'relative',
+            }}
+          >
+            <Image
+              src={article.image_url}
+              alt=""
+              fill
+              sizes={isMobile ? '48px' : '80px'}
+              style={{ objectFit: 'cover' }}
+              loading="lazy"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none';
               }}
-            >
-              <Image
-                src={article.image_url}
-                alt=""
-                fill
-                sizes={isMobile ? '48px' : '80px'}
-                style={{ objectFit: 'cover' }}
-                loading="lazy"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none';
-                }}
-              />
-            </div>
-          )}
+            />
+          </div>
+        )}
         <div style={{ flex: 1, minWidth: 0 }}>
           {/* Source & date */}
           <div style={{ marginBottom: 3, display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -137,30 +132,29 @@ export default function ArticleCard({ article, onClick }: { article: Article; on
           >
             {article.headline}
           </div>
-          {/* Tags row */}
-          {!isMobile && (article.syllabus_tag || article.key_terms?.length) && (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 6 }}>
-              {article.syllabus_tag && <SyllabusTag tag={article.syllabus_tag} />}
-              {article.key_terms?.slice(0, 3).map((term) => (
-                <Tooltip key={term} title={term}>
-                  <Tag
-                    style={{
-                      fontSize: 8,
-                      borderRadius: 0,
-                      margin: 0,
-                      padding: '0 5px',
-                      maxWidth: 90,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      background: 'var(--color-surface)',
-                      border: '1px solid var(--color-border)',
-                    }}
-                  >
-                    {term}
-                  </Tag>
-                </Tooltip>
-              ))}
+          {/* Syllabus tag */}
+          {!isMobile && article.syllabus_tag && (
+            <div style={{ marginTop: 6, overflow: 'hidden' }}>
+              <Tooltip title={article.syllabus_tag}>
+                <Tag
+                  style={{
+                    fontSize: 9,
+                    borderRadius: 2,
+                    margin: 0,
+                    padding: '1px 6px',
+                    maxWidth: '100%',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    display: 'inline-block',
+                    background: 'var(--color-surface)',
+                    border: '1px solid var(--color-border)',
+                    color: 'var(--color-text-secondary)',
+                  }}
+                >
+                  {article.syllabus_tag}
+                </Tag>
+              </Tooltip>
             </div>
           )}
         </div>
