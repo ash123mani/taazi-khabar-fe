@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Typography, Button, Form, Input } from 'antd';
-import { MailOutlined, LockOutlined } from '@ant-design/icons';
+import { Typography, Button, Form, Input, Divider } from 'antd';
+import { MailOutlined, LockOutlined, GoogleOutlined } from '@ant-design/icons';
 import { useAuthStore } from '@/stores/authStore';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
@@ -162,6 +162,42 @@ export default function LoginPage() {
           </Button>
         </Form.Item>
       </Form>
+
+      {process.env.NEXT_PUBLIC_ENABLE_GOOGLE_LOGIN === 'true' && (
+        <>
+          <Divider style={{ borderColor: 'var(--color-border)', margin: '20px 0 16px', fontSize: 11, color: 'var(--color-text-tertiary)' }}>
+            OR
+          </Divider>
+
+          <Button
+            onClick={() => signIn('google', { callbackUrl: '/' })}
+            block
+            size="large"
+            icon={<GoogleOutlined />}
+            style={{
+              height: 44,
+              borderRadius: 0,
+              fontWeight: 600,
+              fontSize: 13,
+              letterSpacing: '1px',
+              textTransform: 'uppercase',
+              border: '1px solid var(--color-border)',
+              background: 'transparent',
+              color: 'var(--color-text-secondary)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#4285f4';
+              e.currentTarget.style.color = '#4285f4';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'var(--color-border)';
+              e.currentTarget.style.color = 'var(--color-text-secondary)';
+            }}
+          >
+            Sign in with Google
+          </Button>
+        </>
+      )}
 
       <div
         style={{

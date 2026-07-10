@@ -14,21 +14,86 @@ interface QuizQuestionProps {
   isMobile?: boolean;
 }
 
+function parseQuestionText(text: string): { premise: string; statements: string[]; footer: string } {
+  const lines = text.split('\n');
+  const statementIdx = lines.findIndex((l) => /^\d+\.\s/.test(l.trim()));
+  if (statementIdx === -1) {
+    return { premise: text, statements: [], footer: '' };
+  }
+
+  const premise = lines.slice(0, statementIdx).join('\n').trim();
+  const statementLines: string[] = [];
+  let footerIdx = lines.length;
+
+  for (let i = statementIdx; i < lines.length; i++) {
+    if (/^\d+\.\s/.test(lines[i].trim())) {
+      statementLines.push(lines[i].trim());
+    } else {
+      footerIdx = i;
+      break;
+    }
+  }
+
+  const footer = lines.slice(footerIdx).join('\n').trim();
+  return { premise, statements: statementLines, footer };
+}
+
 export default function QuizQuestion({ question, selected, onSelect, showResults, isMobile }: QuizQuestionProps) {
+  const { premise, statements, footer } = parseQuestionText(question.question_text);
+
   return (
     <div style={{ marginBottom: 0 }}>
-      <div
-        className="newspaper-heading"
-        style={{
-          fontWeight: 600,
-          fontSize: isMobile ? 16 : 17,
-          lineHeight: 1.4,
-          color: 'var(--color-text)',
-          whiteSpace: 'pre-line',
-          marginBottom: isMobile ? 12 : 14,
-        }}
-      >
-        {question.question_text}
+      <div style={{ marginBottom: isMobile ? 14 : 16 }}>
+        <div
+          style={{
+            fontWeight: premise ? 650 : 600,
+            fontSize: isMobile ? 16 : 17,
+            lineHeight: 1.45,
+            color: 'var(--color-text)',
+            whiteSpace: 'pre-line',
+          }}
+        >
+          {premise || question.question_text}
+        </div>
+
+        {statements.length > 0 && (
+          <div style={{ marginTop: isMobile ? 10 : 12, display: 'flex', flexDirection: 'column', gap: isMobile ? 6 : 8 }}>
+            {statements.map((s) => (
+              <div
+                key={s}
+                style={{
+                  display: 'flex',
+                  gap: 8,
+                  fontSize: isMobile ? 14.5 : 15.5,
+                  lineHeight: 1.5,
+                  color: 'var(--color-text-secondary)',
+                  fontWeight: 400,
+                  paddingLeft: isMobile ? 4 : 8,
+                  borderLeft: '3px solid var(--color-border-light)',
+                }}
+              >
+                <span style={{ flexShrink: 0, fontFamily: 'Georgia, serif', color: 'var(--color-text-tertiary)', fontWeight: 500 }}>
+                  {s.match(/^(\d+\.)/)?.[1]}
+                </span>
+                <span>{s.replace(/^\d+\.\s*/, '')}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {footer && (
+          <div
+            style={{
+              marginTop: isMobile ? 10 : 12,
+              fontWeight: 600,
+              fontSize: isMobile ? 14 : 15,
+              color: 'var(--color-text)',
+              fontStyle: 'italic',
+            }}
+          >
+            {footer}
+          </div>
+        )}
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? 8 : 10 }}>

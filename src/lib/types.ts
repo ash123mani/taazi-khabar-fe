@@ -3,6 +3,7 @@ export interface User {
   email: string;
   name: string;
   is_admin: boolean;
+  avatar_url?: string | null;
 }
 
 export interface Article {

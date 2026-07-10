@@ -41,7 +41,7 @@ describe('useAuth', () => {
       status: 'authenticated',
     });
     renderHook(() => useAuth());
-    expect(mockSetUser).toHaveBeenCalledWith({ id: '1', email: 'a@b.com', name: 'A', is_admin: true }, 'token123');
+    expect(mockSetUser).toHaveBeenCalledWith({ id: '1', email: 'a@b.com', name: 'A', is_admin: true, avatar_url: null }, 'token123');
   });
 
   it('calls logout when no session', () => {

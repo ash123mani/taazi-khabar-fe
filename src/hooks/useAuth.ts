@@ -21,6 +21,7 @@ export function useAuth() {
           email: session.user.email || '',
           name: session.user.name || '',
           is_admin: (session.user as any).is_admin || false,
+          avatar_url: (session.user as any).image || null,
         },
         token,
       );
