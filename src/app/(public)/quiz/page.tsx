@@ -49,7 +49,7 @@ function QuizSkeleton() {
 
 async function QuizContentFetcher({ date }: { date: string }) {
   const summary = await serverFetch<any>(`/quizzes/by-date${date ? `?date_str=${date}` : ''}`).catch(() => null);
-  return <QuizContent date={date} initialSummary={summary} />;
+  return <QuizContent key={date} date={date} initialSummary={summary} />;
 }
 
 export default function QuizPage({

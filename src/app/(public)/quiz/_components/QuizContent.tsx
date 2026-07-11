@@ -107,6 +107,8 @@ export default function QuizContent({
             suffixIcon={
               <CalendarOutlined style={{ fontSize: isMobile ? 10 : 12, color: 'var(--color-text-tertiary)' }} />
             }
+            getPopupContainer={(trigger) => trigger.parentElement!}
+            popupClassName={isMobile ? 'datepicker-popup-mobile' : undefined}
             size="small"
             style={{ background: 'transparent', border: '1px solid var(--color-border)', borderRadius: 2, fontSize: 11 }}
           />
