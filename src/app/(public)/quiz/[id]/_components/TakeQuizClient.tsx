@@ -26,24 +26,52 @@ export default function TakeQuizClient({
 }) {
   const router = useRouter();
   const isMobile = useIsMobile();
-
-  const [quiz, setQuiz] = useState<Quiz | null>(initialQuiz);
-
-  useEffect(() => {
-    if (initialQuiz) setQuiz(initialQuiz);
-  }, [initialQuiz]);
-
-  const [answers, setAnswers] = useState<Record<string, string>>(() => {
-    if (!initialQuiz?.questions) return {};
-    const initial: Record<string, string> = {};
-    initialQuiz.questions.forEach((q) => (initial[q.id] = ''));
-    return initial;
-  });
+  const [quiz, setQuiz] = useState<Quiz | null>(null);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(initialError);
   const [timeLeft, setTimeLeft] = useState(QUIZ_TIME_LIMIT_SEC);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Check if quiz was already submitted and load full history
+  useEffect(() => {
+    if (initialQuiz?.score != null) {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/history/${id}`)
+        .then((r) => r.json())
+        .then((history: any) => {
+          const q: Quiz = {
+            id: history.id,
+            title: history.title,
+            score: history.score,
+            total_questions: history.total_questions,
+            time_taken_sec: history.time_taken_sec,
+            created_at: history.created_at,
+            articles: history.articles || [],
+            questions: (history.questions || []).map((hq: any) => ({
+              id: hq.id,
+              question_text: hq.question_text,
+              options: hq.options,
+              correct_answer: hq.correct_answer,
+              explanation: hq.explanation,
+              difficulty: hq.difficulty,
+              selected_answer: hq.selected_answer,
+            })),
+          };
+          setQuiz(q);
+          const initial: Record<string, string> = {};
+          q.questions.forEach((qst) => (initial[qst.id] = qst.selected_answer || ''));
+          setAnswers(initial);
+          setSubmitted(true);
+        })
+        .catch((e) => setError(e.message || 'Failed to load quiz results'));
+    } else if (initialQuiz) {
+      setQuiz(initialQuiz);
+      const initial: Record<string, string> = {};
+      initialQuiz.questions.forEach((q) => (initial[q.id] = ''));
+      setAnswers(initial);
+    }
+  }, [id, initialQuiz]);
 
   const doSubmit = useCallback(async () => {
     if (timerRef.current) clearInterval(timerRef.current);
