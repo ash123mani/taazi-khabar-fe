@@ -1,6 +1,19 @@
+import type { Metadata } from 'next';
 import { api } from '@/lib/api';
 import type { Article } from '@/lib/types';
 import NewsFeedClient from '@/app/(public)/_components/NewsFeedClient';
+
+export const metadata: Metadata = {
+  title: 'Daily Current Affairs',
+  description:
+    'Stay updated with AI-powered daily current affairs analysis for UPSC preparation. Read news from The Hindu, Indian Express, PIB and more.',
+  openGraph: {
+    title: 'Daily Current Affairs | Taazi Khabar',
+    description:
+      'Stay updated with AI-powered daily current affairs analysis for UPSC preparation.',
+    type: 'website',
+  },
+};
 
 export default async function NewsFeedPage({
   searchParams,

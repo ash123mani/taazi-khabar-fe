@@ -1,7 +1,29 @@
+import type { Metadata } from 'next';
 import { serverFetch } from '@/lib/server-fetch';
 import { Suspense } from 'react';
 import TakeQuizClient from './_components/TakeQuizClient';
 import type { Quiz } from '@/lib/types';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Promise<Metadata> {
+  try {
+    const quiz = await serverFetch<Quiz>(`/quizzes/${params.id}`);
+    return {
+      title: quiz.title || 'Take Quiz',
+      description: `Take the "${quiz.title || 'quiz'}" on Taazi Khabar and test your UPSC current affairs knowledge.`,
+      openGraph: {
+        title: `${quiz.title || 'Quiz'} | Taazi Khabar`,
+        description: `Take the "${quiz.title || 'quiz'}" and test your UPSC current affairs knowledge.`,
+        type: 'website',
+      },
+    };
+  } catch {
+    return { title: 'Take Quiz' };
+  }
+}
 
 function TakeQuizSkeleton() {
   return (

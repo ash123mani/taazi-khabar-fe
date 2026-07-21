@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import dayjs from 'dayjs';
 import { serverFetch } from '@/lib/server-fetch';
@@ -5,6 +6,13 @@ import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
 import { authOptions } from '@/lib/auth';
 import { getServerSession } from 'next-auth';
+
+export const metadata: Metadata = {
+  title: 'Analytics',
+  description:
+    'Track your UPSC current affairs performance, quiz scores, accuracy trends, and topic-wise breakdown on Taazi Khabar.',
+  robots: { index: false, follow: false },
+};
 
 function AnalyticsSkeleton() {
   return (

@@ -1,6 +1,38 @@
+import type { Metadata } from 'next';
 import { api } from '@/lib/api';
 import type { Article } from '@/lib/types';
 import ArticlePageClient from './ArticlePageClient';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Promise<Metadata> {
+  try {
+    const article = await api.getArticle(params.id);
+    const description =
+      article.gk_summary?.replace(/<[^>]*>/g, '').slice(0, 160) ||
+      `Read ${article.headline} on Taazi Khabar`;
+    return {
+      title: article.headline,
+      description,
+      openGraph: {
+        title: article.headline,
+        description,
+        type: 'article',
+        images: article.image_url ? [{ url: article.image_url }] : [],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: article.headline,
+        description,
+        images: article.image_url ? [{ url: article.image_url }] : [],
+      },
+    };
+  } catch {
+    return { title: 'Article not found' };
+  }
+}
 
 export default async function ArticlePage({ params }: { params: { id: string } }) {
   let article: Article | null = null;

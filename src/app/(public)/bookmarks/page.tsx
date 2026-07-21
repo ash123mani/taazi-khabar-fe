@@ -1,9 +1,16 @@
+import type { Metadata } from 'next';
 import { serverFetch } from '@/lib/server-fetch';
 import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
 import { authOptions } from '@/lib/auth';
 import { getServerSession } from 'next-auth';
 import BookmarksList from './_components/BookmarksList';
+
+export const metadata: Metadata = {
+  title: 'Bookmarks',
+  description: 'Your saved articles for UPSC current affairs preparation on Taazi Khabar.',
+  robots: { index: false, follow: false },
+};
 
 function BookmarksSkeleton() {
   return (

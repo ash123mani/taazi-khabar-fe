@@ -1,6 +1,19 @@
+import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { serverFetch } from '@/lib/server-fetch';
 import QuizContent from './_components/QuizContent';
+
+export const metadata: Metadata = {
+  title: 'Daily Quiz',
+  description:
+    'Test your UPSC current affairs knowledge with daily quizzes powered by AI. Multiple-choice questions based on today\'s news from top sources.',
+  openGraph: {
+    title: 'Daily Quiz | Taazi Khabar',
+    description:
+      'Test your UPSC current affairs knowledge with daily quizzes powered by AI.',
+    type: 'website',
+  },
+};
 
 function SkeletonCard({ h }: { h?: number }) {
   return (

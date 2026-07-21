@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { serverFetch } from '@/lib/server-fetch';
 import { Suspense } from 'react';
@@ -6,6 +7,13 @@ import { authOptions } from '@/lib/auth';
 import { getServerSession } from 'next-auth';
 import HistoryCard from './_components/HistoryCard';
 import type { Quiz } from '@/lib/types';
+
+export const metadata: Metadata = {
+  title: 'Quiz History',
+  description:
+    'Track your UPSC current affairs quiz history, scores, and progress over time on Taazi Khabar.',
+  robots: { index: false, follow: false },
+};
 
 function getScoreColor(score: number) {
   if (score >= 70) return '#22c55e';
