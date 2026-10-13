@@ -4,6 +4,7 @@ import RegisterPage from '@/app/(public)/register/page';
 
 const mockPush = vi.fn();
 const mockRegister = vi.fn();
+const mockSignIn = vi.fn();
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: mockPush }),
@@ -11,6 +12,10 @@ vi.mock('next/navigation', () => ({
 
 vi.mock('@/lib/api', () => ({
   api: { register: (...args: any[]) => mockRegister(...args) },
+}));
+
+vi.mock('next-auth/react', () => ({
+  signIn: (...args: any[]) => mockSignIn(...args),
 }));
 
 vi.mock('next/link', () => ({
@@ -36,8 +41,9 @@ describe('RegisterPage', () => {
     expect(screen.getByText('Sign in')).toBeInTheDocument();
   });
 
-  it('calls api.register and redirects on success', async () => {
+  it('calls api.register, auto-logs in, and redirects to home on success', async () => {
     mockRegister.mockResolvedValue({ access_token: 'token' });
+    mockSignIn.mockResolvedValue({ ok: true });
     render(<RegisterPage />);
     fireEvent.change(screen.getByPlaceholderText('Your full name'), { target: { value: 'Test User' } });
     fireEvent.change(screen.getByPlaceholderText('you@example.com'), { target: { value: 'a@b.com' } });
@@ -46,7 +52,12 @@ describe('RegisterPage', () => {
     await waitFor(() => {
       expect(mockRegister).toHaveBeenCalledWith({ name: 'Test User', email: 'a@b.com', password: 'password123' });
     });
-    expect(mockPush).toHaveBeenCalledWith('/login');
+    expect(mockSignIn).toHaveBeenCalledWith('credentials', {
+      email: 'a@b.com',
+      password: 'password123',
+      redirect: false,
+    });
+    expect(mockPush).toHaveBeenCalledWith('/');
   });
 
   it('shows error on failed registration', async () => {

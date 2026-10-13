@@ -194,6 +194,6 @@ describe('api', () => {
 
   it('throws on non-ok response', async () => {
     mockFetch.mockResolvedValueOnce(fail(401, 'Unauthorized'));
-    await expect(api.getMe()).rejects.toThrow('Unauthorized');
+    await expect(api.getMe()).rejects.toThrow('Session expired');
   });
 });

@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 import type { Article } from '@/lib/types';
+import React, {EffectCallback, DependencyList} from 'react';
 import ArticleModal from './ArticleModal';
 
 interface ArticleModalContextValue {

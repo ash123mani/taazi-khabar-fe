@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Typography, Button, Form, Input } from 'antd';
 import { MailOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
+import { signIn } from 'next-auth/react';
 import { api } from '@/lib/api';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
@@ -26,7 +27,12 @@ export default function RegisterPage() {
         email: values.email,
         password: values.password,
       });
-      router.push('/login');
+      await signIn('credentials', {
+        email: values.email,
+        password: values.password,
+        redirect: false,
+      });
+      router.push('/');
     } catch (err: any) {
       let msg = 'Registration failed';
       try {

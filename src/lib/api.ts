@@ -17,6 +17,13 @@ async function fetchApi(path: string, options?: RequestInit) {
     ...options,
     headers,
   });
+  if (res.status === 401 && typeof window !== 'undefined') {
+    useAuthStore.getState().logout();
+    const loginUrl = new URL('/login', window.location.href);
+    loginUrl.searchParams.set('callbackUrl', window.location.pathname);
+    window.location.href = loginUrl.toString();
+    throw new Error('Session expired');
+  }
   if (!res.ok) {
     const body = await res.text();
     throw new Error(body || `Request failed with status ${res.status}`);
