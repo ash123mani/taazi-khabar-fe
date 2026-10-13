@@ -1,0 +1,1 @@
+{"extends": "next/core-web-vitals", "overrides": [{"files": ["src/__tests__/**/*"], "rules": {"react/display-name": "off"}}]}
