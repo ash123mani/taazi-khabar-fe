@@ -163,11 +163,10 @@ export default function LoginPage() {
         </Form.Item>
       </Form>
 
-      {process.env.NEXT_PUBLIC_ENABLE_GOOGLE_LOGIN === 'true' && (
-        <>
-          <Divider style={{ borderColor: 'var(--color-border)', margin: '20px 0 16px', fontSize: 11, color: 'var(--color-text-tertiary)' }}>
-            OR
-          </Divider>
+      <>
+        <Divider style={{ borderColor: 'var(--color-border)', margin: '20px 0 16px', fontSize: 11, color: 'var(--color-text-tertiary)' }}>
+          OR
+        </Divider>
 
           <Button
             onClick={() => signIn('google', { callbackUrl: '/' })}
@@ -194,10 +193,9 @@ export default function LoginPage() {
               e.currentTarget.style.color = 'var(--color-text-secondary)';
             }}
           >
-            Sign in with Google
-          </Button>
-        </>
-      )}
+          Sign in with Google
+        </Button>
+      </>
 
       <div
         style={{

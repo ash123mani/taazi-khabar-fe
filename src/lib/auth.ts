@@ -1,7 +1,6 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-
-const ENABLE_GOOGLE = process.env.NEXT_PUBLIC_ENABLE_GOOGLE_LOGIN === 'true';
+import GoogleProvider from 'next-auth/providers/google';
 
 const providers: any[] = [
   CredentialsProvider({
@@ -34,24 +33,18 @@ const providers: any[] = [
       };
     },
   }),
+  GoogleProvider({
+    clientId: process.env.GOOGLE_CLIENT_ID || '',
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+  }),
 ];
-
-if (ENABLE_GOOGLE) {
-  const GoogleProvider = require('next-auth/providers/google').default;
-  providers.push(
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-    }),
-  );
-}
 
 export const authOptions: NextAuthOptions = {
   providers,
   session: { strategy: 'jwt', maxAge: 30 * 24 * 60 * 60 },
   callbacks: {
     async jwt({ token, user, account }) {
-      if (ENABLE_GOOGLE && account && account.provider === 'google') {
+      if (account && account.provider === 'google') {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/auth/google`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

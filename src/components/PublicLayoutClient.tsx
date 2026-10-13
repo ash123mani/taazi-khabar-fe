@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Layout, Menu, Button, Space, Typography, Drawer } from 'antd';
+import { Layout, Menu, Button, Space, Typography, Drawer, Dropdown, Avatar } from 'antd';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import {
   BookOutlined,
@@ -51,6 +51,33 @@ export default function PublicLayoutClient({ children }: { children: React.React
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const isAdmin = (session?.user as any)?.is_admin;
+  const userName = session?.user?.name || 'Account';
+  const userEmail = session?.user?.email || '';
+  const userImage = (session?.user as any)?.image as string | undefined;
+  const userInitial = (userName || userEmail || '?').trim().charAt(0).toUpperCase();
+
+  const userMenuItems = [
+    {
+      key: '__info__',
+      disabled: true,
+      label: (
+        <div style={{ padding: '4px 0', cursor: 'default' }}>
+          <div style={{ fontWeight: 700, fontSize: 13, color: 'var(--color-text)' }}>{userName}</div>
+          {userEmail && (
+            <div style={{ fontSize: 12, color: 'var(--color-text-tertiary)' }}>{userEmail}</div>
+          )}
+        </div>
+      ),
+    },
+    { type: 'divider' as const },
+    {
+      key: '__logout__',
+      danger: true,
+      icon: <LogoutOutlined />,
+      label: 'Logout',
+      onClick: () => signOut(),
+    },
+  ];
 
   const nav = [
     ...publicMenuItems,
@@ -150,15 +177,20 @@ export default function PublicLayoutClient({ children }: { children: React.React
             />
             {session ? (
               isMobile ? null : (
-                <Button
-                  type="text"
-                  size="small"
-                  icon={<LogoutOutlined />}
-                  onClick={() => signOut()}
-                  style={{ color: 'var(--color-text-secondary)', fontSize: 12 }}
-                >
-                  Logout
-                </Button>
+                <Dropdown menu={{ items: userMenuItems }} trigger={['click']} placement="bottomRight">
+                  <Button
+                    type="text"
+                    size="small"
+                    style={{ color: 'var(--color-text-secondary)', fontSize: 12, display: 'flex', alignItems: 'center', gap: 8 }}
+                  >
+                    <Avatar size={22} src={userImage} style={{ backgroundColor: 'var(--color-accent)', fontSize: 11 }}>
+                      {!userImage && userInitial}
+                    </Avatar>
+                    <span style={{ maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {userName}
+                    </span>
+                  </Button>
+                </Dropdown>
               )
             ) : isMobile ? null : (
               <Button
@@ -198,6 +230,32 @@ export default function PublicLayoutClient({ children }: { children: React.React
         width={260}
         styles={{ body: { padding: '8px 0' } }}
       >
+        {session && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              padding: '12px 16px',
+              borderBottom: '1px solid var(--color-border-light)',
+              marginBottom: 8,
+            }}
+          >
+            <Avatar size={36} src={userImage} style={{ backgroundColor: 'var(--color-accent)', flexShrink: 0 }}>
+              {!userImage && userInitial}
+            </Avatar>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--color-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {userName}
+              </div>
+              {userEmail && (
+                <div style={{ fontSize: 12, color: 'var(--color-text-tertiary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {userEmail}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
         <Menu
           mode="vertical"
           selectedKeys={[selectedKey(pathname)]}
